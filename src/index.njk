@@ -1,0 +1,8 @@
+{% set title = "Home" %}
+{% extends "base.njk" %}
+{% from "macros/render_controller.njk" import render_controller %}
+
+{% block content %}
+    <p>This is the index page</p>
+    {{ render_controller('partials/click_counter.njk', open=true) }}
+{% endblock %}

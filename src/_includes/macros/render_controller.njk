@@ -1,0 +1,10 @@
+{% macro render_controller(template_path, open=false) %}
+    {% include template_path %}
+    <details style="margin-top: 15px; margin-bottom: 15px;" {% if open %}open{% endif %}>
+        <summary>View Source</summary>
+        {# NOTE: This horrid formatting is necessary, any whitespace will be rendered #}
+        <div class="relative"><button class="copy button outline">Copy</button></div>
+        <pre><code class="html">{% filter escape %}{% include(template_path) %}{% endfilter %}</code></pre>
+
+    </details>
+{% endmacro %}
