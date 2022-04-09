@@ -4,7 +4,13 @@
 
 {% block content %}
     <div class="container">
-        <p>This is the index page</p>
+        <h4>
+            <span class="mono">binder.js</span> is a basic JavaScript library to combine web components with server side rendered templates.
+        </h4>
+
+        <br />
+
+        <h2>Basic Demo</h2>
         {{ render_controller('partials/click_counter.njk', open=true) }}
     </div>
 {% endblock %}

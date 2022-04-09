@@ -31,5 +31,9 @@ pre {
 
 .nav {
     margin-top: 15px;
-    margin-bottom: 50px;
+    margin-bottom: 15px;
+}
+
+.nav-sep {
+    margin-bottom: 25px;
 }
