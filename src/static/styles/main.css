@@ -3,7 +3,7 @@
 
 body {
     font-weight: 300;
-    border-top: 5px solid var(--primary-color);
+    border-top: 5px solid var(--color-primary);
 }
 
 strong {

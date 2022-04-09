@@ -1,0 +1,55 @@
+{% extends "surround/base.njk" %}
+{% from "macros/render_controller.njk" import render_controller %}
+
+{% block content %}
+    <div id="guide" class="row">
+        <div id="guide-contents" class="col-2">
+            <ul>
+                <li><a id="guide-c-introduction" href="/guide/introduction">Introduction</a></li>
+                <li><a id="guide-c-our-first-controller" href="/guide/our-first-controller">Our First Controller</a></li>
+                <li><a href="#">Arguments</a></li>
+                <li><a href="#">Event Binding</a></li>
+                <li><a href="#">Data Binding</a></li>
+                <li><a href="#">Rendering</a></li>
+                <li><a href="#">Observed Attributes</a></li>
+                <li><a href="#">The Shadow DOM</a></li>
+                <li>
+                    <a href="#">Core Controllers</a>
+                    <ul>
+                        <li><a href="#">Dynamic Frame</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div id="guide-body" class="col-10">
+            {{ content | safe }}
+        </div>
+    </div>
+
+    <style>
+        #guide {
+            margin-right: 20px;
+            margin-left: 20px;
+        }
+
+        #guide-contents {
+            border-right: 1px solid #ccc;
+        }
+
+        #guide-contents ul {
+            list-style: none;
+        }
+
+        /* Adjust indent for nested pages */
+        #guide-contents ul > li > ul {
+            padding-left: 1.25em;
+        }
+
+        /* Dynamically style the active content entry */
+        #guide-c-{{ active }} {
+            color: var(--color-active);
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+

@@ -1,6 +1,7 @@
 ---
 title: Introduction
-layout: "guide_base.njk"
+layout: "surround/guide_base.njk"
+active: "introduction"
 ---
 
 ## Introduction to binder.js
@@ -15,4 +16,4 @@ It's primary goals are to:
 
 At [teamweb](https://teamwebhq.com) we use `binder.js` with Flask and Jinja templates.  
 
-Next: [Quick Start](/guide/quick-start)
+Next: [The Controller](/guide/the-controller)
