@@ -1,0 +1,44 @@
+{% set title = "Examples" %}
+{% extends "base.njk" %}
+{% from "macros/render_controller.njk" import render_controller %}
+
+{% block content %}
+    <div class="container">
+        <h2>Examples</h2>
+
+        <div class="example">
+            <h4>On Off Switch</h4>
+            {{ render_controller('partials/on_off_switch.njk') }}
+        </div>
+
+        <div class="example">
+            <h4>Click Counter</h4>
+            {{ render_controller('partials/click_counter.njk') }}
+        </div>
+
+        <div class="example">
+            <h4>Currency Picker</h4>
+            {{ render_controller('partials/currency_picker.njk') }}
+        </div>
+
+        <div class="example">
+            <h4>Magic 8 Ball</h4>
+            {{ render_controller('partials/magic_8_ball.njk') }}
+        </div>
+
+        <h2>Core Controllers</h2>
+
+        <div class="example">
+            <h4>Dynamic Frame</h4>
+            {{ render_controller('partials/dynamic_frame.njk') }}
+        </div>
+    </div>
+
+    <style>
+        .example {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+{% endblock %}
+

@@ -1,0 +1,27 @@
+<!-- HTML -->
+<dynamic-frame
+    :url="/dynamic-example"
+    :mount-point="#mount-here"
+    :auto-refresh="5s"
+    :param-strftime="%A %B %m @ %H:%M:%S">
+
+    <p>The line below is another page loaded within a div, click <a href='/dynamic-example'>here</a> to load the page directly!</p>
+
+    <div id="mount-here"></div>
+</dynamic-frame>
+
+<button id="refresh-dynamic-frame">Force Refresh</button>
+
+
+<!-- JavaScript -->
+<script type="module">
+    import { registerControllers } from '/static/js/binder.js';
+    import { DynamicFrame } from '/static/js/binder/core/dynamic_frame.js';
+
+    registerControllers(DynamicFrame);
+
+    document.querySelector("#refresh-dynamic-frame").addEventListener("click", () => {
+        document.querySelector("dynamic-frame").refresh();
+    });
+</script>
+

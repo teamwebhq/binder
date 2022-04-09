@@ -1,0 +1,28 @@
+<!--
+This is our DOM element
+In this case it's just a `button` that is bound to the `on-off-switch` component
+
+We bind the `click` event to the `toggle` method of the controller
+-->
+<button is="on-off-switch" @click="this.toggle">LOADING...</button>
+
+<script type="module">
+    import { registerControllers, makeController } from '/static/js/binder.js';
+
+    class OnOffSwitch extends makeController(HTMLButtonElement, "button") {
+        // The `init` method is called when the controller is first created
+        // Use this to handle your setup logic
+        init() {
+            this.isOn = true;
+            this.root.innerText = "ON";
+        }
+
+        // This is the click handler for the button
+        toggle() {
+            this.isOn = !this.isOn;
+            this.root.innerText = this.isOn ? "ON" : "OFF";
+        }
+    }
+
+    registerControllers(OnOffSwitch);
+</script>
