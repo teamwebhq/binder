@@ -1,6 +1,6 @@
 ---
 title: Quick Start
-layout: "base.njk"
+layout: "guide_base.njk"
 ---
 
 ## Quick Start

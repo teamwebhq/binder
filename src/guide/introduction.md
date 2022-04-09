@@ -1,6 +1,6 @@
 ---
 title: Introduction
-layout: "base.njk"
+layout: "guide_base.njk"
 ---
 
 ## Introduction to binder.js

@@ -141,8 +141,23 @@
 
             // Load the code from localStorage; or show the default
             loadCode() {
-                const defaultJs = `// All binder.js exports are available here\n// No need to import!\nclass MyElement extends Controller {\n\trender() {\n\t\tthis.innerHTML = \`<p>Hello, \${this.name}!</p>\`;\n\t}\n}\n\nregisterControllers(MyElement);`;
-                const defaultHtml = `<my-element :name="World"></my-element>`;
+                const defaultJs = `// All binder.js exports are available here
+// No need to import!
+class GreeterComponent extends Controller {
+    randomize() {
+        const names = [ "Tom", "Dick", "Harry" ];
+        this.name = names[Math.floor(Math.random() * names.length)];
+        this.render();
+    }
+}
+
+registerControllers(GreeterComponent);`;
+
+                const defaultHtml = `<greeter-component :default-name="World">
+    <input type="text" @bind="this.name" />
+    <p @render.eval>Hello, \${this.name || this.defaultName}</p>
+    <button @click="this.randomize">Random Name</button>
+</greeter-component>`;
 
                 return [
                     localStorage.getItem('js') || defaultJs,

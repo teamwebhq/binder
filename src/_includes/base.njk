@@ -46,11 +46,6 @@
 
         <!-- Content -->
         <div>
-            <!-- Wrap markdown content in a container
-            HTML pages can handle that themselves if needed-->
-            <div class="container">
-                {{ content | safe }}
-            </div>
             {% block content %}{% endblock %}
         </div>
     </body>
