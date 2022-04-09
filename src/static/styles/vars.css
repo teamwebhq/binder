@@ -1,3 +1,7 @@
 :root {
-    --primary-color: #588b8b;
+    --primary-color: #007ed7;  /* Teamweb blue */
+    --bg-color: #f5f6f7;
+    --font-size: 1.6rem;
+    --font-family-sans: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    --font-family-mono: monaco, "Consolas", "Lucida Console", monospace;
 }
