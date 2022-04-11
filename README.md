@@ -1,20 +1,25 @@
 # binder.js
 
-
 This repository contains the `binder.js` code and the [11ty](https://www.11ty.dev/) static site https://binderjs.com.  
+To learn more about binder.js see https://binderjs.com.  
 
-#### Building the JavaScript
 
-```shell
-./tools/build.sh
+## Getting Started
+
+This project uses [hermit](https://cashapp.github.io/hermit/usage/get-started/) to manage the node/npm/npx install.  
+
 ```
+# Activate hermit
+source bin/activate-hermit
 
-#### Running Site Locally
-```shell
-nvm use v16
-npx @11ty/eleventy --serve
+# Install dependencies
+npm install
+
+# Run 11ty website locally
+npm run serve
+
+# Build 11ty site to ./dist
+npm run build:site
+
+# Build JS to ./build
 ```
-
-
-#### Deploying
-TODO

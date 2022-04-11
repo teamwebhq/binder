@@ -1,0 +1,26 @@
+{
+  "devDependencies": {
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.2.165",
+    "@11ty/eleventy": "^1.0.0"
+  },
+  "name": "binder",
+  "description": "This repository contains the `binder.js` code and the [11ty](https://www.11ty.dev/) static site https://binderjs.com.   To learn more about binder.js see https://binderjs.com.",
+  "version": "1.0.0",
+  "scripts": {
+    "serve": "npx @11ty/eleventy --serve",
+    "build:site": "npx @11ty/eleventy",
+    "build:js": "./tools/build-js.sh",
+    "build": "npm run build:site && npm run build:js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teamwebhq/binder.git"
+  },
+  "author": "teamwebhq.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/teamwebhq/binder/issues"
+  },
+  "homepage": "https://github.com/teamwebhq/binder#readme"
+}

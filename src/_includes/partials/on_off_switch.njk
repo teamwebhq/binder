@@ -7,7 +7,7 @@ We bind the `click` event to the `toggle` method of the controller
 <button is="on-off-switch" @click="this.toggle">LOADING...</button>
 
 <script type="module">
-    import { registerControllers, makeController } from '/static/js/binder.js';
+    import { registerControllers, makeController } from '/static/js/binder/binder.js';
 
     class OnOffSwitch extends makeController(HTMLButtonElement, "button") {
         // The `init` method is called when the controller is first created
