@@ -21,5 +21,12 @@ npm run serve
 # Build 11ty site to ./dist
 npm run build:site
 
+# Build jsdoc site to ./docs
+npm run build:docs
+
 # Build JS to ./build
+npm run build:js
+
+# Build everything
+npm run build
 ```
