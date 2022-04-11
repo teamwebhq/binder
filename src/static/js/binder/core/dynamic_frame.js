@@ -16,16 +16,21 @@ Example HTML:
  * @class
  * @name DynamicFrame
  * @namespace DynamicFrame
+ * @property url - The URL to fetch
+ * @property executeScripts - If true will find and execute scripts in the response body
+ * @property mountPoint - A selector used to find the element to mount to within the element (defaults to the root element)
+ * @property autoRefresh - Will call `refresh()` automatically at the specified interval (Intervals are in the format `${num}${unit}` where unit is one of ms, s, m, h: `10s` = 10 seconds)
+ * @property delay - An artificial delay applied before displaying the content
+ * @example
+ *  <dynamic-frame :url="/some/url" :param-day="Monday" :mount-point=".content">
+ *     <div class="content"></div>
+ *  </dynamic-frame>
  */
 class DynamicFrame extends Controller {
     /**
      * Setup the DynamicFrame and do the initial request/load
-     * @property url - The URL to fetch
-     * @property executeScripts - If true will find and execute scripts in the response body
-     * @property mountPoint - A selector used to find the element to mount to within the element (defaults to the root element)
-     * @property autoRefresh - Will call `refresh()` automatically at the specified interval (Intervals are in the format `${num}${unit}` where unit is one of ms, s, m, h: `10s` = 10 seconds)
-     * @property delay - An artificial delay applied before displaying the content
      * @memberof! DynamicFrame
+     *
      */
     async init() {
         this.contents = '';
