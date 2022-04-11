@@ -11,7 +11,8 @@
     "serve": "npx @11ty/eleventy --serve",
     "build:site": "npx @11ty/eleventy",
     "build:js": "./tools/build-js.sh",
-    "build": "npm run build:site && npm run build:js"
+    "build:docs": "npx jsdoc --configure ./jsdoc.conf.json --destination ./docs ./src/static/js/binder/*",
+    "build": "npm run build:site && npm run build:js && npm run build:docs"
   },
   "repository": {
     "type": "git",
