@@ -1,0 +1,10 @@
+{% set title = "DateTime" %}
+
+<span id="today"></span>
+
+<script>
+    (function() {
+        const span = document.getElementById("today");
+        today.innerText = (new Date()).toISOString()
+    })();
+</script>

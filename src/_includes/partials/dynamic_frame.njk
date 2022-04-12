@@ -1,11 +1,11 @@
 <!-- HTML -->
 <dynamic-frame
-    :url="/dynamic-example"
+    :url="/current_date"
     :mount-point="#mount-here"
     :auto-refresh="5s"
-    :param-strftime="%A %B %m @ %H:%M:%S">
+    :execute-scripts="true">
 
-    <p>The line below is another page loaded within a div, click <a href='/dynamic-example'>here</a> to load the page directly!</p>
+    <p>The line below is another page loaded within a div, click <a href='/current_date'>here</a> to load the page directly!</p>
 
     <div id="mount-here"></div>
 </dynamic-frame>
