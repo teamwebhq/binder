@@ -2,12 +2,12 @@ import { pascalToKebab } from './util.js';
 
 /**
  * Register a controller (or multiple controllers)
- * 
+ *
  * Example
  * ```js
  * registerControllers(MyController, MyOtherController);
  * ```
- * 
+ *
  * ```js
  * registerControllers(
  *  MyController,
@@ -15,7 +15,7 @@ import { pascalToKebab } from './util.js';
  *  [ MyOtherOtherController ],
  * )
  * ```
- * @param  {...any} controllers 
+ * @param  {...any} controllers
  */
 const registerControllers = (...controllers) => {
     // First find all undefined elements and assume they are custom elements
@@ -41,7 +41,7 @@ const registerControllers = (...controllers) => {
 
         // If our controller has a __tag__ property then it extends that tag
         let opts = {};
-        if (controller.__extendTag__) opts.extends = controller.__extendTag__;
+        if (controller._extendTag) opts.extends = controller._extendTag;
 
         // Create an anonymous class here to avoid name clashes when using the bare controller with a custom name
         window.customElements.define(controllerTag, controller, opts);

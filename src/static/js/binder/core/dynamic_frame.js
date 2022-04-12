@@ -38,15 +38,14 @@ class DynamicFrame extends Controller {
         // Keep track of pending requests so we can cancel when updating multiple things
         this._reqAbort = [];
 
-        this.autoRefresh = parseBoolean(this.autoRefresh);
-        this.executeScripts = parseBoolean(this.executeScripts);
+        this.args.executeScripts = parseBoolean(this.args.executeScripts);
 
-        if (this.autoRefresh) {
-            const interval = parseDuration(this.autoRefresh);
+        if (this.args.autoRefresh) {
+            const interval = parseDuration(this.args.autoRefresh);
             this.setAutoRefresh(interval);
         }
 
-        if (!this.delay) this.delay = 0;
+        if (!this.args.delay) this.args.delay = 0;
     }
 
     /**
@@ -74,12 +73,12 @@ class DynamicFrame extends Controller {
         super.bind();
 
         // Find the mount point
-        if (this.mountPoint && typeof(this.mountPoint) === 'string') {
-            this.mountPoint = this.querySelector(this.mountPoint);
+        if (this.args.mountPoint && typeof(this.args.mountPoint) === 'string') {
+            this.args.mountPoint = this.querySelector(this.args.mountPoint);
         }
 
-        if (!this.mountPoint) {
-            this.mountPoint = this.root;
+        if (!this.args.mountPoint) {
+            this.args.mountPoint = this.root;
         }
     }
 
@@ -95,11 +94,11 @@ class DynamicFrame extends Controller {
             return;
         }
 
-        if (this.__internal__.autoRefreshInterval) {
-            window.clearInterval(this.__internal__.autoRefreshInterval);
+        if (this._internal.autoRefreshInterval) {
+            window.clearInterval(this._internal.autoRefreshInterval);
         }
 
-        this.__internal__.autoRefreshInterval = window.setInterval(() => this.refresh(), interval);
+        this._internal.autoRefreshInterval = window.setInterval(() => this.refresh(), interval);
     }
 
     /**
@@ -135,7 +134,7 @@ class DynamicFrame extends Controller {
         };
 
         await Promise.allSettled([
-            new Promise(resolve => setTimeout(resolve, this.delay)),
+            new Promise(resolve => setTimeout(resolve, this.args.delay)),
             sendReq(),
         ]);
 
@@ -149,7 +148,7 @@ class DynamicFrame extends Controller {
      * @memberof! DynamicFrame
      */
     findAndExecuteScripts() {
-        if (!this.executeScripts) return;
+        if (!this.args.executeScripts) return;
 
         let scripts = this.querySelectorAll('script');
         if (!scripts) return;
@@ -179,9 +178,9 @@ class DynamicFrame extends Controller {
     updateContent(content, mode='replace') {
         // TODO: Might want to use morphdom here
         if (mode === 'replace') {
-            this.mountPoint.innerHTML = content;
+            this.args.mountPoint.innerHTML = content;
         } else if (mode === 'append') {
-            this.mountPoint.insertAdjacentHTML('beforeEnd', content);
+            this.args.mountPoint.insertAdjacentHTML('beforeEnd', content);
         }
     }
 
@@ -203,7 +202,7 @@ class DynamicFrame extends Controller {
             }
         });
 
-        for (let attr of this.root.attributes) {
+        for (let attr of this.attributes) {
             if (attr.nodeName.startsWith(":param-")) {
                 params.append(attr.nodeName.substr(7), attr.nodeValue);
             }
@@ -218,9 +217,9 @@ class DynamicFrame extends Controller {
      * @memberof! DynamicFrame
      */
     endpoint() {
-        let url = this.url;
+        let url = this.args.url;
 
-        if (!this.url) {
+        if (!this.args.url) {
             console.error(`${this.tag}: No :url attribute specified`);
             return;
         }

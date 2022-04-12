@@ -205,7 +205,20 @@ To pass params use the attribute format `:param-name`
 
 Example HTML:
 <dynamic-frame :url="/some/url" :param-day="Monday"></dynamic-frame>
-*/ var DynamicFrame = /*#__PURE__*/ function(Controller1) {
+*/ /**
+ * @class
+ * @name DynamicFrame
+ * @namespace DynamicFrame
+ * @property url - The URL to fetch
+ * @property executeScripts - If true will find and execute scripts in the response body
+ * @property mountPoint - A selector used to find the element to mount to within the element (defaults to the root element)
+ * @property autoRefresh - Will call `refresh()` automatically at the specified interval (Intervals are in the format `${num}${unit}` where unit is one of ms, s, m, h: `10s` = 10 seconds)
+ * @property delay - An artificial delay applied before displaying the content
+ * @example
+ *  <dynamic-frame :url="/some/url" :param-day="Monday" :mount-point=".content">
+ *     <div class="content"></div>
+ *  </dynamic-frame>
+ */ var DynamicFrame = /*#__PURE__*/ function(Controller1) {
     "use strict";
     _inherits(DynamicFrame, Controller1);
     var _super = _createSuper(DynamicFrame);
@@ -218,11 +231,8 @@ Example HTML:
             key: "init",
             value: /**
      * Setup the DynamicFrame and do the initial request/load
-     * @property url - The URL to fetch
-     * @property executeScripts - If true will find and execute scripts in the response body
-     * @property mountPoint - A selector used to find the element to mount to within the element (defaults to the root element)
-     * @property autoRefresh - Will call `refresh()` automatically at the specified interval (Intervals are in the format `${num}${unit}` where unit is one of ms, s, m, h: `10s` = 10 seconds)
-     * @property delay - An artificial delay applied before displaying the content
+     * @memberof! DynamicFrame
+     *
      */ function init() {
                 var _this = this;
                 return _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
@@ -233,14 +243,13 @@ Example HTML:
                                 _this.contents = "";
                                 // Keep track of pending requests so we can cancel when updating multiple things
                                 _this._reqAbort = [];
-                                _this.autoRefresh = parseBoolean(_this.autoRefresh);
-                                _this.executeScripts = parseBoolean(_this.executeScripts);
-                                if (_this.autoRefresh) {
-                                    interval = parseDuration(_this.autoRefresh);
+                                _this.args.executeScripts = parseBoolean(_this.args.executeScripts);
+                                if (_this.args.autoRefresh) {
+                                    interval = parseDuration(_this.args.autoRefresh);
                                     _this.setAutoRefresh(interval);
                                 }
-                                if (!_this.delay) _this.delay = 0;
-                            case 6:
+                                if (!_this.args.delay) _this.args.delay = 0;
+                            case 5:
                             case "end":
                                 return _ctx.stop();
                         }
@@ -252,6 +261,7 @@ Example HTML:
             key: "refresh",
             value: /**
      * Alias for `render()`
+     * @memberof! DynamicFrame
      */ function refresh() {
                 var _this = this;
                 return _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
@@ -270,7 +280,10 @@ Example HTML:
         },
         {
             key: "render",
-            value: function render() {
+            value: /**
+     * Reload the frame content
+     * @memberof! DynamicFrame
+     */ function render() {
                 var _this = this;
                 var _this1 = this, _superprop_get_render = function() {
                     return _get(_getPrototypeOf(DynamicFrame.prototype), "render", _this);
@@ -295,15 +308,16 @@ Example HTML:
         {
             /**
      * Call the base `bind()` and re-find the mountPoint in case it's changed
+     * @memberof! DynamicFrame
      */ key: "bind",
             value: function bind() {
                 _get(_getPrototypeOf(DynamicFrame.prototype), "bind", this).call(this);
                 // Find the mount point
-                if (this.mountPoint && typeof this.mountPoint === "string") {
-                    this.mountPoint = this.querySelector(this.mountPoint);
+                if (this.args.mountPoint && typeof this.args.mountPoint === "string") {
+                    this.args.mountPoint = this.querySelector(this.args.mountPoint);
                 }
-                if (!this.mountPoint) {
-                    this.mountPoint = this.root;
+                if (!this.args.mountPoint) {
+                    this.args.mountPoint = this.root;
                 }
             }
         },
@@ -312,6 +326,7 @@ Example HTML:
      * Sets an interval to auto call `this.refresh()`
      * Overwrites previously set refresh intervals
      * @param {*} interval Duration in milliseconds
+     * @memberof! DynamicFrame
      */ key: "setAutoRefresh",
             value: function setAutoRefresh(interval) {
                 var _this = this;
@@ -319,10 +334,10 @@ Example HTML:
                     console.error("[".concat(this.tag, "] Undefined interval passed to setAutoRefresh"));
                     return;
                 }
-                if (this.__internal__.autoRefreshInterval) {
-                    window.clearInterval(this.__internal__.autoRefreshInterval);
+                if (this._internal.autoRefreshInterval) {
+                    window.clearInterval(this._internal.autoRefreshInterval);
                 }
-                this.__internal__.autoRefreshInterval = window.setInterval(function() {
+                this._internal.autoRefreshInterval = window.setInterval(function() {
                     return _this.refresh();
                 }, interval);
             }
@@ -335,6 +350,7 @@ Example HTML:
      * Multiple calls will abort previous requests and return false
      * @param mode - replace or append
      * @returns boolean - true on success
+     * @memberof! DynamicFrame
      */ function loadContent(e) {
                 var mode = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "replace";
                 var _this = this;
@@ -397,7 +413,7 @@ Example HTML:
                                 _ctx1.next = 10;
                                 return Promise.allSettled([
                                     new Promise(function(resolve) {
-                                        return setTimeout(resolve, _this.delay);
+                                        return setTimeout(resolve, _this.args.delay);
                                     }),
                                     sendReq(), 
                                 ]);
@@ -416,10 +432,11 @@ Example HTML:
      * Called during `loadContent()`
      * Will find all script tags within the frame and execute them
      * Only if the frame has the `execute-scripts` attribute set to true
+     * @memberof! DynamicFrame
      */ key: "findAndExecuteScripts",
             value: function findAndExecuteScripts() {
                 var _this = this;
-                if (!this.executeScripts) return;
+                if (!this.args.executeScripts) return;
                 var scripts = this.querySelectorAll("script");
                 if (!scripts) return;
                 _toConsumableArray(scripts).forEach(function(script) {
@@ -441,14 +458,15 @@ Example HTML:
      * This is where the artificial delay is applied
      * @param content - The content to use
      * @param mode - replace or append
+     * @memberof! DynamicFrame
      */ key: "updateContent",
             value: function updateContent(content) {
                 var mode = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "replace";
                 // TODO: Might want to use morphdom here
                 if (mode === "replace") {
-                    this.mountPoint.innerHTML = content;
+                    this.args.mountPoint.innerHTML = content;
                 } else if (mode === "append") {
-                    this.mountPoint.insertAdjacentHTML("beforeEnd", content);
+                    this.args.mountPoint.insertAdjacentHTML("beforeEnd", content);
                 }
             }
         },
@@ -457,6 +475,7 @@ Example HTML:
      * Returns the query string params for the request - expected to be overridden
      * Handles arrays as duplicated params (ie. a: [1,2] => ?a=1&a=2)
      * @returns {URLSearchParams}
+     * @memberof! DynamicFrame
      */ key: "params",
             value: function params() {
                 var values = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
@@ -474,7 +493,7 @@ Example HTML:
                 });
                 var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                 try {
-                    for(var _iterator = this.root.attributes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                    for(var _iterator = this.attributes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                         var attr = _step.value;
                         if (attr.nodeName.startsWith(":param-")) {
                             params1.append(attr.nodeName.substr(7), attr.nodeValue);
@@ -501,10 +520,11 @@ Example HTML:
             /**
      * Returns the endpoint to call - from the data-url attr on the root element
      * @returns {string}
+     * @memberof! DynamicFrame
      */ key: "endpoint",
             value: function endpoint() {
-                var url = this.url;
-                if (!this.url) {
+                var url = this.args.url;
+                if (!this.args.url) {
                     console.error("".concat(this.tag, ": No :url attribute specified"));
                     return;
                 }

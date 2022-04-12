@@ -1,7 +1,7 @@
 <!-- HTML -->
 <click-counter>
-    <p @render>Clicks: ${this.clicks}</p>
-    <button @click.prevent="this.count">Click me!</button>
+    <p @render>Clicks: ${this.data.clicks}</p>
+    <button @click.prevent="this.count()">Click me!</button>
 </click-counter>
 
 <!-- JavaScript -->
@@ -10,11 +10,11 @@
 
     class ClickCounter extends Controller {
         init() {
-            this.clicks = 0;
+            this.data.clicks = 0;
         }
 
         count() {
-            this.clicks++;
+            this.data.clicks++;
             this.render();
         }
     }

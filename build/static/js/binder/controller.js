@@ -212,10 +212,11 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
          * EG. <controller :some-arg="150" /> will set `this.someArg = 150`
          */ bindArgs = function bindArgs() {
         var _this = this;
+        this.args = {};
         this.getAttributeNames().forEach(function(attr) {
             var value = _this.getAttribute(attr);
             var key = kebabToCamel(attr).replace(":", "");
-            _this[key] = value;
+            _this.args[key] = value;
         });
     };
     var /**
@@ -234,10 +235,10 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
         var _this3 = this;
         // We need to delete all events and before binding
         // Otherwise we would end up with duplicate events upon muliple bind() calls
-        this.__events__.forEach(function(e) {
+        this._events.forEach(function(e) {
             return e.el.removeEventListener(e.eventType, e.event);
         });
-        this.__events__ = [];
+        this._events = [];
         // Now find all configured events
         var eventTypes = [
             "click",
@@ -268,7 +269,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
                 }
             };
             el.addEventListener(eventType, callable);
-            _this3.__events__.push({
+            _this3._events.push({
                 el: el,
                 event: callable,
                 eventType: eventType
@@ -299,10 +300,11 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
          * @description Find all elements within the controller that has a `@bind` attribute
          * Each element will have it's value bound to the controller under `this`
          * The value of the attribute will be converted from kebab-case to camelCase
-         * 
+         *
          * EG. <input @bind="the-input" /> will have it's value bound to `this.theInput`
          */ bindDataValues = function bindDataValues() {
         var _this = this;
+        this.data = {};
         var instance1 = this;
         var tagToEvent = {
             "input|text": "keyup",
@@ -311,26 +313,26 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
         // Event handlers for various element types
         var handlers = {
             "input|checkbox": function(instance, varName, e) {
-                if (!instance[varName]) instance[varName] = [];
+                if (!instance.data[varName]) instance.data[varName] = [];
                 if (e.target.checked) {
-                    instance[varName].push(e.target.value);
+                    instance.data[varName].push(e.target.value);
                 } else {
-                    instance[varName] = instance[varName].filter(function(item) {
+                    instance.data[varName] = instance.data[varName].filter(function(item) {
                         return item !== e.target.value;
                     });
                 }
             },
             "select": function(instance, varName, e) {
                 if (e.target.getAttribute("multiple") !== null) {
-                    instance[varName] = Array.from(e.target.selectedOptions).map(function(item) {
+                    instance.data[varName] = Array.from(e.target.selectedOptions).map(function(item) {
                         return item.value;
                     });
                 } else {
-                    instance[varName] = e.target.value;
+                    instance.data[varName] = e.target.value;
                 }
             },
             "default": function(instance, varName, e) {
-                return instance[varName] = e.target.value;
+                return instance.data[varName] = e.target.value;
             }
         };
         // Logic to actually bind an element to the controller
@@ -338,7 +340,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
             var elType = _classPrivateMethodGet(_this, _getElementType, getElementType).call(_this, el);
             var eventType = tagToEvent[elType] || tagToEvent.default;
             el.addEventListener(eventType, function(e) {
-                var varName = el.getAttribute("@bind".concat(modifier)).replace("this.", "");
+                var varName = el.getAttribute("@bind".concat(modifier)).replace("this.data.", "").replace("this.", "");
                 var handler = handlers[elType] || handlers.default;
                 handler(instance1, varName, e);
                 // If this element is @bind.render this call render()
@@ -353,7 +355,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
         modifiers.forEach(function(modifier) {
             var _this4 = _this;
             // Handle any binds on the root node
-            if (_this.root.hasAttribute("@bind".concat(modifier))) {
+            if (_this.hasAttribute("@bind".concat(modifier))) {
                 bindData(_this.root, modifier);
             }
             // Handle any binds on the children
@@ -419,11 +421,11 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
             _classPrivateMethodInit(_assertThisInitialized(_this), _getElementType);
             _classPrivateMethodInit(_assertThisInitialized(_this), _belongsToController);
             // Store for internal data
-            _this.__internal__ = {};
+            _this._internal = {};
             _this.root = _assertThisInitialized(_this);
             _this.args = args;
             // Keep track of all attached events
-            _this.__events__ = [];
+            _this._events = [];
             // Handle <self> node
             // By default an empty element will only contain it's `self` content
             // Can also be added manually using <self></self>
@@ -563,13 +565,13 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
                 value: function bind() {
                     // TODO: Might be useful to bind a specific node/tree
                     // We only want to configure the arguments on the first bind()
-                    if (!this.__internal__.bound) {
+                    if (!this._internal.bound) {
                         _classPrivateMethodGet(this, _bindArgs, bindArgs).call(this);
                     }
                     ;
                     _classPrivateMethodGet(this, _bindEvents, bindEvents).call(this);
                     _classPrivateMethodGet(this, _bindDataValues, bindDataValues).call(this);
-                    this.__internal__.bound = true;
+                    this._internal.bound = true;
                 }
             },
             {
@@ -587,10 +589,10 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
                         console.error("[".concat(this.localName, "] Undefined interval passed to setAutoRender"));
                         return;
                     }
-                    if (this.__internal__.autoRenderInterval) {
-                        window.clearInterval(this.__internal__.autoRenderInterval);
+                    if (this._internal.autoRenderInterval) {
+                        window.clearInterval(this._internal.autoRenderInterval);
                     }
-                    this.__internal__.autoRenderInterval = window.setInterval(function() {
+                    this._internal.autoRenderInterval = window.setInterval(function() {
                         return _this.render();
                     }, interval);
                 }
@@ -603,7 +605,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
          * @memberof! Controller
          * @description Called during the `connectedCallback()` (when an element is created in the DOM)
          * Expected to be overridden
-         * @param {*} args 
+         * @param {*} args
          */ function init(args) {
                     return _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
                         return regeneratorRuntime.wrap(function _callee$(_ctx) {
@@ -614,20 +616,6 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
                             }
                         }, _callee);
                     }))();
-                }
-            },
-            {
-                key: "getTag",
-                value: function getTag(tag) {
-                    console.warn("[getTag] Deprecated, use querySelector instead");
-                    return this.querySelector('[data-tag="'.concat(tag, '"]')) || this.querySelector('[\\:tag="'.concat(tag, '"]'));
-                }
-            },
-            {
-                key: "getTagAll",
-                value: function getTagAll(tag) {
-                    console.warn("[getTagAll] Deprecated, use querySelectorAll instead");
-                    return _toConsumableArray(this.querySelectorAll('[data-tag="'.concat(tag, '"]'))).concat(_toConsumableArray(this.querySelectorAll('[\\:tag="'.concat(tag, '"]'))));
                 }
             },
             {
@@ -704,7 +692,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
             }
         ]);
         return _class;
-    }(base1), _defineProperty(_class1, "__extendTag__", extendTag), /**
+    }(base1), _defineProperty(_class1, "_extendTag", extendTag), /**
          * @static
          * @name observedAttributes
          * @type String[]

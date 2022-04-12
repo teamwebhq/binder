@@ -13,7 +13,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
      * @namespace Controller
      */
     const CoreController = (class extends base {
-        static __extendTag__ = extendTag;
+        static _extendTag = extendTag;
 
         /**
          * @static
@@ -26,17 +26,21 @@ const makeController = (base=HTMLElement, extendTag=null) => {
          */
         static observedAttributes = [];
 
+        /**
+         * Create a new custom controller element
+         * @param {*} args
+         */
         constructor(args) {
             super();
 
             // Store for internal data
-            this.__internal__ = {};
+            this._internal = {};
 
             this.root = this;
             this.args = args;
 
             // Keep track of all attached events
-            this.__events__ = [];
+            this._events = [];
 
             // Handle <self> node
             // By default an empty element will only contain it's `self` content
@@ -136,7 +140,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                 ...config,
             }));
         }
-        
+
         /**
          * @method
          * @name listenFor
@@ -162,14 +166,14 @@ const makeController = (base=HTMLElement, extendTag=null) => {
             // TODO: Might be useful to bind a specific node/tree
 
             // We only want to configure the arguments on the first bind()
-            if (!this.__internal__.bound) {
+            if (!this._internal.bound) {
                 this.#bindArgs();
             };
 
             this.#bindEvents();
             this.#bindDataValues();
 
-            this.__internal__.bound = true;
+            this._internal.bound = true;
         }
 
         /**
@@ -186,11 +190,11 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                 return;
             }
 
-            if (this.__internal__.autoRenderInterval) {
-                window.clearInterval(this.__internal__.autoRenderInterval);
+            if (this._internal.autoRenderInterval) {
+                window.clearInterval(this._internal.autoRenderInterval);
             }
 
-            this.__internal__.autoRenderInterval = window.setInterval(() => this.render(), interval);
+            this._internal.autoRenderInterval = window.setInterval(() => this.render(), interval);
         }
 
         /**
@@ -199,22 +203,9 @@ const makeController = (base=HTMLElement, extendTag=null) => {
          * @memberof! Controller
          * @description Called during the `connectedCallback()` (when an element is created in the DOM)
          * Expected to be overridden
-         * @param {*} args 
+         * @param {*} args
          */
         async init(args) {}
-
-        getTag(tag) {
-            console.warn("[getTag] Deprecated, use querySelector instead");
-            return this.querySelector(`[data-tag="${tag}"]`) || this.querySelector(`[\\:tag="${tag}"]`);
-        }
-
-        getTagAll(tag) {
-            console.warn("[getTagAll] Deprecated, use querySelectorAll instead");
-            return [
-                ...this.querySelectorAll(`[data-tag="${tag}"]`),
-                ...this.querySelectorAll(`[\\:tag="${tag}"]`),
-            ]
-        }
 
         /**
          * @method
@@ -278,7 +269,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                         template = template.replace(replacer, pos.toString() || '');
                     }
                 });
-                
+
                 // TODO: This may be innefecient
                 el.innerHTML = template;
             });
@@ -309,10 +300,12 @@ const makeController = (base=HTMLElement, extendTag=null) => {
          * EG. <controller :some-arg="150" /> will set `this.someArg = 150`
          */
         #bindArgs() {
+            this.args = {};
+
             this.getAttributeNames().forEach(attr => {
                 const value = this.getAttribute(attr);
                 const key = kebabToCamel(attr).replace(':', '');
-                this[key] = value;
+                this.args[key] = value;
             });
         }
 
@@ -332,8 +325,8 @@ const makeController = (base=HTMLElement, extendTag=null) => {
         #bindEvents() {
             // We need to delete all events and before binding
             // Otherwise we would end up with duplicate events upon muliple bind() calls
-            this.__events__.forEach(e => e.el.removeEventListener(e.eventType, e.event));
-            this.__events__ = [];
+            this._events.forEach(e => e.el.removeEventListener(e.eventType, e.event));
+            this._events = [];
 
             // Now find all configured events
             const eventTypes = [ 'click', 'change', 'mouseover', 'mouseout', 'keydown', 'keyup', 'load' ];
@@ -356,7 +349,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
 
                 el.addEventListener(eventType, callable);
 
-                this.__events__.push({
+                this._events.push({
                     el: el,
                     event: callable,
                     eventType: eventType,
@@ -390,10 +383,11 @@ const makeController = (base=HTMLElement, extendTag=null) => {
          * @description Find all elements within the controller that has a `@bind` attribute
          * Each element will have it's value bound to the controller under `this`
          * The value of the attribute will be converted from kebab-case to camelCase
-         * 
+         *
          * EG. <input @bind="the-input" /> will have it's value bound to `this.theInput`
          */
         #bindDataValues() {
+            this.data = {};
             const instance = this;
 
             const tagToEvent = {
@@ -404,21 +398,21 @@ const makeController = (base=HTMLElement, extendTag=null) => {
             // Event handlers for various element types
             const handlers = {
                 'input|checkbox': (instance, varName, e) => {
-                    if (!instance[varName]) instance[varName] = [];
+                    if (!instance.data[varName]) instance.data[varName] = [];
                     if (e.target.checked) {
-                        instance[varName].push(e.target.value);
+                        instance.data[varName].push(e.target.value);
                     } else {
-                        instance[varName] = instance[varName].filter(item => item !== e.target.value);
+                        instance.data[varName] = instance.data[varName].filter(item => item !== e.target.value);
                     }
                 },
                 'select': (instance, varName, e) => {
                     if (e.target.getAttribute('multiple') !== null) {
-                        instance[varName] = Array.from(e.target.selectedOptions).map(item => item.value);
+                        instance.data[varName] = Array.from(e.target.selectedOptions).map(item => item.value);
                     } else {
-                        instance[varName] = e.target.value;
+                        instance.data[varName] = e.target.value;
                     }
                 },
-                'default': (instance, varName, e) => instance[varName] = e.target.value,
+                'default': (instance, varName, e) => instance.data[varName] = e.target.value,
             }
 
             // Logic to actually bind an element to the controller
@@ -427,7 +421,9 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                 const eventType = tagToEvent[elType] || tagToEvent.default;
 
                 el.addEventListener(eventType, e => {
-                    const varName = el.getAttribute(`@bind${modifier}`).replace("this.", "");
+                    const varName = el.getAttribute(`@bind${modifier}`)
+                        .replace("this.data.", "")
+                        .replace("this.", "");
 
                     const handler = handlers[elType] || handlers.default;
                     handler(instance, varName, e);
@@ -440,7 +436,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
             const modifiers = [ "", ...permutations([ ".render" ], true) ];
             modifiers.forEach(modifier => {
                 // Handle any binds on the root node
-                if (this.root.hasAttribute(`@bind${modifier}`)) {
+                if (this.hasAttribute(`@bind${modifier}`)) {
                     bindData(this.root, modifier);
                 }
 
