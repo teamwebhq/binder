@@ -3,6 +3,9 @@ function _arrayLikeToArray(arr, len) {
     for(var i = 0, arr2 = new Array(len); i < len; i++)arr2[i] = arr[i];
     return arr2;
 }
+function _arrayWithHoles(arr) {
+    if (Array.isArray(arr)) return arr;
+}
 function _arrayWithoutHoles(arr) {
     if (Array.isArray(arr)) return _arrayLikeToArray(arr);
 }
@@ -110,6 +113,33 @@ function _inherits(subClass, superClass) {
 function _iterableToArray(iter) {
     if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
 }
+function _iterableToArrayLimit(arr, i) {
+    var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+    if (_i == null) return;
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _s, _e;
+    try {
+        for(_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true){
+            _arr.push(_s.value);
+            if (i && _arr.length === i) break;
+        }
+    } catch (err) {
+        _d = true;
+        _e = err;
+    } finally{
+        try {
+            if (!_n && _i["return"] != null) _i["return"]();
+        } finally{
+            if (_d) throw _e;
+        }
+    }
+    return _arr;
+}
+function _nonIterableRest() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
 function _nonIterableSpread() {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
@@ -140,6 +170,9 @@ function _setPrototypeOf(o, p) {
         return o;
     };
     return _setPrototypeOf(o, p);
+}
+function _slicedToArray(arr, i) {
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 function _toConsumableArray(arr) {
     return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
@@ -232,31 +265,15 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
          * - `.prevent`: Automatically calls `event.preventDefault()`
          * - `.eval`: Will evaluate the attribute value
          */ bindEvents = function bindEvents() {
-        var _this3 = this;
+        var _this = this;
         // We need to delete all events and before binding
         // Otherwise we would end up with duplicate events upon muliple bind() calls
         this._events.forEach(function(e) {
             return e.el.removeEventListener(e.eventType, e.event);
         });
         this._events = [];
-        // Now find all configured events
-        var eventTypes = [
-            "click",
-            "change",
-            "mouseover",
-            "mouseout",
-            "keydown",
-            "keyup",
-            "load"
-        ];
-        var modifiers = [
-            ""
-        ].concat(_toConsumableArray(permutations([
-            ".prevent",
-            ".eval"
-        ], true)));
         var bindEvent = function(el, eventType, modifier) {
-            var _this1 = _this3;
+            var _this1 = _this;
             var value = el.getAttribute("@".concat(eventType).concat(modifier));
             var action = value.replace("this.", "").replace("()", "");
             var callable = function(event) {
@@ -269,28 +286,73 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
                 }
             };
             el.addEventListener(eventType, callable);
-            _this3._events.push({
+            _this._events.push({
                 el: el,
                 event: callable,
                 eventType: eventType
             });
         };
-        eventTypes.forEach(function(eventType) {
-            var _this2 = _this3;
-            modifiers.forEach(function(modifier) {
-                var _this = _this2;
-                var escapedModifier = modifier.replace(/\./g, "\\.");
-                // Handle events on the root node
-                if (_this2.root.hasAttribute("@".concat(eventType).concat(modifier))) {
-                    bindEvent(_this2.root, eventType, modifier);
+        // Find all controller child nodes with attributes that start with `@`
+        // TODO: Not sure of the performance impact of this
+        // Need to benchmark and compare to plain querySelector
+        // Another option is to parse the DOM as a string ourselves
+        var nodesWithEvents = document.evaluate('./*[starts-with(name(@*),"@")]', this.root);
+        var eventNode = nodesWithEvents.iterateNext();
+        while(eventNode){
+            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+            try {
+                for(var _iterator = eventNode.getAttributeNames()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                    var attr = _step.value;
+                    if (!attr.startsWith("@")) continue;
+                    var ref = _slicedToArray(attr.replace("@", "").split(".", 2), 2), event2 = ref[0], modifiers = ref[1];
+                    modifiers = modifiers ? ".".concat(modifiers) : "";
+                    // @render and @bind are handled separately
+                    if (event2 === "render" || event2 === "bind") continue;
+                    bindEvent(eventNode, event2, modifiers);
                 }
-                // Handle events on any children
-                _this2.root.querySelectorAll("[\\@".concat(eventType).concat(escapedModifier, "]")).forEach(function(el) {
-                    if (!_classPrivateMethodGet(_this, _belongsToController, belongsToController).call(_this, el)) return;
-                    bindEvent(el, eventType, modifier);
-                });
-            });
-        });
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally{
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return != null) {
+                        _iterator.return();
+                    }
+                } finally{
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+            eventNode = nodesWithEvents.iterateNext();
+        }
+        var _iteratorNormalCompletion1 = true, _didIteratorError1 = false, _iteratorError1 = undefined;
+        try {
+            // The above does not match attributes on the root node itself so check that manually
+            // TODO: This section is the same as the above, de-dupe it
+            for(var _iterator1 = this.root.getAttributeNames()[Symbol.iterator](), _step1; !(_iteratorNormalCompletion1 = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion1 = true){
+                var attr1 = _step1.value;
+                if (!attr1.startsWith("@")) continue;
+                var ref1 = _slicedToArray(attr1.replace("@", "").split(".", 2), 2), event1 = ref1[0], modifiers1 = ref1[1];
+                modifiers1 = modifiers1 ? ".".concat(modifiers1) : "";
+                // @render and @bind are handled separately
+                if (event1 === "render" || event1 === "bind") continue;
+                bindEvent(this.root, event1, modifiers1);
+            }
+        } catch (err) {
+            _didIteratorError1 = true;
+            _iteratorError1 = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion1 && _iterator1.return != null) {
+                    _iterator1.return();
+                }
+            } finally{
+                if (_didIteratorError1) {
+                    throw _iteratorError1;
+                }
+            }
+        }
     };
     var /**
          * @method
@@ -353,7 +415,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
             ".render"
         ], true)));
         modifiers.forEach(function(modifier) {
-            var _this4 = _this;
+            var _this2 = _this;
             // Handle any binds on the root node
             if (_this.hasAttribute("@bind".concat(modifier))) {
                 bindData(_this.root, modifier);
@@ -361,7 +423,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
             // Handle any binds on the children
             var escapedModifier = modifier.replace(/\./g, "\\.");
             _this.root.querySelectorAll("[\\@bind".concat(escapedModifier, "]")).forEach(function(el) {
-                if (!_classPrivateMethodGet(_this4, _belongsToController, belongsToController).call(_this4, el)) return;
+                if (!_classPrivateMethodGet(_this2, _belongsToController, belongsToController).call(_this2, el)) return;
                 bindData(el, modifier);
             });
         });
