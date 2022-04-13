@@ -328,10 +328,6 @@ const makeController = (base=HTMLElement, extendTag=null) => {
             this._events.forEach(e => e.el.removeEventListener(e.eventType, e.event));
             this._events = [];
 
-            // Now find all configured events
-            const eventTypes = [ 'click', 'change', 'mouseover', 'mouseout', 'keydown', 'keyup', 'load' ];
-            const modifiers = [ "", ...permutations([ ".prevent", ".eval" ], true) ];
-
             const bindEvent = (el, eventType, modifier) => {
                 const value = el.getAttribute(`@${eventType}${modifier}`);
                 const action = value.replace("this.", "").replace("()", "");
@@ -356,22 +352,43 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                 });
             };
 
-            eventTypes.forEach(eventType => {
-                modifiers.forEach(modifier => {
-                    const escapedModifier = modifier.replace(/\./g, "\\.");
+            // Find all controller child nodes with attributes that start with `@`
+            // TODO: Not sure of the performance impact of this
+            // Need to benchmark and compare to plain querySelector
+            // Another option is to parse the DOM as a string ourselves
+            const nodesWithEvents = document.evaluate(`./*[starts-with(name(@*),"@")]`, this.root);
 
-                    // Handle events on the root node
-                    if (this.root.hasAttribute(`@${eventType}${modifier}`)) {
-                        bindEvent(this.root, eventType, modifier);
-                    }
+            let eventNode = nodesWithEvents.iterateNext();
+            while (eventNode) {
+                for (let attr of eventNode.getAttributeNames()) {
+                    if (!attr.startsWith('@')) continue;
 
-                    // Handle events on any children
-                    this.root.querySelectorAll(`[\\@${eventType}${escapedModifier}]`).forEach(el => {
-                        if (!this.#belongsToController(el)) return;
-                        bindEvent(el, eventType, modifier);
-                    });
-                });
-            });
+                    let [event, modifiers] = attr.replace("@", "").split(".", 2);
+                    modifiers = modifiers ? `.${modifiers}` : "";
+
+                    // @render and @bind are handled separately
+                    if (event === "render" || event === "bind") continue;
+
+                    bindEvent(eventNode, event, modifiers);
+                }
+
+                eventNode = nodesWithEvents.iterateNext();
+            }
+
+            // The above does not match attributes on the root node itself so check that manually
+            // TODO: This section is the same as the above, de-dupe it
+            for (let attr of this.root.getAttributeNames()) {
+                if (!attr.startsWith('@')) continue;
+
+                let [event, modifiers] = attr.replace("@", "").split(".", 2);
+                modifiers = modifiers ? `.${modifiers}` : "";
+
+                // @render and @bind are handled separately
+                if (event === "render" || event === "bind") continue;
+
+                bindEvent(this.root, event, modifiers);
+            }
+
         }
 
 
