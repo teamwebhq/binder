@@ -103,6 +103,24 @@
 
         <tr>
             
+                <td class="name"><code>mode</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The mode to use for adding the response content, either <code>replace</code>, <code>append</code> or <code>prepend</code> (Defaults to <code>replace</code>)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>mountPoint</code></td>
             
 
@@ -292,7 +310,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line72">line 72</a>
+        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line73">line 73</a>
     </li></ul></dd>
     
 
@@ -380,7 +398,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line219">line 219</a>
+        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line222">line 222</a>
     </li></ul></dd>
     
 
@@ -576,7 +594,7 @@ Only if the frame has the <code>execute-scripts</code> attribute set to true</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line35">line 35</a>
+        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line36">line 36</a>
     </li></ul></dd>
     
 
@@ -612,7 +630,7 @@ Only if the frame has the <code>execute-scripts</code> attribute set to true</p>
     
 
     
-    <h4 class="name" id="loadContent"><span class="type-signature">(async) </span>#loadContent<span class="signature">(mode)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="loadContent"><span class="type-signature">(async) </span>#loadContent<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -631,58 +649,6 @@ Multiple calls will abort previous requests and return false</p>
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>mode</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                    replace
-                
-                </td>
-            
-
-            <td class="description last"><p>replace or append</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -817,7 +783,7 @@ Handles arrays as duplicated params (ie. a: [1,2] =&gt; ?a=1&amp;a=2)</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line193">line 193</a>
+        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line196">line 196</a>
     </li></ul></dd>
     
 
@@ -923,7 +889,7 @@ Handles arrays as duplicated params (ie. a: [1,2] =&gt; ?a=1&amp;a=2)</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line55">line 55</a>
+        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line56">line 56</a>
     </li></ul></dd>
     
 
@@ -1011,7 +977,7 @@ Handles arrays as duplicated params (ie. a: [1,2] =&gt; ?a=1&amp;a=2)</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line63">line 63</a>
+        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line64">line 64</a>
     </li></ul></dd>
     
 
@@ -1149,7 +1115,7 @@ Overwrites previously set refresh intervals</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line91">line 91</a>
+        <a href="core_dynamic_frame.js.html">core/dynamic_frame.js</a>, <a href="core_dynamic_frame.js.html#line92">line 92</a>
     </li></ul></dd>
     
 
@@ -1266,12 +1232,12 @@ This is where the artificial delay is applied</p>
             
                 <td class="default">
                 
-                    replace
+                    null
                 
                 </td>
             
 
-            <td class="description last"><p>replace or append</p></td>
+            <td class="description last"><p>replace or append, defaults to <code>this.args.mode</code></p></td>
         </tr>
 
     
@@ -1364,7 +1330,7 @@ This is where the artificial delay is applied</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue Apr 12 2022 22:48:41 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Wed Apr 13 2022 18:51:47 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

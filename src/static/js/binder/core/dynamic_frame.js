@@ -18,6 +18,7 @@ Example HTML:
  * @namespace DynamicFrame
  * @property url - The URL to fetch
  * @property executeScripts - If true will find and execute scripts in the response body
+ * @property mode - The mode to use for adding the response content, either `replace`, `append` or `prepend` (Defaults to `replace`)
  * @property mountPoint - A selector used to find the element to mount to within the element (defaults to the root element)
  * @property autoRefresh - Will call `refresh()` automatically at the specified interval (Intervals are in the format `${num}${unit}` where unit is one of ms, s, m, h: `10s` = 10 seconds)
  * @property delay - An artificial delay applied before displaying the content
@@ -74,11 +75,11 @@ class DynamicFrame extends Controller {
 
         // Find the mount point
         if (this.args.mountPoint && typeof(this.args.mountPoint) === 'string') {
-            this.args.mountPoint = this.querySelector(this.args.mountPoint);
+            this.mountPoint = this.querySelector(this.args.mountPoint);
         }
 
-        if (!this.args.mountPoint) {
-            this.args.mountPoint = this.root;
+        if (!this.mountPoint) {
+            this.mountPoint = this.root;
         }
     }
 
@@ -105,11 +106,10 @@ class DynamicFrame extends Controller {
      * [async] Makes a new request and replaces or appends the response to the mountPoint
      * Returns true on success
      * Multiple calls will abort previous requests and return false
-     * @param mode - replace or append
      * @returns boolean - true on success
      * @memberof! DynamicFrame
      */
-    async loadContent(e, mode='replace') {
+    async loadContent(e) {
         let url = this.endpoint();
         url.search = new URLSearchParams(this.params());
 
@@ -172,15 +172,18 @@ class DynamicFrame extends Controller {
      * Actually updates the content
      * This is where the artificial delay is applied
      * @param content - The content to use
-     * @param mode - replace or append
+     * @param mode - replace or append, defaults to `this.args.mode`
      * @memberof! DynamicFrame
      */
-    updateContent(content, mode='replace') {
-        // TODO: Might want to use morphdom here
+    updateContent(content, mode=null) {
+        if (!mode) mode = this.args.mode || "replace";
+
         if (mode === 'replace') {
-            this.args.mountPoint.innerHTML = content;
+            this.mountPoint.innerHTML = content;
         } else if (mode === 'append') {
-            this.args.mountPoint.insertAdjacentHTML('beforeEnd', content);
+            this.mountPoint.insertAdjacentHTML('beforeEnd', content);
+        } else if (mode === 'prepend') {
+            this.mountPoint.insertAdjacentHTML('afterBegin', content);
         }
     }
 
