@@ -211,6 +211,7 @@ Example HTML:
  * @namespace DynamicFrame
  * @property url - The URL to fetch
  * @property executeScripts - If true will find and execute scripts in the response body
+ * @property mode - The mode to use for adding the response content, either `replace`, `append` or `prepend` (Defaults to `replace`)
  * @property mountPoint - A selector used to find the element to mount to within the element (defaults to the root element)
  * @property autoRefresh - Will call `refresh()` automatically at the specified interval (Intervals are in the format `${num}${unit}` where unit is one of ms, s, m, h: `10s` = 10 seconds)
  * @property delay - An artificial delay applied before displaying the content
@@ -314,10 +315,10 @@ Example HTML:
                 _get(_getPrototypeOf(DynamicFrame.prototype), "bind", this).call(this);
                 // Find the mount point
                 if (this.args.mountPoint && typeof this.args.mountPoint === "string") {
-                    this.args.mountPoint = this.querySelector(this.args.mountPoint);
+                    this.mountPoint = this.querySelector(this.args.mountPoint);
                 }
-                if (!this.args.mountPoint) {
-                    this.args.mountPoint = this.root;
+                if (!this.mountPoint) {
+                    this.mountPoint = this.root;
                 }
             }
         },
@@ -348,11 +349,9 @@ Example HTML:
      * [async] Makes a new request and replaces or appends the response to the mountPoint
      * Returns true on success
      * Multiple calls will abort previous requests and return false
-     * @param mode - replace or append
      * @returns boolean - true on success
      * @memberof! DynamicFrame
      */ function loadContent(e) {
-                var mode = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "replace";
                 var _this = this;
                 return _asyncToGenerator(regeneratorRuntime.mark(function _callee1() {
                     var url, abortController, ok, sendReq;
@@ -457,16 +456,18 @@ Example HTML:
      * Actually updates the content
      * This is where the artificial delay is applied
      * @param content - The content to use
-     * @param mode - replace or append
+     * @param mode - replace or append, defaults to `this.args.mode`
      * @memberof! DynamicFrame
      */ key: "updateContent",
             value: function updateContent(content) {
-                var mode = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "replace";
-                // TODO: Might want to use morphdom here
+                var mode = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : null;
+                if (!mode) mode = this.args.mode || "replace";
                 if (mode === "replace") {
-                    this.args.mountPoint.innerHTML = content;
+                    this.mountPoint.innerHTML = content;
                 } else if (mode === "append") {
-                    this.args.mountPoint.insertAdjacentHTML("beforeEnd", content);
+                    this.mountPoint.insertAdjacentHTML("beforeEnd", content);
+                } else if (mode === "prepend") {
+                    this.mountPoint.insertAdjacentHTML("afterBegin", content);
                 }
             }
         },
