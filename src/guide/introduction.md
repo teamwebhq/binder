@@ -4,16 +4,21 @@ layout: "surround/guide_base.njk"
 active: "introduction"
 ---
 
-## Introduction to binder.js
+# Introduction to binder.js
 
-`binder.js` is a lightweight library for building [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
 
-It's primary goals are to:  
+### How it works
+
+Binder itself doesn't do too much, the true power under the hood is [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components).  
+If you're comfortable with Web Components already then great but if not don't worry, this guide assumes no prior knowledge.
+
+### Goals
 
 - Work well with server-side templated HTML
 - Not reinvent the wheel; use existing DOM functionality
 - Not require a build step
 
-At [teamweb](https://teamwebhq.com) we use `binder.js` with Flask and Jinja templates.  
 
-Next: [The Controller](/guide/the-controller)
+---
+
+Next: [Our First Controller](/guide/our-first-controller)
