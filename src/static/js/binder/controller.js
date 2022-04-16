@@ -446,7 +446,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                     handler(instance, varName, e);
 
                     // If this element is @bind.render this call render()
-                    if (modifiers.includes('.render')) instance.render();
+                    if (modifier.includes('.render')) instance.render();
                 });
             };
 
