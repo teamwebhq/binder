@@ -406,7 +406,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
                 var handler = handlers[elType] || handlers.default;
                 handler(instance1, varName, e);
                 // If this element is @bind.render this call render()
-                if (modifiers.includes(".render")) instance1.render();
+                if (modifier.includes(".render")) instance1.render();
             });
         };
         var modifiers = [
