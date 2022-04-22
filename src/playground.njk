@@ -53,6 +53,7 @@
         // We import everything here so it's available in the playground
         import { registerControllers, Controller, makeController } from '/static/js/binder/binder.js';
         import { pascalToKebab, kebabToCamel, parseBoolean, html, css } from '/static/js/binder/util.js';
+        import { DynamicFrame } from '/static/js/binder/core/dynamic_frame.js';
 
         class PlaygroundView extends Controller {
             init() {

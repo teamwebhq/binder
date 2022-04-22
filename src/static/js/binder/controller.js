@@ -287,7 +287,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
             return [
                 ...this.root.querySelectorAll(`[\\@render]`),
                 ...this.root.querySelectorAll(`[\\@render\\.eval]`),
-            ].filter(el => this.#belongsToController(el))
+            ].filter(el => this.belongsToController(el))
         }
 
         /**
@@ -460,7 +460,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                 // Handle any binds on the children
                 const escapedModifier = modifier.replace(/\./g, "\\.")
                 this.root.querySelectorAll(`[\\@bind${escapedModifier}]`).forEach(el => {
-                    if (!this.#belongsToController(el)) return;
+                    if (!this.belongsToController(el)) return;
                     bindData(el, modifier);
                 });
             });
@@ -491,15 +491,14 @@ const makeController = (base=HTMLElement, extendTag=null) => {
          * @param {Element} el The controller root DOM element
          * @returns {Boolean} True if the element belongs to the controller
          */
-        #belongsToController(el) {
+        belongsToController(el) {
             // If we're using the shadow DOM then we only see this controllers children so it must belong to the controller
             if (this.hasShadow) return true;
 
             const closestController = el.closest(`[data-controller]`);
             if (closestController == null) return false;
-            if (closestController.getAttribute('data-controller') !== this.localName) return false;
+            if (closestController !== this) return false;
             return true;
-
         }
     });
 
