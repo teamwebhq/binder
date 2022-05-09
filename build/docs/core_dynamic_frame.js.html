@@ -50,6 +50,7 @@ Example HTML:
  * @property mountPoint - A selector used to find the element to mount to within the element (defaults to the root element)
  * @property autoRefresh - Will call `refresh()` automatically at the specified interval (Intervals are in the format `${num}${unit}` where unit is one of ms, s, m, h: `10s` = 10 seconds)
  * @property delay - An artificial delay applied before displaying the content
+ * @property stateKey - An optional key, if specified the frame state will be stored and loaded from the page query string
  * @example
  *  &lt;dynamic-frame :url="/some/url" :param-day="Monday" :mount-point=".content">
  *     &lt;div class="content">&lt;/div>
@@ -76,7 +77,24 @@ class DynamicFrame extends Controller {
 
         if (!this.args.delay) this.args.delay = 0;
 
-        this.loadFragment();
+        // If we have a stateKey then track and handle the state
+        if (this.args.stateKey) {
+            this.loadState();
+
+            const handleStateChange = () => {
+                let qs = this.loadState();
+
+                if (this._internal.currentQs !== qs) {
+                    this._internal.currentQs = qs;
+                    this.refresh();
+                }
+            };
+
+            // When the history state changes then reload our state
+            // This is triggered when going back and forward in the browser
+            window.addEventListener("popstate", () => handleStateChange());
+            window.addEventListener("pushstate", () => handleStateChange());
+        }
 
         if (parseBoolean(this.args.contained)) {
             this.containFrame();
@@ -98,7 +116,7 @@ class DynamicFrame extends Controller {
     async render() {
         await this.loadContent();
         await super.render();
-        this.saveFragment();
+        this.saveState();
     }
 
     /**
@@ -267,44 +285,57 @@ class DynamicFrame extends Controller {
     }
 
     /**
-     * Load the frame state based on the URL fragment
+     * Load the frame state based on the URL query string
      */
-    loadFragment() {
-        if (this.args.fragmentKey) {
-            let fragment = window.location.hash;
+    loadState() {
+        if (!this.args.stateKey) return;
 
-            if (fragment) {
-                fragment = fragment.substring(1);
-                let fragmentParts = Object.fromEntries(fragment.split(";").map(part => part.split("=")));
+        let qs = window.location.search;
+        if (!qs) return;
 
-                if (fragmentParts[`${this.args.fragmentKey}-url`]) {
-                    this.args.url = fragmentParts[`${this.args.fragmentKey}-url`];
-                    delete fragmentParts[`${this.args.fragmentKey}-url`];
-                }
+        qs = qs.substring(1);
+        let qsParts = Object.fromEntries(qs.split("&amp;").map(part => part.split("=")));
 
-                for (let [key, value] of Object.entries(fragmentParts)) {
-                    key = key.replace(`${this.args.fragmentKey}-param-`, "");
-                    this.setAttribute(`:param-${key}`, value);
-                }
-            }
+        if (qsParts[`${this.args.stateKey}-url`]) {
+            this.args.url = qsParts[`${this.args.stateKey}-url`];
+            delete qsParts[`${this.args.stateKey}-url`];
         }
+
+        for (let [key, value] of Object.entries(qsParts)) {
+            // Ignore other state keys
+            // TODO: It might be better to make the state keys easier to identify
+            // I can see these two cases being used for real parameters, in which case we drop them
+            if (key.endsWith("-url") || key.includes("-param-")) continue;
+
+            key = key.replace(`${this.args.stateKey}-param-`, "");
+            this.setAttribute(`:param-${key}`, value);
+        }
+
+        return qs;
     }
 
     /**
-     * Save the frame state to the URL fragment
+     * Save the frame state to the URL query string
+     * Only saves if the state has changed
      */
-    saveFragment() {
-        if (this.args.fragmentKey) {
-            let fragment = {};
+    saveState() {
+        if (!this.args.stateKey) return;
 
-            fragment[`${this.args.fragmentKey}-url`] = this.args.url;
+        let qsParts = Object.fromEntries(new URLSearchParams(window.location.search));
+        console.log(qsParts)
 
-            for (const [key, value] of this.params()) {
-                fragment[`${this.args.fragmentKey}-param-${key}`] = value;
-            }
+        qsParts[`${this.args.stateKey}-url`] = this.args.url;
 
-            const fragmentString = Object.entries(fragment).map(part => `${part[0]}=${part[1]}`).join(";");
-            window.location.hash = `#${fragmentString}`;
+        for (const [key, value] of this.params()) {
+            console.log(`${key}=${value}`);
+            qsParts[`${this.args.stateKey}-param-${key}`] = value;
+        }
+
+        const qs = Object.entries(qsParts).map(part => `${part[0]}=${part[1]}`).join("&amp;");
+
+        if (this._internal.currentQs !== qs) {
+            window.history.pushState(qs, "", `?${qs}`);
+            this._internal.currentQs = qs;
         }
     }
 
@@ -350,7 +381,7 @@ export { DynamicFrame };
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon May 09 2022 19:59:34 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon May 09 2022 21:24:49 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

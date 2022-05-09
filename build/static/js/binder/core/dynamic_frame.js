@@ -215,6 +215,7 @@ Example HTML:
  * @property mountPoint - A selector used to find the element to mount to within the element (defaults to the root element)
  * @property autoRefresh - Will call `refresh()` automatically at the specified interval (Intervals are in the format `${num}${unit}` where unit is one of ms, s, m, h: `10s` = 10 seconds)
  * @property delay - An artificial delay applied before displaying the content
+ * @property stateKey - An optional key, if specified the frame state will be stored and loaded from the page query string
  * @example
  *  <dynamic-frame :url="/some/url" :param-day="Monday" :mount-point=".content">
  *     <div class="content"></div>
@@ -237,7 +238,7 @@ Example HTML:
      */ function init() {
                 var _this = this;
                 return _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-                    var interval;
+                    var interval, handleStateChange;
                     return regeneratorRuntime.wrap(function _callee$(_ctx) {
                         while(1)switch(_ctx.prev = _ctx.next){
                             case 0:
@@ -250,7 +251,25 @@ Example HTML:
                                     _this.setAutoRefresh(interval);
                                 }
                                 if (!_this.args.delay) _this.args.delay = 0;
-                                _this.loadFragment();
+                                // If we have a stateKey then track and handle the state
+                                if (_this.args.stateKey) {
+                                    _this.loadState();
+                                    handleStateChange = function() {
+                                        var qs = _this.loadState();
+                                        if (_this._internal.currentQs !== qs) {
+                                            _this._internal.currentQs = qs;
+                                            _this.refresh();
+                                        }
+                                    };
+                                    // When the history state changes then reload our state
+                                    // This is triggered when going back and forward in the browser
+                                    window.addEventListener("popstate", function() {
+                                        return handleStateChange();
+                                    });
+                                    window.addEventListener("pushstate", function() {
+                                        return handleStateChange();
+                                    });
+                                }
                                 if (parseBoolean(_this.args.contained)) {
                                     _this.containFrame();
                                 }
@@ -303,7 +322,7 @@ Example HTML:
                                 _ctx.next = 4;
                                 return _superprop_get_render().call(_this1);
                             case 4:
-                                _this1.saveFragment();
+                                _this1.saveState();
                             case 5:
                             case "end":
                                 return _ctx.stop();
@@ -541,77 +560,85 @@ Example HTML:
         },
         {
             /**
-     * Load the frame state based on the URL fragment
-     */ key: "loadFragment",
-            value: function loadFragment() {
-                if (this.args.fragmentKey) {
-                    var fragment = window.location.hash;
-                    if (fragment) {
-                        fragment = fragment.substring(1);
-                        var fragmentParts = Object.fromEntries(fragment.split(";").map(function(part) {
-                            return part.split("=");
-                        }));
-                        if (fragmentParts["".concat(this.args.fragmentKey, "-url")]) {
-                            this.args.url = fragmentParts["".concat(this.args.fragmentKey, "-url")];
-                            delete fragmentParts["".concat(this.args.fragmentKey, "-url")];
+     * Load the frame state based on the URL query string
+     */ key: "loadState",
+            value: function loadState() {
+                if (!this.args.stateKey) return;
+                var qs = window.location.search;
+                if (!qs) return;
+                qs = qs.substring(1);
+                var qsParts = Object.fromEntries(qs.split("&").map(function(part) {
+                    return part.split("=");
+                }));
+                if (qsParts["".concat(this.args.stateKey, "-url")]) {
+                    this.args.url = qsParts["".concat(this.args.stateKey, "-url")];
+                    delete qsParts["".concat(this.args.stateKey, "-url")];
+                }
+                var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                try {
+                    for(var _iterator = Object.entries(qsParts)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        var _value = _slicedToArray(_step.value, 2), key = _value[0], value = _value[1];
+                        // Ignore other state keys
+                        // TODO: It might be better to make the state keys easier to identify
+                        // I can see these two cases being used for real parameters, in which case we drop them
+                        if (key.endsWith("-url") || key.includes("-param-")) continue;
+                        key = key.replace("".concat(this.args.stateKey, "-param-"), "");
+                        this.setAttribute(":param-".concat(key), value);
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally{
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return != null) {
+                            _iterator.return();
                         }
-                        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                        try {
-                            for(var _iterator = Object.entries(fragmentParts)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                var _value = _slicedToArray(_step.value, 2), key = _value[0], value = _value[1];
-                                key = key.replace("".concat(this.args.fragmentKey, "-param-"), "");
-                                this.setAttribute(":param-".concat(key), value);
-                            }
-                        } catch (err) {
-                            _didIteratorError = true;
-                            _iteratorError = err;
-                        } finally{
-                            try {
-                                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                    _iterator.return();
-                                }
-                            } finally{
-                                if (_didIteratorError) {
-                                    throw _iteratorError;
-                                }
-                            }
+                    } finally{
+                        if (_didIteratorError) {
+                            throw _iteratorError;
                         }
                     }
                 }
+                return qs;
             }
         },
         {
             /**
-     * Save the frame state to the URL fragment
-     */ key: "saveFragment",
-            value: function saveFragment() {
-                if (this.args.fragmentKey) {
-                    var fragment = {};
-                    fragment["".concat(this.args.fragmentKey, "-url")] = this.args.url;
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+     * Save the frame state to the URL query string
+     * Only saves if the state has changed
+     */ key: "saveState",
+            value: function saveState() {
+                if (!this.args.stateKey) return;
+                var qsParts = Object.fromEntries(new URLSearchParams(window.location.search));
+                console.log(qsParts);
+                qsParts["".concat(this.args.stateKey, "-url")] = this.args.url;
+                var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                try {
+                    for(var _iterator = this.params()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        var _value = _slicedToArray(_step.value, 2), key = _value[0], value = _value[1];
+                        console.log("".concat(key, "=").concat(value));
+                        qsParts["".concat(this.args.stateKey, "-param-").concat(key)] = value;
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally{
                     try {
-                        for(var _iterator = this.params()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var _value = _slicedToArray(_step.value, 2), key = _value[0], value = _value[1];
-                            fragment["".concat(this.args.fragmentKey, "-param-").concat(key)] = value;
+                        if (!_iteratorNormalCompletion && _iterator.return != null) {
+                            _iterator.return();
                         }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
                     } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
+                        if (_didIteratorError) {
+                            throw _iteratorError;
                         }
                     }
-                    var fragmentString = Object.entries(fragment).map(function(part) {
-                        return "".concat(part[0], "=").concat(part[1]);
-                    }).join(";");
-                    window.location.hash = "#".concat(fragmentString);
+                }
+                var qs = Object.entries(qsParts).map(function(part) {
+                    return "".concat(part[0], "=").concat(part[1]);
+                }).join("&");
+                if (this._internal.currentQs !== qs) {
+                    window.history.pushState(qs, "", "?".concat(qs));
+                    this._internal.currentQs = qs;
                 }
             }
         },
