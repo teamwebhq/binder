@@ -23,6 +23,7 @@ Example HTML:
  * @property autoRefresh - Will call `refresh()` automatically at the specified interval (Intervals are in the format `${num}${unit}` where unit is one of ms, s, m, h: `10s` = 10 seconds)
  * @property delay - An artificial delay applied before displaying the content
  * @property stateKey - An optional key, if specified the frame state will be stored and loaded from the page query string
+ * @property contained - If `true` then the frame will be self contained, clicking links and submitting forms will be handled within the frame and **not** impact the surrounding page
  * @example
  *  <dynamic-frame :url="/some/url" :param-day="Monday" :mount-point=".content">
  *     <div class="content"></div>
