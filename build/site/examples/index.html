@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="author" content="Dan Stewart" />
+
+        <title>Examples | Binder JS</title>
+
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css" />
+        <link rel="stylesheet" href="//unpkg.com/chota@0.8.0/dist/chota.min.css" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/a11y-light.min.css" />
+        <link rel="stylesheet" href="/static/styles/main.css" />
+
+        <script src="/static/js/copy.js"></script>
+        <script type="module" src="/static/js/binder/binder.js"></script>
+        <script src="//unpkg.com/@ungap/custom-elements"></script>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </head>
+
+    <body>
+        <!-- Header -->
+        <nav class="nav container">
+            <div class="nav-left">
+                <a class="brand bold mono" href="/">binder.js</a>
+
+                <div class="tabs">
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="/quick-start">Quick Start</a>
+                <a href="/guide/introduction">Guide</a>
+                <a href="/examples">Examples</a>
+                <a href="/playground">Playground</a>
+                <a href="https://github.com/teamwebhq/binder">
+                    <img src="/static/icons/github.svg" alt="GitHub" />
+                </a>
+            </div>
+        </nav>
+
+        <hr class="nav-sep" />
+
+        <!-- Content -->
+        <div>
+            
+    <div class="container">
+        <h2>Examples</h2>
+
+        <div class="example">
+            <h4>On Off Switch</h4>
+            
+    <!--
+This is our DOM element
+In this case it's just a `button` that is bound to the `on-off-switch` component
+
+We bind the `click` event to the `toggle` method of the controller
+-->
+<button is="on-off-switch" @click="this.toggle">LOADING...</button>
+
+<script type="module">
+    import { registerControllers, makeController } from '/static/js/binder/binder.js';
+
+    class OnOffSwitch extends makeController(HTMLButtonElement, "button") {
+        // The `init` method is called when the controller is first created
+        // Use this to handle your setup logic
+        init() {
+            this.isOn = true;
+            this.root.innerText = "ON";
+        }
+
+        // This is the click handler for the button
+        toggle() {
+            this.isOn = !this.isOn;
+            this.root.innerText = this.isOn ? "ON" : "OFF";
+        }
+    }
+
+    registerControllers(OnOffSwitch);
+</script>
+
+    <details style="margin-top: 15px; margin-bottom: 15px;" >
+        <summary>View Source</summary>
+        
+        <div class="relative"><button class="copy button outline">Copy</button></div>
+        <pre><code class="html">&lt;!--
+This is our DOM element
+In this case it&#39;s just a `button` that is bound to the `on-off-switch` component
+
+We bind the `click` event to the `toggle` method of the controller
+--&gt;
+&lt;button is=&quot;on-off-switch&quot; @click=&quot;this.toggle&quot;&gt;LOADING...&lt;/button&gt;
+
+&lt;script type=&quot;module&quot;&gt;
+    import { registerControllers, makeController } from &#39;/static/js/binder/binder.js&#39;;
+
+    class OnOffSwitch extends makeController(HTMLButtonElement, &quot;button&quot;) {
+        // The `init` method is called when the controller is first created
+        // Use this to handle your setup logic
+        init() {
+            this.isOn = true;
+            this.root.innerText = &quot;ON&quot;;
+        }
+
+        // This is the click handler for the button
+        toggle() {
+            this.isOn = !this.isOn;
+            this.root.innerText = this.isOn ? &quot;ON&quot; : &quot;OFF&quot;;
+        }
+    }
+
+    registerControllers(OnOffSwitch);
+&lt;/script&gt;
+</code></pre>
+
+    </details>
+
+        </div>
+
+        <div class="example">
+            <h4>Click Counter</h4>
+            
+    <!-- HTML -->
+<click-counter>
+    <p @render>Clicks: ${this.data.clicks}</p>
+    <button @click.prevent="this.count()">Click me!</button>
+</click-counter>
+
+<!-- JavaScript -->
+<script type="module">
+    import { registerControllers, Controller } from '/static/js/binder/binder.js';
+
+    class ClickCounter extends Controller {
+        init() {
+            this.data.clicks = 0;
+        }
+
+        count() {
+            this.data.clicks++;
+            this.render();
+        }
+    }
+
+    registerControllers(ClickCounter);
+</script>
+
+
+    <details style="margin-top: 15px; margin-bottom: 15px;" >
+        <summary>View Source</summary>
+        
+        <div class="relative"><button class="copy button outline">Copy</button></div>
+        <pre><code class="html">&lt;!-- HTML --&gt;
+&lt;click-counter&gt;
+    &lt;p @render&gt;Clicks: ${this.data.clicks}&lt;/p&gt;
+    &lt;button @click.prevent=&quot;this.count()&quot;&gt;Click me!&lt;/button&gt;
+&lt;/click-counter&gt;
+
+&lt;!-- JavaScript --&gt;
+&lt;script type=&quot;module&quot;&gt;
+    import { registerControllers, Controller } from &#39;/static/js/binder/binder.js&#39;;
+
+    class ClickCounter extends Controller {
+        init() {
+            this.data.clicks = 0;
+        }
+
+        count() {
+            this.data.clicks++;
+            this.render();
+        }
+    }
+
+    registerControllers(ClickCounter);
+&lt;/script&gt;
+
+</code></pre>
+
+    </details>
+
+        </div>
+
+        <div class="example">
+            <h4>Currency Picker</h4>
+            
+    <!-- HTML -->
+<currency-picker :currency="GBP">
+    <select @bind.render="this.data.currency">
+        <option disabled selected>Please select a currency</option>
+        <option value="AUD">Australian Dollars</option>
+        <option selected value="GBP">British Pounds</option>
+        <option value="EUR">Euros</option>
+        <option value="USD">US Dollars</option>
+    </select>
+
+    <h4 @render>Chosen currency: ${this.data.currency}</h4>
+</currency-picker>
+
+<!-- JavaScript -->
+<script type="module">
+    // This example uses the core Controller component
+    import { registerControllers, Controller } from '/static/js/binder/binder.js';
+
+    class CurrencyPicker extends Controller {
+        init() {
+            this.data.currency = this.args.currency;
+        }
+    }
+
+    registerControllers(CurrencyPicker);
+</script>
+
+    <details style="margin-top: 15px; margin-bottom: 15px;" >
+        <summary>View Source</summary>
+        
+        <div class="relative"><button class="copy button outline">Copy</button></div>
+        <pre><code class="html">&lt;!-- HTML --&gt;
+&lt;currency-picker :currency=&quot;GBP&quot;&gt;
+    &lt;select @bind.render=&quot;this.data.currency&quot;&gt;
+        &lt;option disabled selected&gt;Please select a currency&lt;/option&gt;
+        &lt;option value=&quot;AUD&quot;&gt;Australian Dollars&lt;/option&gt;
+        &lt;option selected value=&quot;GBP&quot;&gt;British Pounds&lt;/option&gt;
+        &lt;option value=&quot;EUR&quot;&gt;Euros&lt;/option&gt;
+        &lt;option value=&quot;USD&quot;&gt;US Dollars&lt;/option&gt;
+    &lt;/select&gt;
+
+    &lt;h4 @render&gt;Chosen currency: ${this.data.currency}&lt;/h4&gt;
+&lt;/currency-picker&gt;
+
+&lt;!-- JavaScript --&gt;
+&lt;script type=&quot;module&quot;&gt;
+    // This example uses the core Controller component
+    import { registerControllers, Controller } from &#39;/static/js/binder/binder.js&#39;;
+
+    class CurrencyPicker extends Controller {
+        init() {
+            this.data.currency = this.args.currency;
+        }
+    }
+
+    registerControllers(CurrencyPicker);
+&lt;/script&gt;
+</code></pre>
+
+    </details>
+
+        </div>
+
+        <div class="example">
+            <h4>Magic 8 Ball</h4>
+            
+    <magic-8-ball>
+    <button @render @click="this.render">${this.prompt}</button>
+    <p @render.eval>${this.randomAnswer()}</p>
+</magic-8-ball>
+
+<script type="module">
+    import { registerControllers, Controller } from '/static/js/binder/binder.js';
+
+    class Magic8Ball extends Controller {
+        init() {
+            this.prompt = 'Ask the magic 8 ball';
+
+            this.answers = [
+                "It is certain.",
+                "It is decidedly so.",
+                "Without a doubt.",
+                "Yes definitely.",
+                "You may rely on",
+                "As I see it, yes.",
+                "Most likely.",
+                "Outlook good.",
+                "Yes.",
+
+                "Signs point to yes.",
+                "Reply hazy, try again.",
+                "Ask again later.",
+                "Better not tell you now.",
+                "Cannot predict now.",
+                "Concentrate and ask again.",
+
+                "Don't count on it.",
+                "My reply is no.",
+                "My sources say no.",
+                "Outlook not so good.",
+                "Very doubtful.",
+            ];
+        }
+
+        randomAnswer() {
+            return this.answers[Math.floor(Math.random() * this.answers.length)]
+        }
+    }
+
+    registerControllers(Magic8Ball);
+</script>
+
+    <details style="margin-top: 15px; margin-bottom: 15px;" >
+        <summary>View Source</summary>
+        
+        <div class="relative"><button class="copy button outline">Copy</button></div>
+        <pre><code class="html">&lt;magic-8-ball&gt;
+    &lt;button @render @click=&quot;this.render&quot;&gt;${this.prompt}&lt;/button&gt;
+    &lt;p @render.eval&gt;${this.randomAnswer()}&lt;/p&gt;
+&lt;/magic-8-ball&gt;
+
+&lt;script type=&quot;module&quot;&gt;
+    import { registerControllers, Controller } from &#39;/static/js/binder/binder.js&#39;;
+
+    class Magic8Ball extends Controller {
+        init() {
+            this.prompt = &#39;Ask the magic 8 ball&#39;;
+
+            this.answers = [
+                &quot;It is certain.&quot;,
+                &quot;It is decidedly so.&quot;,
+                &quot;Without a doubt.&quot;,
+                &quot;Yes definitely.&quot;,
+                &quot;You may rely on&quot;,
+                &quot;As I see it, yes.&quot;,
+                &quot;Most likely.&quot;,
+                &quot;Outlook good.&quot;,
+                &quot;Yes.&quot;,
+
+                &quot;Signs point to yes.&quot;,
+                &quot;Reply hazy, try again.&quot;,
+                &quot;Ask again later.&quot;,
+                &quot;Better not tell you now.&quot;,
+                &quot;Cannot predict now.&quot;,
+                &quot;Concentrate and ask again.&quot;,
+
+                &quot;Don&#39;t count on it.&quot;,
+                &quot;My reply is no.&quot;,
+                &quot;My sources say no.&quot;,
+                &quot;Outlook not so good.&quot;,
+                &quot;Very doubtful.&quot;,
+            ];
+        }
+
+        randomAnswer() {
+            return this.answers[Math.floor(Math.random() * this.answers.length)]
+        }
+    }
+
+    registerControllers(Magic8Ball);
+&lt;/script&gt;
+</code></pre>
+
+    </details>
+
+        </div>
+
+        <h2>Core Controllers</h2>
+
+        <div class="example">
+            <h4>Dynamic Frame</h4>
+            
+    <!-- HTML -->
+<dynamic-frame
+    :url="/current_date"
+    :mount-point="#mount-here"
+    :auto-refresh="5s"
+    :execute-scripts="true">
+
+    <p>The line below is another page loaded within a div, click <a href='/current_date'>here</a> to load the page directly!</p>
+
+    <div id="mount-here"></div>
+</dynamic-frame>
+
+<button id="refresh-dynamic-frame">Force Refresh</button>
+
+
+<!-- JavaScript -->
+<script type="module">
+    import { registerControllers } from '/static/js/binder/binder.js';
+    import { DynamicFrame } from '/static/js/binder/core/dynamic_frame.js';
+
+    registerControllers(DynamicFrame);
+
+    document.querySelector("#refresh-dynamic-frame").addEventListener("click", () => {
+        document.querySelector("dynamic-frame").refresh();
+    });
+</script>
+
+
+    <details style="margin-top: 15px; margin-bottom: 15px;" >
+        <summary>View Source</summary>
+        
+        <div class="relative"><button class="copy button outline">Copy</button></div>
+        <pre><code class="html">&lt;!-- HTML --&gt;
+&lt;dynamic-frame
+    :url=&quot;/current_date&quot;
+    :mount-point=&quot;#mount-here&quot;
+    :auto-refresh=&quot;5s&quot;
+    :execute-scripts=&quot;true&quot;&gt;
+
+    &lt;p&gt;The line below is another page loaded within a div, click &lt;a href=&#39;/current_date&#39;&gt;here&lt;/a&gt; to load the page directly!&lt;/p&gt;
+
+    &lt;div id=&quot;mount-here&quot;&gt;&lt;/div&gt;
+&lt;/dynamic-frame&gt;
+
+&lt;button id=&quot;refresh-dynamic-frame&quot;&gt;Force Refresh&lt;/button&gt;
+
+
+&lt;!-- JavaScript --&gt;
+&lt;script type=&quot;module&quot;&gt;
+    import { registerControllers } from &#39;/static/js/binder/binder.js&#39;;
+    import { DynamicFrame } from &#39;/static/js/binder/core/dynamic_frame.js&#39;;
+
+    registerControllers(DynamicFrame);
+
+    document.querySelector(&quot;#refresh-dynamic-frame&quot;).addEventListener(&quot;click&quot;, () =&gt; {
+        document.querySelector(&quot;dynamic-frame&quot;).refresh();
+    });
+&lt;/script&gt;
+
+</code></pre>
+
+    </details>
+
+        </div>
+    </div>
+
+    <style>
+        .example {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+
+        </div>
+    </body>
+</html>

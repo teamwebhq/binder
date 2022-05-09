@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="author" content="Dan Stewart" />
+
+        <title>Examples | Binder JS</title>
+
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css" />
+        <link rel="stylesheet" href="//unpkg.com/chota@0.8.0/dist/chota.min.css" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/a11y-light.min.css" />
+        <link rel="stylesheet" href="/static/styles/main.css" />
+
+        <script src="/static/js/copy.js"></script>
+        <script type="module" src="/static/js/binder/binder.js"></script>
+        <script src="//unpkg.com/@ungap/custom-elements"></script>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </head>
+
+    <body>
+        <!-- Header -->
+        <nav class="nav container">
+            <div class="nav-left">
+                <a class="brand bold mono" href="/">binder.js</a>
+
+                <div class="tabs">
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="/quick-start">Quick Start</a>
+                <a href="/guide/introduction">Guide</a>
+                <a href="/examples">Examples</a>
+                <a href="/playground">Playground</a>
+                <a href="https://github.com/teamwebhq/binder">
+                    <img src="/static/icons/github.svg" alt="GitHub" />
+                </a>
+            </div>
+        </nav>
+
+        <hr class="nav-sep" />
+
+        <!-- Content -->
+        <div>
+            
+    <h4>The below box is a dynamic frame of this site</h4>
+
+    <div class="box">
+        <dynamic-frame :url="/quick-start" :param-a=12 :execute-scripts="true" :fragment-key="df" :contained="true"></dynamic-frame>
+    </div>
+
+    <script type="module">
+        import { registerControllers } from "/static/js/binder/binder.js";
+        import { DynamicFrame } from "/static/js/binder/core/dynamic_frame.js";
+        registerControllers(DynamicFrame);
+    </script>
+
+    <style>
+        .box {
+            border: 3px solid green;
+            margin: 15px;
+        }
+    </style>
+
+        </div>
+    </body>
+</html>

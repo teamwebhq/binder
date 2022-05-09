@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="author" content="Dan Stewart" />
+
+        <title>Quick Start | Binder JS</title>
+
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css" />
+        <link rel="stylesheet" href="//unpkg.com/chota@0.8.0/dist/chota.min.css" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/a11y-light.min.css" />
+        <link rel="stylesheet" href="/static/styles/main.css" />
+
+        <script src="/static/js/copy.js"></script>
+        <script type="module" src="/static/js/binder/binder.js"></script>
+        <script src="//unpkg.com/@ungap/custom-elements"></script>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </head>
+
+    <body>
+        <!-- Header -->
+        <nav class="nav container">
+            <div class="nav-left">
+                <a class="brand bold mono" href="/">binder.js</a>
+
+                <div class="tabs">
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="/quick-start">Quick Start</a>
+                <a href="/guide/introduction">Guide</a>
+                <a href="/examples">Examples</a>
+                <a href="/playground">Playground</a>
+                <a href="https://github.com/teamwebhq/binder">
+                    <img src="/static/icons/github.svg" alt="GitHub" />
+                </a>
+            </div>
+        </nav>
+
+        <hr class="nav-sep" />
+
+        <!-- Content -->
+        <div>
+            
+    <div class="container">
+        <h3>Getting Started</h3>
+<p>The easiest way to get started with binder is to load it from a CDN:</p>
+<pre><code class="language-html">&lt;!-- index.html --&gt;
+&lt;script type=&quot;module&quot;&gt;
+    import { registerControllers, Controller } from &quot;https://cdn.jsdelivr.net/gh/teamwebhq/binder/build/static/js/binder/binder.js&quot;;
+
+    class MyController extends Controller {}
+
+    registerControllers(Controller)
+&lt;/script&gt;
+
+&lt;my-controller&gt;&lt;/my-controller&gt;
+</code></pre>
+<p>Check out the <a href="/guide/introduction/">guide</a> to learn how to use binder or the <a href="/playground/">playground</a> to see it in action.</p>
+
+    </div>
+
+        </div>
+    </body>
+</html>

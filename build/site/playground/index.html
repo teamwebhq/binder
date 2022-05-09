@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="author" content="Dan Stewart" />
+
+        <title>Playground | Binder JS</title>
+
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css" />
+        <link rel="stylesheet" href="//unpkg.com/chota@0.8.0/dist/chota.min.css" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/a11y-light.min.css" />
+        <link rel="stylesheet" href="/static/styles/main.css" />
+
+        <script src="/static/js/copy.js"></script>
+        <script type="module" src="/static/js/binder/binder.js"></script>
+        <script src="//unpkg.com/@ungap/custom-elements"></script>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </head>
+
+    <body>
+        <!-- Header -->
+        <nav class="nav container">
+            <div class="nav-left">
+                <a class="brand bold mono" href="/">binder.js</a>
+
+                <div class="tabs">
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="/quick-start">Quick Start</a>
+                <a href="/guide/introduction">Guide</a>
+                <a href="/examples">Examples</a>
+                <a href="/playground">Playground</a>
+                <a href="https://github.com/teamwebhq/binder">
+                    <img src="/static/icons/github.svg" alt="GitHub" />
+                </a>
+            </div>
+        </nav>
+
+        <hr class="nav-sep" />
+
+        <!-- Content -->
+        <div>
+            
+    
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.32.1/min/vs/editor/editor.main.min.css">
+
+    <script>var require = { paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.32.1/min/vs' } };</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.32.1/min/vs/loader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.32.1/min/vs/editor/editor.main.nls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.32.1/min/vs/editor/editor.main.js"></script>
+
+    <div>
+        <playground-view>
+            <div class="editor-container">
+                <div class="editor">
+                    <h4 class="bold">HTML</h4>
+                    <div id="html" style="height:400px;border:1px solid black;"></div>
+                </div>
+                <div class="editor">
+                    <h4 class="bold">JavaScript</h4>
+                    <div id="js" style="height:400px;border:1px solid black;"></div>
+                </div>
+            </div>
+
+            <div class="container">
+                <button @click="render">Run</button>
+
+                <div id="output" style="border: 1px solid grey; padding: 15px; margin-top: 15px;">
+                    <p>Nothing to show.</p>
+                </div>
+            </div>
+        </playground-view>
+    </div>
+
+    <style>
+        .editor-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .editor {
+            width: 50%;
+            padding: 10px;
+        }
+    </style>
+
+
+    <script type="module">
+        // We import everything here so it's available in the playground
+        import { registerControllers, Controller, makeController } from '/static/js/binder/binder.js';
+        import { pascalToKebab, kebabToCamel, parseBoolean, html, css } from '/static/js/binder/util.js';
+        import { DynamicFrame } from '/static/js/binder/core/dynamic_frame.js';
+
+        class PlaygroundView extends Controller {
+            init() {
+                this.js = this.querySelector('#js');
+                this.html = this.querySelector('#html');
+                this.output = this.querySelector('#output');
+
+                const [jsValue, htmlValue] = this.loadCode();
+
+                const monacoConfig = {
+                    theme: "vs-dark",
+                    fontFamily: "IBMPlexMono",
+                    scrollBeyondLastLine: false,
+                    minimap: {
+                        enabled: false,
+                    }
+                };
+
+                this.jsEditor = monaco.editor.create(this.js, {
+                    value: jsValue,
+                    language: "javascript",
+                    ...monacoConfig,
+                });
+
+                this.htmlEditor = monaco.editor.create(this.html, {
+                    value: htmlValue,
+                    language: "html",
+                    ...monacoConfig,
+                });
+
+                this.loadKeyBinds();
+            }
+
+            // Makes component names unique to avoid name clashes
+            // Also strips out any imports
+            fixCode() {
+                const unixTime = Math.floor(Date.now() / 1000);
+
+                let jsValue = this.jsEditor.getValue();
+                let htmlValue = this.htmlEditor.getValue();
+
+                // Nasty hack warning!
+                // We need to dynamically rename the controllers in the JS
+                // This is because once a custom element is defined you cannot remove or redefine it
+                const controllerRegexp = /class ([a-zA-Z0-9\-_]+) extends Controller/g;
+
+                for (let match of jsValue.matchAll(controllerRegexp)) {
+                    let controllerName = match[1];
+                    let fixedControllerName = `${controllerName}${unixTime}`;
+                    let tagName = pascalToKebab(controllerName);
+                    let fixedTagName = pascalToKebab(fixedControllerName);
+
+                    jsValue = jsValue.replaceAll(controllerName, fixedControllerName);
+                    jsValue = jsValue.replaceAll(tagName, fixedTagName);
+                    htmlValue = htmlValue.replaceAll(tagName, fixedTagName);
+                }
+
+                const customNameRegexp = /\{\s*name:\s*["'](.*)["']/g;
+                for (let match of jsValue.matchAll(customNameRegexp)) {
+                    let customName = match[1];
+                    let controllerName = kebabToCamel(customName);
+                    let fixedCustomName = pascalToKebab(controllerName + unixTime);
+
+                    jsValue = jsValue.replaceAll(customName, fixedCustomName);
+                    htmlValue = htmlValue.replaceAll(customName, fixedCustomName);
+                }
+
+                // Strip out any imports
+                // We expose everything by default so imports are not needed
+                const importRegexp = /^\s*import .*$/gm;
+                for (let match of jsValue.matchAll(importRegexp)) {
+                    jsValue = jsValue.replaceAll(match[0], '');
+                }
+
+                return [jsValue, htmlValue];
+            }
+
+            // Save the code to localStorage
+            saveCode() {
+                let jsValue = this.jsEditor.getValue();
+                let htmlValue = this.htmlEditor.getValue();
+
+                localStorage.setItem('js', jsValue);
+                localStorage.setItem('html', htmlValue);
+            }
+
+            // Load the code from localStorage; or show the default
+            loadCode() {
+                const defaultJs = `// All binder.js exports are available here
+// No need to import!
+class GreeterComponent extends Controller {
+    randomize() {
+        const names = [ "Tom", "Dick", "Harry" ];
+        this.data.name = names[Math.floor(Math.random() * names.length)];
+        this.render();
+    }
+}
+
+registerControllers(GreeterComponent);`;
+
+                const defaultHtml = `<greeter-component :default-name="World">
+    <input type="text" @bind.render="name" />
+    <p @render.eval>Hello, \${this.data.name || this.args.defaultName}</p>
+    <button @click="this.randomize">Random Name</button>
+</greeter-component>`;
+
+                return [
+                    localStorage.getItem('js') || defaultJs,
+                    localStorage.getItem('html') || defaultHtml,
+                ]
+            }
+
+            // Add listeners for keyboard shortcuts
+            loadKeyBinds() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.key === 's') {
+                        e.preventDefault();
+                        this.render();
+                    }
+                });
+            }
+
+            // Save the code to localStorage then execute it
+            render(e) {
+                this.saveCode();
+                let [jsValue, htmlValue] = this.fixCode();
+
+                this.output.innerHTML = htmlValue || "Nothing to show.";
+                eval(jsValue);
+
+                if (e) {
+                    e.target.textContent = "Run ✅";
+                    setTimeout(() => {
+                        e.target.textContent = "Run";
+                    }, 1000);
+                }
+            }
+        }
+
+        registerControllers([PlaygroundView]);
+    </script>
+
+        </div>
+    </body>
+</html>

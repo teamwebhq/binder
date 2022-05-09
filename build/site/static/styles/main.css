@@ -1,0 +1,39 @@
+@import "vars.css";
+@import "util.css";
+
+body {
+    font-weight: 300;
+    border-top: 5px solid var(--color-primary);
+}
+
+strong {
+    font-weight: 600;
+}
+
+code {
+    color: #1d6d6d;
+    font-weight: 500;
+    background-color: transparent;
+    padding: 0px;
+}
+
+pre {
+    padding: 0px;
+    border: 1px solid var(--color-lightGrey);
+}
+
+.copy {
+    position: absolute;
+    top: 30px;
+    right: 12px;
+    z-index: 999;
+}
+
+.nav {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.nav-sep {
+    margin-bottom: 25px;
+}

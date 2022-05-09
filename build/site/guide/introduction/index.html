@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="author" content="Dan Stewart" />
+
+        <title>Introduction | Binder JS</title>
+
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css" />
+        <link rel="stylesheet" href="//unpkg.com/chota@0.8.0/dist/chota.min.css" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/a11y-light.min.css" />
+        <link rel="stylesheet" href="/static/styles/main.css" />
+
+        <script src="/static/js/copy.js"></script>
+        <script type="module" src="/static/js/binder/binder.js"></script>
+        <script src="//unpkg.com/@ungap/custom-elements"></script>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </head>
+
+    <body>
+        <!-- Header -->
+        <nav class="nav container">
+            <div class="nav-left">
+                <a class="brand bold mono" href="/">binder.js</a>
+
+                <div class="tabs">
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="/quick-start">Quick Start</a>
+                <a href="/guide/introduction">Guide</a>
+                <a href="/examples">Examples</a>
+                <a href="/playground">Playground</a>
+                <a href="https://github.com/teamwebhq/binder">
+                    <img src="/static/icons/github.svg" alt="GitHub" />
+                </a>
+            </div>
+        </nav>
+
+        <hr class="nav-sep" />
+
+        <!-- Content -->
+        <div>
+            
+    <div id="guide" class="row">
+        <div id="guide-contents" class="col-2">
+            <ul>
+                <li><a id="guide-c-introduction" href="/guide/introduction">Introduction</a></li>
+                <li><a id="guide-c-our-first-controller" href="/guide/our-first-controller">Our First Controller</a></li>
+                <li><a id="guide-c-arguments" href="/guide/arguments">Arguments</a></li>
+                <li><a href="#">Event Binding</a></li>
+                <li><a href="#">Data Binding</a></li>
+                <li><a href="#">Rendering</a></li>
+                <li><a href="#">Observed Attributes</a></li>
+                <li><a href="#">The Shadow DOM</a></li>
+                <li>
+                    <a href="#">Core Controllers</a>
+                    <ul>
+                        <li><a href="#">Dynamic Frame</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div id="guide-body" class="col-10">
+            <h1>Introduction to binder.js</h1>
+<h3>How it works</h3>
+<p>Binder itself doesn't do too much, the true power under the hood is <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components">Web Components</a>.<br>
+If you're comfortable with Web Components already then great but if not don't worry, this guide assumes no prior knowledge.</p>
+<h3>Goals</h3>
+<ul>
+<li>Work well with server-side templated HTML</li>
+<li>Not reinvent the wheel; use existing DOM functionality</li>
+<li>Not require a build step</li>
+</ul>
+<hr>
+<p>Next: <a href="/guide/our-first-controller">Our First Controller</a></p>
+
+        </div>
+    </div>
+
+    <style>
+        #guide {
+            margin-right: 20px;
+            margin-left: 20px;
+        }
+
+        #guide-contents {
+            border-right: 1px solid #ccc;
+        }
+
+        #guide-contents ul {
+            list-style: none;
+        }
+
+        /* Adjust indent for nested pages */
+        #guide-contents ul > li > ul {
+            padding-left: 1.25em;
+        }
+
+        /* Dynamically style the active content entry */
+        #guide-c-introduction {
+            color: var(--color-active);
+            font-weight: bold;
+        }
+    </style>
+
+        </div>
+    </body>
+</html>

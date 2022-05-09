@@ -250,7 +250,11 @@ Example HTML:
                                     _this.setAutoRefresh(interval);
                                 }
                                 if (!_this.args.delay) _this.args.delay = 0;
-                            case 5:
+                                _this.loadFragment();
+                                if (parseBoolean(_this.args.contained)) {
+                                    _this.containFrame();
+                                }
+                            case 7:
                             case "end":
                                 return _ctx.stop();
                         }
@@ -299,6 +303,8 @@ Example HTML:
                                 _ctx.next = 4;
                                 return _superprop_get_render().call(_this1);
                             case 4:
+                                _this1.saveFragment();
+                            case 5:
                             case "end":
                                 return _ctx.stop();
                         }
@@ -440,7 +446,7 @@ Example HTML:
                 if (!scripts) return;
                 _toConsumableArray(scripts).forEach(function(script) {
                     var newScript = document.createElement("script");
-                    newScript.setAttribute("type", "text/javascript");
+                    newScript.setAttribute("type", script.type || "text/javascript");
                     if (script.getAttribute("src")) {
                         newScript.setAttribute("src", script.getAttribute("src"));
                         _this.appendChild(newScript);
@@ -531,6 +537,102 @@ Example HTML:
                 }
                 if (!url.startsWith("http")) url = window.location.origin + url;
                 return new URL(url);
+            }
+        },
+        {
+            /**
+     * Load the frame state based on the URL fragment
+     */ key: "loadFragment",
+            value: function loadFragment() {
+                if (this.args.fragmentKey) {
+                    var fragment = window.location.hash;
+                    if (fragment) {
+                        fragment = fragment.substring(1);
+                        var fragmentParts = Object.fromEntries(fragment.split(";").map(function(part) {
+                            return part.split("=");
+                        }));
+                        if (fragmentParts["".concat(this.args.fragmentKey, "-url")]) {
+                            this.args.url = fragmentParts["".concat(this.args.fragmentKey, "-url")];
+                            delete fragmentParts["".concat(this.args.fragmentKey, "-url")];
+                        }
+                        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                        try {
+                            for(var _iterator = Object.entries(fragmentParts)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                                var _value = _slicedToArray(_step.value, 2), key = _value[0], value = _value[1];
+                                key = key.replace("".concat(this.args.fragmentKey, "-param-"), "");
+                                this.setAttribute(":param-".concat(key), value);
+                            }
+                        } catch (err) {
+                            _didIteratorError = true;
+                            _iteratorError = err;
+                        } finally{
+                            try {
+                                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                    _iterator.return();
+                                }
+                            } finally{
+                                if (_didIteratorError) {
+                                    throw _iteratorError;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            /**
+     * Save the frame state to the URL fragment
+     */ key: "saveFragment",
+            value: function saveFragment() {
+                if (this.args.fragmentKey) {
+                    var fragment = {};
+                    fragment["".concat(this.args.fragmentKey, "-url")] = this.args.url;
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.params()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var _value = _slicedToArray(_step.value, 2), key = _value[0], value = _value[1];
+                            fragment["".concat(this.args.fragmentKey, "-param-").concat(key)] = value;
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                    var fragmentString = Object.entries(fragment).map(function(part) {
+                        return "".concat(part[0], "=").concat(part[1]);
+                    }).join(";");
+                    window.location.hash = "#".concat(fragmentString);
+                }
+            }
+        },
+        {
+            /**
+     * Makes the frame self contained
+     * Clicking any links or submitting any forms will only impact the frame, not the surrounding page
+     */ key: "containFrame",
+            value: function containFrame() {
+                var _this = this;
+                // Capture all clicks and if it was on an <a> tag load the href within the frame
+                this.addEventListener("click", function(e) {
+                    var target = e.target || e.srcElement;
+                    if (target.tagName === "A" && _this.belongsToController(target)) {
+                        var href = target.getAttribute("href");
+                        _this.args.url = href;
+                        _this.render();
+                        e.preventDefault();
+                    }
+                });
+                this.addEventListener("submit", function(e) {});
             }
         }
     ]);

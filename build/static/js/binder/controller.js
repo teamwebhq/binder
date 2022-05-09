@@ -232,7 +232,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
          */ findRenderableElements = function findRenderableElements() {
         var _this = this;
         return _toConsumableArray(this.root.querySelectorAll("[\\@render]")).concat(_toConsumableArray(this.root.querySelectorAll("[\\@render\\.eval]"))).filter(function(el) {
-            return _classPrivateMethodGet(_this, _belongsToController, belongsToController).call(_this, el);
+            return _this.belongsToController(el);
         });
     };
     var /**
@@ -423,7 +423,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
             // Handle any binds on the children
             var escapedModifier = modifier.replace(/\./g, "\\.");
             _this.root.querySelectorAll("[\\@bind".concat(escapedModifier, "]")).forEach(function(el) {
-                if (!_classPrivateMethodGet(_this2, _belongsToController, belongsToController).call(_this2, el)) return;
+                if (!_this2.belongsToController(el)) return;
                 bindData(el, modifier);
             });
         });
@@ -447,28 +447,12 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
         }
         return el.tagName.toLowerCase();
     };
-    var /**
-         * @method
-         * @private
-         * @name belongsToController
-         * @memberof! Controller
-         * @description Return true if the given element belongs to this controller
-         * @param {Element} el The controller root DOM element
-         * @returns {Boolean} True if the element belongs to the controller
-         */ belongsToController = function belongsToController(el) {
-        // If we're using the shadow DOM then we only see this controllers children so it must belong to the controller
-        if (this.hasShadow) return true;
-        var closestController = el.closest("[data-controller]");
-        if (closestController == null) return false;
-        if (closestController.getAttribute("data-controller") !== this.localName) return false;
-        return true;
-    };
-    var _findRenderableElements, _bindArgs, _bindEvents, _bindDataValues, _getElementType, _belongsToController, _class1;
+    var _findRenderableElements, _bindArgs, _bindEvents, _bindDataValues, _getElementType, _class1;
     /**
      * @class
      * @name Controller
      * @namespace Controller
-     */ var CoreController = (_findRenderableElements = /*#__PURE__*/ new WeakSet(), _bindArgs = /*#__PURE__*/ new WeakSet(), _bindEvents = /*#__PURE__*/ new WeakSet(), _bindDataValues = /*#__PURE__*/ new WeakSet(), _getElementType = /*#__PURE__*/ new WeakSet(), _belongsToController = /*#__PURE__*/ new WeakSet(), _class1 = /*#__PURE__*/ function(base) {
+     */ var CoreController = (_findRenderableElements = /*#__PURE__*/ new WeakSet(), _bindArgs = /*#__PURE__*/ new WeakSet(), _bindEvents = /*#__PURE__*/ new WeakSet(), _bindDataValues = /*#__PURE__*/ new WeakSet(), _getElementType = /*#__PURE__*/ new WeakSet(), _class1 = /*#__PURE__*/ function(base) {
         "use strict";
         _inherits(_class, base);
         var _super = _createSuper(_class);
@@ -481,7 +465,6 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
             _classPrivateMethodInit(_assertThisInitialized(_this), _bindEvents);
             _classPrivateMethodInit(_assertThisInitialized(_this), _bindDataValues);
             _classPrivateMethodInit(_assertThisInitialized(_this), _getElementType);
-            _classPrivateMethodInit(_assertThisInitialized(_this), _belongsToController);
             // Store for internal data
             _this._internal = {};
             _this.root = _assertThisInitialized(_this);
@@ -750,6 +733,25 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
                             }
                         }, _callee);
                     }))();
+                }
+            },
+            {
+                /**
+         * @method
+         * @private
+         * @name belongsToController
+         * @memberof! Controller
+         * @description Return true if the given element belongs to this controller
+         * @param {Element} el The controller root DOM element
+         * @returns {Boolean} True if the element belongs to the controller
+         */ key: "belongsToController",
+                value: function belongsToController(el) {
+                    // If we're using the shadow DOM then we only see this controllers children so it must belong to the controller
+                    if (this.hasShadow) return true;
+                    var closestController = el.closest("[data-controller]");
+                    if (closestController == null) return false;
+                    if (closestController !== this) return false;
+                    return true;
                 }
             }
         ]);

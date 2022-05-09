@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="author" content="Dan Stewart" />
+
+        <title>Arguments | Binder JS</title>
+
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css" />
+        <link rel="stylesheet" href="//unpkg.com/chota@0.8.0/dist/chota.min.css" />
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/a11y-light.min.css" />
+        <link rel="stylesheet" href="/static/styles/main.css" />
+
+        <script src="/static/js/copy.js"></script>
+        <script type="module" src="/static/js/binder/binder.js"></script>
+        <script src="//unpkg.com/@ungap/custom-elements"></script>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </head>
+
+    <body>
+        <!-- Header -->
+        <nav class="nav container">
+            <div class="nav-left">
+                <a class="brand bold mono" href="/">binder.js</a>
+
+                <div class="tabs">
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="/quick-start">Quick Start</a>
+                <a href="/guide/introduction">Guide</a>
+                <a href="/examples">Examples</a>
+                <a href="/playground">Playground</a>
+                <a href="https://github.com/teamwebhq/binder">
+                    <img src="/static/icons/github.svg" alt="GitHub" />
+                </a>
+            </div>
+        </nav>
+
+        <hr class="nav-sep" />
+
+        <!-- Content -->
+        <div>
+            
+    <div id="guide" class="row">
+        <div id="guide-contents" class="col-2">
+            <ul>
+                <li><a id="guide-c-introduction" href="/guide/introduction">Introduction</a></li>
+                <li><a id="guide-c-our-first-controller" href="/guide/our-first-controller">Our First Controller</a></li>
+                <li><a id="guide-c-arguments" href="/guide/arguments">Arguments</a></li>
+                <li><a href="#">Event Binding</a></li>
+                <li><a href="#">Data Binding</a></li>
+                <li><a href="#">Rendering</a></li>
+                <li><a href="#">Observed Attributes</a></li>
+                <li><a href="#">The Shadow DOM</a></li>
+                <li>
+                    <a href="#">Core Controllers</a>
+                    <ul>
+                        <li><a href="#">Dynamic Frame</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div id="guide-body" class="col-10">
+            <h1>Arguments</h1>
+<p>Binder controllers allow passing arguments through to the JavaScript, these are stored in your controller in the <code>this.args</code> object.</p>
+<pre><code class="language-html">&lt;our-first-controller :greeting=&quot;Hey&quot;&gt;&lt;/our-first-controller&gt;
+</code></pre>
+<pre><code class="language-js">class OurFirstController extends Controller {
+    init() {
+        this.innerHTML = `&lt;p&gt;${this.args.greeting}, World!&lt;/p&gt;`;
+    }
+}
+</code></pre>
+<h3>Helpers</h3>
+<p>Binder also provides a couple of helper functions for parsing arguments.</p>
+<pre><code class="language-js">import { parseBoolean, parseDuration } from './binder/util.js';
+
+// parseBoolean will parse the strings &quot;&quot;, &quot;0&quot; and &quot;false&quot; (any casing) as `false`
+// Everything else will be `true`
+parseBoolean(&quot;true&quot;);   // true
+parseBoolean(&quot;1&quot;);      // true
+parseBoolean(&quot;abc&quot;);    // true
+parseBoolean(&quot;false&quot;);  // false
+parseBoolean(&quot;False&quot;);  // false
+parseBoolean(&quot;0&quot;);      // false
+parseBoolean(&quot;&quot;);       // false
+
+// parseDuration parses a duration string into milliseconds
+// It supports ms, s, m and h for milliseconds, seconds, minutes and hours
+parseDuration(&quot;2h&quot;)     // 7200000 (2 hours)
+parseDuration(&quot;5m&quot;)     // 300000 (5 minutes)
+parseDuration(&quot;45s&quot;)    // 45000 (45 seconds)
+parseDuration(&quot;250ms&quot;)  // 250 (250 milliseconds)
+</code></pre>
+
+        </div>
+    </div>
+
+    <style>
+        #guide {
+            margin-right: 20px;
+            margin-left: 20px;
+        }
+
+        #guide-contents {
+            border-right: 1px solid #ccc;
+        }
+
+        #guide-contents ul {
+            list-style: none;
+        }
+
+        /* Adjust indent for nested pages */
+        #guide-contents ul > li > ul {
+            padding-left: 1.25em;
+        }
+
+        /* Dynamically style the active content entry */
+        #guide-c-arguments {
+            color: var(--color-active);
+            font-weight: bold;
+        }
+    </style>
+
+        </div>
+    </body>
+</html>

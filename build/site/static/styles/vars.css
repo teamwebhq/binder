@@ -1,0 +1,25 @@
+@font-face {
+    font-family: IBMPlexMono;
+    src: url('/static/fonts/ibmplexmono-regular-webfont.woff2') format('woff2'),
+         url('/static/fonts/ibmplexmono-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: WorkSans;
+    src: url('/static/fonts/worksans-variablefont_wght-webfont.woff2') format('woff2'),
+         url('/static/fonts/worksans-variablefont_wght-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    --color-primary: #007ed7;  /* Teamweb blue */
+    --color-active: #003f6b;
+    --bg-color: #f5f6f7;
+    --font-size: 1.7rem;
+    --font-family-sans: WorkSans, "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    --font-family-mono: IBMPlexMono, monaco, "Consolas", "Lucida Console", monospace;
+}
