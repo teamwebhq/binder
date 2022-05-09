@@ -96,6 +96,10 @@ import { pascalToKebab } from "./util.js";
             }
             var controllerName = controller.name;
             var controllerTag = config && config.name ? config.name : pascalToKebab(controllerName.replace("Controller", ""));
+            if (window.customElements.get(controllerTag)) {
+                console.warn('Controller "'.concat(controllerTag, '" is already registered, skipping...'));
+                return;
+            }
             // All custom elements required a hyphenated tag name
             if (!controllerTag.includes("-")) {
                 console.error("[".concat(controllerName, "] Controller tag name must contain a hyphen but got <").concat(controllerTag, ">"));
