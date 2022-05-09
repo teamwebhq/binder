@@ -34,6 +34,11 @@ const registerControllers = (...controllers) => {
         const controllerName = controller.name;
         const controllerTag = config && config.name ? config.name : pascalToKebab(controllerName.replace("Controller", ""));
 
+        if (window.customElements.get(controllerTag)) {
+            console.warn(`Controller "${controllerTag}" is already registered, skipping...`);
+            return;
+        }
+
         // All custom elements required a hyphenated tag name
         if (!controllerTag.includes("-")) {
             console.error(`[${controllerName}] Controller tag name must contain a hyphen but got <${controllerTag}>`);
