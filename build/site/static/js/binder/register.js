@@ -1,4 +1,4 @@
-import { pascalToKebab } from './util.js';
+import { pascalToKebab } from "./util.js";
 
 /**
  * Register a controller (or multiple controllers)
@@ -28,7 +28,7 @@ const registerControllers = (...controllers) => {
     for (let controller of controllers) {
         let config = {};
         if (Array.isArray(controller)) {
-            [controller, config={}] = controller;
+            [controller, config = {}] = controller;
         }
 
         const controllerName = controller.name;
@@ -48,6 +48,4 @@ const registerControllers = (...controllers) => {
     }
 };
 
-export {
-    registerControllers,
-};
+export { registerControllers };

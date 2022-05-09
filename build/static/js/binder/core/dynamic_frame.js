@@ -233,10 +233,10 @@ Example HTML:
         {
             key: "init",
             value: /**
-	 * Setup the DynamicFrame and do the initial request/load
-	 * @memberof! DynamicFrame
-	 *
-	 */ function init() {
+     * Setup the DynamicFrame and do the initial request/load
+     * @memberof! DynamicFrame
+     *
+     */ function init() {
                 var _this = this;
                 return _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
                     var interval, handleStateChange;
@@ -285,9 +285,9 @@ Example HTML:
         {
             key: "refresh",
             value: /**
-	 * Alias for `render()`
-	 * @memberof! DynamicFrame
-	 */ function refresh() {
+     * Alias for `render()`
+     * @memberof! DynamicFrame
+     */ function refresh() {
                 var _this = this;
                 return _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
                     return regeneratorRuntime.wrap(function _callee$(_ctx) {
@@ -306,9 +306,9 @@ Example HTML:
         {
             key: "render",
             value: /**
-	 * Reload the frame content
-	 * @memberof! DynamicFrame
-	 */ function render() {
+     * Reload the frame content
+     * @memberof! DynamicFrame
+     */ function render() {
                 var _this = this;
                 var _this1 = this, _superprop_get_render = function() {
                     return _get(_getPrototypeOf(DynamicFrame.prototype), "render", _this);
@@ -334,9 +334,9 @@ Example HTML:
         },
         {
             /**
-	 * Call the base `bind()` and re-find the mountPoint in case it's changed
-	 * @memberof! DynamicFrame
-	 */ key: "bind",
+     * Call the base `bind()` and re-find the mountPoint in case it's changed
+     * @memberof! DynamicFrame
+     */ key: "bind",
             value: function bind() {
                 _get(_getPrototypeOf(DynamicFrame.prototype), "bind", this).call(this);
                 // Find the mount point
@@ -350,11 +350,11 @@ Example HTML:
         },
         {
             /**
-	 * Sets an interval to auto call `this.refresh()`
-	 * Overwrites previously set refresh intervals
-	 * @param {*} interval Duration in milliseconds
-	 * @memberof! DynamicFrame
-	 */ key: "setAutoRefresh",
+     * Sets an interval to auto call `this.refresh()`
+     * Overwrites previously set refresh intervals
+     * @param {*} interval Duration in milliseconds
+     * @memberof! DynamicFrame
+     */ key: "setAutoRefresh",
             value: function setAutoRefresh(interval) {
                 var _this = this;
                 if (interval === undefined) {
@@ -372,12 +372,12 @@ Example HTML:
         {
             key: "loadContent",
             value: /**
-	 * [async] Makes a new request and replaces or appends the response to the mountPoint
-	 * Returns true on success
-	 * Multiple calls will abort previous requests and return false
-	 * @returns boolean - true on success
-	 * @memberof! DynamicFrame
-	 */ function loadContent(e) {
+     * [async] Makes a new request and replaces or appends the response to the mountPoint
+     * Returns true on success
+     * Multiple calls will abort previous requests and return false
+     * @returns boolean - true on success
+     * @memberof! DynamicFrame
+     */ function loadContent(e) {
                 var _this = this;
                 return _asyncToGenerator(regeneratorRuntime.mark(function _callee1() {
                     var url, abortController, ok, sendReq;
@@ -454,11 +454,11 @@ Example HTML:
         },
         {
             /**
-	 * Called during `loadContent()`
-	 * Will find all script tags within the frame and execute them
-	 * Only if the frame has the `execute-scripts` attribute set to true
-	 * @memberof! DynamicFrame
-	 */ key: "findAndExecuteScripts",
+     * Called during `loadContent()`
+     * Will find all script tags within the frame and execute them
+     * Only if the frame has the `execute-scripts` attribute set to true
+     * @memberof! DynamicFrame
+     */ key: "findAndExecuteScripts",
             value: function findAndExecuteScripts() {
                 var _this = this;
                 if (!this.args.executeScripts) return;
@@ -479,12 +479,12 @@ Example HTML:
         },
         {
             /**
-	 * Actually updates the content
-	 * This is where the artificial delay is applied
-	 * @param content - The content to use
-	 * @param mode - replace or append, defaults to `this.args.mode`
-	 * @memberof! DynamicFrame
-	 */ key: "updateContent",
+     * Actually updates the content
+     * This is where the artificial delay is applied
+     * @param content - The content to use
+     * @param mode - replace or append, defaults to `this.args.mode`
+     * @memberof! DynamicFrame
+     */ key: "updateContent",
             value: function updateContent(content) {
                 var mode = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : null;
                 if (!mode) mode = this.args.mode || "replace";
@@ -499,11 +499,11 @@ Example HTML:
         },
         {
             /**
-	 * Returns the query string params for the request - expected to be overridden
-	 * Handles arrays as duplicated params (ie. a: [1,2] => ?a=1&a=2)
-	 * @returns {URLSearchParams}
-	 * @memberof! DynamicFrame
-	 */ key: "params",
+     * Returns the query string params for the request - expected to be overridden
+     * Handles arrays as duplicated params (ie. a: [1,2] => ?a=1&a=2)
+     * @returns {URLSearchParams}
+     * @memberof! DynamicFrame
+     */ key: "params",
             value: function params() {
                 var values = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
                 var params1 = new URLSearchParams(values);
@@ -545,10 +545,10 @@ Example HTML:
         },
         {
             /**
-	 * Returns the endpoint to call - from the data-url attr on the root element
-	 * @returns {string}
-	 * @memberof! DynamicFrame
-	 */ key: "endpoint",
+     * Returns the endpoint to call - from the data-url attr on the root element
+     * @returns {string}
+     * @memberof! DynamicFrame
+     */ key: "endpoint",
             value: function endpoint() {
                 var url = this.args.url;
                 if (!this.args.url) {
@@ -561,8 +561,8 @@ Example HTML:
         },
         {
             /**
-	 * Load the frame state based on the URL query string
-	 */ key: "loadState",
+     * Load the frame state based on the URL query string
+     */ key: "loadState",
             value: function loadState() {
                 if (!this.args.stateKey) return;
                 var qs = window.location.search;
@@ -605,9 +605,9 @@ Example HTML:
         },
         {
             /**
-	 * Save the frame state to the URL query string
-	 * Only saves if the state has changed
-	 */ key: "saveState",
+     * Save the frame state to the URL query string
+     * Only saves if the state has changed
+     */ key: "saveState",
             value: function saveState() {
                 if (!this.args.stateKey) return;
                 var qsParts = Object.fromEntries(new URLSearchParams(window.location.search));
@@ -643,11 +643,12 @@ Example HTML:
         },
         {
             /**
-	 * Makes the frame self contained
-	 * Clicking any links or submitting any forms will only impact the frame, not the surrounding page
-	 */ key: "containFrame",
+     * Makes the frame self contained
+     * Clicking any links or submitting any forms will only impact the frame, not the surrounding page
+     */ key: "containFrame",
             value: function containFrame() {
                 var _this = this;
+                // TODO: Handle form submits
                 // Capture all clicks and if it was on an <a> tag load the href within the frame
                 this.addEventListener("click", function(e) {
                     var target = e.target || e.srcElement;

@@ -6,14 +6,15 @@ active: "our-first-controller"
 
 # Our First Controller
 
-[Custom Elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) are a way to create custom HTML elements, binder helps simplify the process of creating new elements, managing their state and handling events.  
+[Custom Elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) are a way to create custom HTML elements, binder helps simplify the process of creating new elements, managing their state and handling events.
 
 In binder we call our custom elements **Controllers**.  
-There are two parts to a controller, the HTML and the JavaScript class behind it.  
+There are two parts to a controller, the HTML and the JavaScript class behind it.
 
 We'll start with the JavaScript, it's just a standard ES6 class that extends the base binder `Controller`:
+
 ```js
-import { Controller, registerControllers } from './binder.js';
+import { Controller, registerControllers } from "./binder.js";
 
 class OurFirstController extends Controller {
     // The init method is called when a new element is added to the DOM
@@ -27,8 +28,8 @@ class OurFirstController extends Controller {
 registerControllers(OurFirstController);
 ```
 
-
 And now our HTML:
+
 ```html
 <our-first-controller></our-first-controller>
 ```

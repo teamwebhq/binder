@@ -14,7 +14,7 @@ The easiest way to get started with binder is to load it from a CDN:
 
     class MyController extends Controller {}
 
-    registerControllers(Controller)
+    registerControllers(Controller);
 </script>
 
 <my-controller></my-controller>

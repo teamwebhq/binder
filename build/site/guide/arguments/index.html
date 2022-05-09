@@ -79,24 +79,24 @@
 </code></pre>
 <h3>Helpers</h3>
 <p>Binder also provides a couple of helper functions for parsing arguments.</p>
-<pre><code class="language-js">import { parseBoolean, parseDuration } from './binder/util.js';
+<pre><code class="language-js">import { parseBoolean, parseDuration } from &quot;./binder/util.js&quot;;
 
 // parseBoolean will parse the strings &quot;&quot;, &quot;0&quot; and &quot;false&quot; (any casing) as `false`
 // Everything else will be `true`
-parseBoolean(&quot;true&quot;);   // true
-parseBoolean(&quot;1&quot;);      // true
-parseBoolean(&quot;abc&quot;);    // true
-parseBoolean(&quot;false&quot;);  // false
-parseBoolean(&quot;False&quot;);  // false
-parseBoolean(&quot;0&quot;);      // false
-parseBoolean(&quot;&quot;);       // false
+parseBoolean(&quot;true&quot;); // true
+parseBoolean(&quot;1&quot;); // true
+parseBoolean(&quot;abc&quot;); // true
+parseBoolean(&quot;false&quot;); // false
+parseBoolean(&quot;False&quot;); // false
+parseBoolean(&quot;0&quot;); // false
+parseBoolean(&quot;&quot;); // false
 
 // parseDuration parses a duration string into milliseconds
 // It supports ms, s, m and h for milliseconds, seconds, minutes and hours
-parseDuration(&quot;2h&quot;)     // 7200000 (2 hours)
-parseDuration(&quot;5m&quot;)     // 300000 (5 minutes)
-parseDuration(&quot;45s&quot;)    // 45000 (45 seconds)
-parseDuration(&quot;250ms&quot;)  // 250 (250 milliseconds)
+parseDuration(&quot;2h&quot;); // 7200000 (2 hours)
+parseDuration(&quot;5m&quot;); // 300000 (5 minutes)
+parseDuration(&quot;45s&quot;); // 45000 (45 seconds)
+parseDuration(&quot;250ms&quot;); // 250 (250 milliseconds)
 </code></pre>
 
         </div>

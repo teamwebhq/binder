@@ -68,7 +68,7 @@ var kebabToCamel = function(str) {
 };
 /**
  * Returns the permutations of an array for all combinations and lengths
- * @param {*} arr 
+ * @param {*} arr
  */ var permutations = function(arr) {
     var toString = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
     // Group each chunk of permutations of each length

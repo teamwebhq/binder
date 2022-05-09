@@ -370,7 +370,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
         var instance1 = this;
         var tagToEvent = {
             "input|text": "keyup",
-            "default": "change"
+            default: "change"
         };
         // Event handlers for various element types
         var handlers = {
@@ -384,7 +384,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
                     });
                 }
             },
-            "select": function(instance, varName, e) {
+            select: function(instance, varName, e) {
                 if (e.target.getAttribute("multiple") !== null) {
                     instance.data[varName] = Array.from(e.target.selectedOptions).map(function(item) {
                         return item.value;
@@ -393,7 +393,7 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
                     instance.data[varName] = e.target.value;
                 }
             },
-            "default": function(instance, varName, e) {
+            default: function(instance, varName, e) {
                 return instance.data[varName] = e.target.value;
             }
         };
@@ -613,7 +613,6 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.
                     if (!this._internal.bound) {
                         _classPrivateMethodGet(this, _bindArgs, bindArgs).call(this);
                     }
-                    ;
                     _classPrivateMethodGet(this, _bindEvents, bindEvents).call(this);
                     _classPrivateMethodGet(this, _bindDataValues, bindDataValues).call(this);
                     this._internal.bound = true;
