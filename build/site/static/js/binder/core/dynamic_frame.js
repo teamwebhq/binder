@@ -312,8 +312,6 @@ class DynamicFrame extends Controller {
      * Clicking any links or submitting any forms will only impact the frame, not the surrounding page
      */
     containFrame() {
-        // TODO: Handle form submits
-
         // Capture all clicks and if it was on an <a> tag load the href within the frame
         this.addEventListener("click", e => {
             let target = e.target || e.srcElement;
@@ -326,7 +324,34 @@ class DynamicFrame extends Controller {
             }
         });
 
-        this.addEventListener("submit", e => {});
+        // Intercept form submits
+        // TODO: Handle all attributes documented here:
+        // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+        this.addEventListener("submit", async e => {
+            e.preventDefault();
+
+            const method = e.target.getAttribute("method") || "GET";
+            const action = e.target.getAttribute("action") || "/";
+            const formData = new FormData(e.target);
+
+            if (method.toUpperCase() == "POST") {
+                let response = await fetch(action, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (response.redirected) {
+                    this.args.url = response.url;
+                    this.render();
+                }
+            } else if (method.toUpperCase() == "GET") {
+                const query = new URLSearchParams(formData);
+                this.args.url = `${action}?${query.toString()}`;
+                this.render();
+            }
+
+            return false;
+        });
     }
 }
 
