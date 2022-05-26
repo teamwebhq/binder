@@ -325,24 +325,42 @@ class DynamicFrame extends Controller {
         });
 
         // Intercept form submits
-        // TODO: Handle all attributes documented here:
+        // To do this we need to submit the form ourselves
+        // Aims to have near-full feature parity with regular HTML forms
+        // We do not support the `target` attribute or the `method="dialog"` value
         // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
         this.addEventListener("submit", async e => {
             e.preventDefault();
 
             const method = e.target.getAttribute("method") || "GET";
             const action = e.target.getAttribute("action") || "/";
+            const encoding = e.target.getAttribute("enctype") || "application/x-www-form-urlencoded";
+            const skipValidation = e.target.getAttribute("novalidate") !== undefined;
+
+            // Base HTML5 validation
+            if (!skipValidation && !e.target.checkValidity()) {
+                console.warn("Form is not valid");
+                return;
+            }
+
             const formData = new FormData(e.target);
 
             if (method.toUpperCase() == "POST") {
                 let response = await fetch(action, {
                     method: "POST",
                     body: formData,
+                    headers: {
+                        "Content-Type": encoding,
+                    },
                 });
 
                 if (response.redirected) {
+                    // If we have a redirect then follow it
                     this.args.url = response.url;
                     this.render();
+                } else {
+                    // Otherwise show the response body
+                    this.innerHTML = await response.text();
                 }
             } else if (method.toUpperCase() == "GET") {
                 const query = new URLSearchParams(formData);

@@ -648,7 +648,6 @@ Example HTML:
      */ key: "containFrame",
             value: function containFrame() {
                 var _this = this;
-                // TODO: Handle form submits
                 // Capture all clicks and if it was on an <a> tag load the href within the frame
                 this.addEventListener("click", function(e) {
                     var target = e.target || e.srcElement;
@@ -659,7 +658,83 @@ Example HTML:
                         e.preventDefault();
                     }
                 });
-                this.addEventListener("submit", function(e) {});
+                var _this2 = this;
+                // Intercept form submits
+                // To do this we need to submit the form ourselves
+                // Aims to have near-full feature parity with regular HTML forms
+                // We do not support the `target` attribute or the `method="dialog"` value
+                // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+                this.addEventListener("submit", function() {
+                    var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(e) {
+                        var method, action, encoding, skipValidation, formData, response, query;
+                        return regeneratorRuntime.wrap(function _callee$(_ctx) {
+                            while(1)switch(_ctx.prev = _ctx.next){
+                                case 0:
+                                    e.preventDefault();
+                                    method = e.target.getAttribute("method") || "GET";
+                                    action = e.target.getAttribute("action") || "/";
+                                    encoding = e.target.getAttribute("enctype") || "application/x-www-form-urlencoded";
+                                    skipValidation = e.target.getAttribute("novalidate") !== undefined;
+                                    if (!(!skipValidation && !e.target.checkValidity())) {
+                                        _ctx.next = 8;
+                                        break;
+                                    }
+                                    console.warn("Form is not valid");
+                                    return _ctx.abrupt("return");
+                                case 8:
+                                    formData = new FormData(e.target);
+                                    if (!(method.toUpperCase() == "POST")) {
+                                        _ctx.next = 22;
+                                        break;
+                                    }
+                                    _ctx.next = 12;
+                                    return fetch(action, {
+                                        method: "POST",
+                                        body: formData,
+                                        headers: {
+                                            "Content-Type": encoding
+                                        }
+                                    });
+                                case 12:
+                                    response = _ctx.sent;
+                                    if (!response.redirected) {
+                                        _ctx.next = 17;
+                                        break;
+                                    }
+                                    {
+                                        // If we have a redirect then follow it
+                                        _this2.args.url = response.url;
+                                        _this2.render();
+                                    }
+                                    _ctx.next = 20;
+                                    break;
+                                case 17:
+                                    _ctx.next = 19;
+                                    return response.text();
+                                case 19:
+                                    // Otherwise show the response body
+                                    _this2.innerHTML = _ctx.sent;
+                                case 20:
+                                    _ctx.next = 23;
+                                    break;
+                                case 22:
+                                    if (method.toUpperCase() == "GET") {
+                                        query = new URLSearchParams(formData);
+                                        _this2.args.url = "".concat(action, "?").concat(query.toString());
+                                        _this2.render();
+                                    }
+                                case 23:
+                                    return _ctx.abrupt("return", false);
+                                case 24:
+                                case "end":
+                                    return _ctx.stop();
+                            }
+                        }, _callee);
+                    }));
+                    return function(e) {
+                        return _ref.apply(this, arguments);
+                    };
+                }());
             }
         }
     ]);
