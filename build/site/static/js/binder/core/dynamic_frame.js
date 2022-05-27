@@ -237,6 +237,24 @@ class DynamicFrame extends Controller {
     }
 
     /**
+     * Set key/value pairs of params in the element attributes
+     * @param {object} values
+     */
+    setParams(values = {}) {
+        // Wipe out all current attributes
+        for (let attr of this.attributes) {
+            if (attr.nodeName.startsWith(":param-")) {
+                this.removeAttribute(attr.nodeName);
+            }
+        }
+
+        // Set the new params
+        Object.entries(values).forEach(([key, val]) => {
+            this.setAttribute(`:param-${key}`, val);
+        });
+    }
+
+    /**
      * Returns the endpoint to call - from the data-url attr on the root element
      * @returns {string}
      * @memberof! DynamicFrame
@@ -270,11 +288,21 @@ class DynamicFrame extends Controller {
             delete qsParts[`${this.args.stateKey}-url`];
         }
 
+        // TODO: Rewrite this to use `setParams`
+
+        // Wipe out the default param attributes on this frame as we add the correct ones below
+        for (let attr of this.attributes) {
+            if (attr.nodeName.startsWith(":param-")) {
+                this.removeAttribute(attr.nodeName);
+            }
+        }
+
         for (let [key, value] of Object.entries(qsParts)) {
             // Ignore other state keys
             // TODO: It might be better to make the state keys easier to identify
             // I can see these two cases being used for real parameters, in which case we drop them
-            if (key.endsWith("-url") || key.includes("-param-")) continue;
+            if (key.endsWith("-url")) continue;
+            if (!key.startsWith(this.args.stateKey)) continue;
 
             key = key.replace(`${this.args.stateKey}-param-`, "");
             this.setAttribute(`:param-${key}`, value);
@@ -293,6 +321,15 @@ class DynamicFrame extends Controller {
         let qsParts = Object.fromEntries(new URLSearchParams(window.location.search));
         qsParts[`${this.args.stateKey}-url`] = this.args.url;
 
+        // Strip out any params that belong to this frame
+        // We re-add them below
+        for (const key of Object.keys(qsParts)) {
+            if (key.startsWith(`${this.args.stateKey}-param-`)) {
+                delete qsParts[key];
+            }
+        }
+
+        // Add the params for this fra,e
         for (const [key, value] of this.params()) {
             qsParts[`${this.args.stateKey}-param-${key}`] = value;
         }
@@ -312,13 +349,25 @@ class DynamicFrame extends Controller {
      * Clicking any links or submitting any forms will only impact the frame, not the surrounding page
      */
     containFrame() {
+        /**
+         * Loads a URL into the frame by updating the url and param attributes
+         * @param {*} url
+         */
+        const loadUrl = url => {
+            const [origin, query] = url.split("?");
+            const params = Object.fromEntries(query.split("&").map(part => part.split("=")));
+
+            this.setParams(params);
+            this.args.url = origin;
+        };
+
         // Capture all clicks and if it was on an <a> tag load the href within the frame
         this.addEventListener("click", e => {
             let target = e.target || e.srcElement;
 
             if (target.tagName === "A" && this.belongsToController(target)) {
-                let href = target.getAttribute("href");
-                this.args.url = href;
+                const href = target.getAttribute("href");
+                loadUrl(href);
                 this.render();
                 e.preventDefault();
             }
@@ -356,15 +405,16 @@ class DynamicFrame extends Controller {
 
                 if (response.redirected) {
                     // If we have a redirect then follow it
-                    this.args.url = response.url;
+                    loadUrl(response.url);
                     this.render();
                 } else {
                     // Otherwise show the response body
                     this.innerHTML = await response.text();
                 }
             } else if (method.toUpperCase() == "GET") {
-                const query = new URLSearchParams(formData);
-                this.args.url = `${action}?${query.toString()}`;
+                const query = Object.fromEntries(new URLSearchParams(formData));
+                this.setParams(query);
+                this.args.url = action;
                 this.render();
             }
 

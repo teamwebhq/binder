@@ -545,6 +545,44 @@ Example HTML:
         },
         {
             /**
+     * Set key/value pairs of params in the element attributes
+     * @param {object} values
+     */ key: "setParams",
+            value: function setParams() {
+                var values = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+                var _this = this;
+                var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                try {
+                    // Wipe out all current attributes
+                    for(var _iterator = this.attributes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        var attr = _step.value;
+                        if (attr.nodeName.startsWith(":param-")) {
+                            this.removeAttribute(attr.nodeName);
+                        }
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally{
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return != null) {
+                            _iterator.return();
+                        }
+                    } finally{
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+                // Set the new params
+                Object.entries(values).forEach(function(param) {
+                    var _param = _slicedToArray(param, 2), key = _param[0], val = _param[1];
+                    _this.setAttribute(":param-".concat(key), val);
+                });
+            }
+        },
+        {
+            /**
      * Returns the endpoint to call - from the data-url attr on the root element
      * @returns {string}
      * @memberof! DynamicFrame
@@ -577,14 +615,13 @@ Example HTML:
                 }
                 var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                 try {
-                    for(var _iterator = Object.entries(qsParts)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                        var _value = _slicedToArray(_step.value, 2), key = _value[0], value = _value[1];
-                        // Ignore other state keys
-                        // TODO: It might be better to make the state keys easier to identify
-                        // I can see these two cases being used for real parameters, in which case we drop them
-                        if (key.endsWith("-url") || key.includes("-param-")) continue;
-                        key = key.replace("".concat(this.args.stateKey, "-param-"), "");
-                        this.setAttribute(":param-".concat(key), value);
+                    // TODO: Rewrite this to use `setParams`
+                    // Wipe out the default param attributes on this frame as we add the correct ones below
+                    for(var _iterator = this.attributes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        var attr = _step.value;
+                        if (attr.nodeName.startsWith(":param-")) {
+                            this.removeAttribute(attr.nodeName);
+                        }
                     }
                 } catch (err) {
                     _didIteratorError = true;
@@ -597,6 +634,32 @@ Example HTML:
                     } finally{
                         if (_didIteratorError) {
                             throw _iteratorError;
+                        }
+                    }
+                }
+                var _iteratorNormalCompletion1 = true, _didIteratorError1 = false, _iteratorError1 = undefined;
+                try {
+                    for(var _iterator1 = Object.entries(qsParts)[Symbol.iterator](), _step1; !(_iteratorNormalCompletion1 = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion1 = true){
+                        var _value = _slicedToArray(_step1.value, 2), key = _value[0], value = _value[1];
+                        // Ignore other state keys
+                        // TODO: It might be better to make the state keys easier to identify
+                        // I can see these two cases being used for real parameters, in which case we drop them
+                        if (key.endsWith("-url")) continue;
+                        if (!key.startsWith(this.args.stateKey)) continue;
+                        key = key.replace("".concat(this.args.stateKey, "-param-"), "");
+                        this.setAttribute(":param-".concat(key), value);
+                    }
+                } catch (err) {
+                    _didIteratorError1 = true;
+                    _iteratorError1 = err;
+                } finally{
+                    try {
+                        if (!_iteratorNormalCompletion1 && _iterator1.return != null) {
+                            _iterator1.return();
+                        }
+                    } finally{
+                        if (_didIteratorError1) {
+                            throw _iteratorError1;
                         }
                     }
                 }
@@ -614,9 +677,13 @@ Example HTML:
                 qsParts["".concat(this.args.stateKey, "-url")] = this.args.url;
                 var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                 try {
-                    for(var _iterator = this.params()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                        var _value = _slicedToArray(_step.value, 2), key = _value[0], value = _value[1];
-                        qsParts["".concat(this.args.stateKey, "-param-").concat(key)] = value;
+                    // Strip out any params that belong to this frame
+                    // We re-add them below
+                    for(var _iterator = Object.keys(qsParts)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        var key = _step.value;
+                        if (key.startsWith("".concat(this.args.stateKey, "-param-"))) {
+                            delete qsParts[key];
+                        }
                     }
                 } catch (err) {
                     _didIteratorError = true;
@@ -629,6 +696,27 @@ Example HTML:
                     } finally{
                         if (_didIteratorError) {
                             throw _iteratorError;
+                        }
+                    }
+                }
+                var _iteratorNormalCompletion2 = true, _didIteratorError2 = false, _iteratorError2 = undefined;
+                try {
+                    // Add the params for this fra,e
+                    for(var _iterator2 = this.params()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true){
+                        var _value = _slicedToArray(_step2.value, 2), key1 = _value[0], value = _value[1];
+                        qsParts["".concat(this.args.stateKey, "-param-").concat(key1)] = value;
+                    }
+                } catch (err) {
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
+                } finally{
+                    try {
+                        if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                            _iterator2.return();
+                        }
+                    } finally{
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
                         }
                     }
                 }
@@ -648,12 +736,23 @@ Example HTML:
      */ key: "containFrame",
             value: function containFrame() {
                 var _this = this;
+                /**
+         * Loads a URL into the frame by updating the url and param attributes
+         * @param {*} url
+         */ var loadUrl = function(url) {
+                    var ref = _slicedToArray(url.split("?"), 2), origin = ref[0], query = ref[1];
+                    var params = Object.fromEntries(query.split("&").map(function(part) {
+                        return part.split("=");
+                    }));
+                    _this.setParams(params);
+                    _this.args.url = origin;
+                };
                 // Capture all clicks and if it was on an <a> tag load the href within the frame
                 this.addEventListener("click", function(e) {
                     var target = e.target || e.srcElement;
                     if (target.tagName === "A" && _this.belongsToController(target)) {
                         var href = target.getAttribute("href");
-                        _this.args.url = href;
+                        loadUrl(href);
                         _this.render();
                         e.preventDefault();
                     }
@@ -703,7 +802,7 @@ Example HTML:
                                     }
                                     {
                                         // If we have a redirect then follow it
-                                        _this2.args.url = response.url;
+                                        loadUrl(response.url);
                                         _this2.render();
                                     }
                                     _ctx.next = 20;
@@ -719,8 +818,9 @@ Example HTML:
                                     break;
                                 case 22:
                                     if (method.toUpperCase() == "GET") {
-                                        query = new URLSearchParams(formData);
-                                        _this2.args.url = "".concat(action, "?").concat(query.toString());
+                                        query = Object.fromEntries(new URLSearchParams(formData));
+                                        _this2.setParams(query);
+                                        _this2.args.url = action;
                                         _this2.render();
                                     }
                                 case 23:
