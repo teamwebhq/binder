@@ -1,0 +1,22 @@
+{
+    "files.trimTrailingWhitespace": false,
+
+    "[markdown]": {
+        "files.trimTrailingWhitespace": false
+    },
+
+    "[css][postcss][javascript]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "build/": true,
+        "dist": true,
+        "docs": true,
+        "src/scratch.njk": false
+    }
+}

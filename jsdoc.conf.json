@@ -1,4 +1,7 @@
 {
+    "opts": {
+        "destination": "build/docs"
+    },
     "plugins": ["plugins/markdown"],
     "markdown": {
         "hardwrap": true

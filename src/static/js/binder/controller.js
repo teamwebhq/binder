@@ -1,4 +1,4 @@
-import { kebabToCamel, permutations, parseDuration, parseBoolean } from './util.js';
+import { kebabToCamel, permutations, parseDuration, parseBoolean } from "./util.js";
 
 /**
  * Dynamically create a new Controller class extending an existing element class
@@ -6,13 +6,13 @@ import { kebabToCamel, permutations, parseDuration, parseBoolean } from './util.
  * @param {string} name The name of the built in HTML tag to extend
  * @returns Controller class
  */
-const makeController = (base=HTMLElement, extendTag=null) => {
+const makeController = (base = HTMLElement, extendTag = null) => {
     /**
      * @class
      * @name Controller
      * @namespace Controller
      */
-    const CoreController = (class extends base {
+    const CoreController = class extends base {
         static _extendTag = extendTag;
 
         /**
@@ -63,8 +63,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
 
                 // Only use the shadowDOM when specified
                 if (this.template.hasAttribute(":use-shadow")) {
-                    this.attachShadow({ mode: "open" })
-                        .appendChild(this.content.cloneNode(true));
+                    this.attachShadow({ mode: "open" }).appendChild(this.content.cloneNode(true));
 
                     this.root = this.shadowRoot;
                     this.hasShadow = true;
@@ -98,7 +97,6 @@ const makeController = (base=HTMLElement, extendTag=null) => {
             if (this.renderOnInit) this.render();
         }
 
-
         /**
          * @method
          * @name attributeChangedCallback
@@ -112,12 +110,12 @@ const makeController = (base=HTMLElement, extendTag=null) => {
          * @param {string} newValue The new value of the attribute
          */
         attributeChangedCallback(name, oldValue, newValue) {
-            let handler = name.replace(/^data-/, '');
-            handler = handler.replace(/^aria-/, '');
+            let handler = name.replace(/^data-/, "");
+            handler = handler.replace(/^aria-/, "");
             handler = kebabToCamel(handler);
             handler = `set${handler.charAt(0).toUpperCase()}${handler.slice(1)}`;
 
-            if (handler in this && typeof(this[handler]) === "function") {
+            if (handler in this && typeof this[handler] === "function") {
                 this[handler](oldValue, newValue);
             }
         }
@@ -131,14 +129,16 @@ const makeController = (base=HTMLElement, extendTag=null) => {
          * @param {object} detail Optional object that is passed in the event under the key `detail`
          * @param {object} config Optional configuration object that can be passed to `new CustomEvent()`
          */
-        emit(eventName, detail={}, config={}) {
-            window.dispatchEvent(new CustomEvent(eventName, {
-                bubbles: true,
-                cancelable: true,
-                composed: true,
-                detail: detail,
-                ...config,
-            }));
+        emit(eventName, detail = {}, config = {}) {
+            window.dispatchEvent(
+                new CustomEvent(eventName, {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: true,
+                    detail: detail,
+                    ...config,
+                })
+            );
         }
 
         /**
@@ -168,7 +168,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
             // We only want to configure the arguments on the first bind()
             if (!this._internal.bound) {
                 this.#bindArgs();
-            };
+            }
 
             this.#bindEvents();
             this.#bindDataValues();
@@ -218,23 +218,23 @@ const makeController = (base=HTMLElement, extendTag=null) => {
 
             // Render self
             // TODO: Better way to do this?
-            if (this.renderSelf && typeof this.renderSelf === 'function') {
+            if (this.renderSelf && typeof this.renderSelf === "function") {
                 this.renderSelf();
             }
 
             this.#findRenderableElements().forEach(el => {
                 // Store the original template as an attribute on the element on first render
-                let template = el.getAttribute('_template');
+                let template = el.getAttribute("_template");
                 if (!template) {
                     template = el.innerText;
-                    el.setAttribute('_template', template);
+                    el.setAttribute("_template", template);
                 }
 
                 // If the element has the attribute with .eval then eval the template
                 // This should be used sparingly and only when the content is trusted
                 const evalMode = el.hasAttribute(`@render.eval`);
 
-                let replacerRegex = /\$\{(.*?)\}/g;  // Find template vars: ${var}
+                let replacerRegex = /\$\{(.*?)\}/g; // Find template vars: ${var}
 
                 template.replace(replacerRegex, (replacer, key) => {
                     if (evalMode) {
@@ -247,26 +247,28 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                         let pos = null;
 
                         // Split on dots and brackets and strip out any quotes
-                        key.split(/[\.\[\]]/).filter(item => !!item).forEach(part => {
-                            part = part.replace(/["']/g, '');  // Strip out square brackets
-                            part = part.replace(/\(\)/g, '');  // Strip out function parens
+                        key.split(/[\.\[\]]/)
+                            .filter(item => !!item)
+                            .forEach(part => {
+                                part = part.replace(/["']/g, ""); // Strip out square brackets
+                                part = part.replace(/\(\)/g, ""); // Strip out function parens
 
-                            if (pos == null && part === "this") {
-                                pos = this;
-                                return;
-                            }
+                                if (pos == null && part === "this") {
+                                    pos = this;
+                                    return;
+                                }
 
-                            if (pos && part in pos) {
-                                pos = pos[part];
-                            } else {
-                                pos = null;
-                                return;
-                            }
-                        });
+                                if (pos && part in pos) {
+                                    pos = pos[part];
+                                } else {
+                                    pos = null;
+                                    return;
+                                }
+                            });
 
                         if (pos == null) pos = "";
                         if (typeof pos === "function") pos = pos.call(this);
-                        template = template.replace(replacer, pos.toString() || '');
+                        template = template.replace(replacer, pos.toString() || "");
                     }
                 });
 
@@ -284,10 +286,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
          * @render is a special action that let's the controller know to render this elements content when the render() method is called
          */
         #findRenderableElements() {
-            return [
-                ...this.root.querySelectorAll(`[\\@render]`),
-                ...this.root.querySelectorAll(`[\\@render\\.eval]`),
-            ].filter(el => this.#belongsToController(el))
+            return [...this.root.querySelectorAll(`[\\@render]`), ...this.root.querySelectorAll(`[\\@render\\.eval]`)].filter(el => this.belongsToController(el));
         }
 
         /**
@@ -304,7 +303,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
 
             this.getAttributeNames().forEach(attr => {
                 const value = this.getAttribute(attr);
-                const key = kebabToCamel(attr).replace(':', '');
+                const key = kebabToCamel(attr).replace(":", "");
                 this.args[key] = value;
             });
         }
@@ -332,10 +331,10 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                 const value = el.getAttribute(`@${eventType}${modifier}`);
                 const action = value.replace("this.", "").replace("()", "");
 
-                const callable = (event) => {
-                    if (modifier.includes('.prevent')) event.preventDefault();
+                const callable = event => {
+                    if (modifier.includes(".prevent")) event.preventDefault();
 
-                    if (modifier.includes('.eval')) {
+                    if (modifier.includes(".eval")) {
                         const fn = new Function(`${value}`);
                         fn.call(this);
                     } else {
@@ -361,7 +360,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
             let eventNode = nodesWithEvents.iterateNext();
             while (eventNode) {
                 for (let attr of eventNode.getAttributeNames()) {
-                    if (!attr.startsWith('@')) continue;
+                    if (!attr.startsWith("@")) continue;
 
                     let [event, modifiers] = attr.replace("@", "").split(".", 2);
                     modifiers = modifiers ? `.${modifiers}` : "";
@@ -378,7 +377,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
             // The above does not match attributes on the root node itself so check that manually
             // TODO: This section is the same as the above, de-dupe it
             for (let attr of this.root.getAttributeNames()) {
-                if (!attr.startsWith('@')) continue;
+                if (!attr.startsWith("@")) continue;
 
                 let [event, modifiers] = attr.replace("@", "").split(".", 2);
                 modifiers = modifiers ? `.${modifiers}` : "";
@@ -388,9 +387,7 @@ const makeController = (base=HTMLElement, extendTag=null) => {
 
                 bindEvent(this.root, event, modifiers);
             }
-
         }
-
 
         /**
          * @method
@@ -408,13 +405,13 @@ const makeController = (base=HTMLElement, extendTag=null) => {
             const instance = this;
 
             const tagToEvent = {
-                'input|text': 'keyup',
-                'default': 'change',
+                "input|text": "keyup",
+                default: "change",
             };
 
             // Event handlers for various element types
             const handlers = {
-                'input|checkbox': (instance, varName, e) => {
+                "input|checkbox": (instance, varName, e) => {
                     if (!instance.data[varName]) instance.data[varName] = [];
                     if (e.target.checked) {
                         instance.data[varName].push(e.target.value);
@@ -422,15 +419,15 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                         instance.data[varName] = instance.data[varName].filter(item => item !== e.target.value);
                     }
                 },
-                'select': (instance, varName, e) => {
-                    if (e.target.getAttribute('multiple') !== null) {
+                select: (instance, varName, e) => {
+                    if (e.target.getAttribute("multiple") !== null) {
                         instance.data[varName] = Array.from(e.target.selectedOptions).map(item => item.value);
                     } else {
                         instance.data[varName] = e.target.value;
                     }
                 },
-                'default': (instance, varName, e) => instance.data[varName] = e.target.value,
-            }
+                default: (instance, varName, e) => (instance.data[varName] = e.target.value),
+            };
 
             // Logic to actually bind an element to the controller
             const bindData = (el, modifier) => {
@@ -438,19 +435,17 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                 const eventType = tagToEvent[elType] || tagToEvent.default;
 
                 el.addEventListener(eventType, e => {
-                    const varName = el.getAttribute(`@bind${modifier}`)
-                        .replace("this.data.", "")
-                        .replace("this.", "");
+                    const varName = el.getAttribute(`@bind${modifier}`).replace("this.data.", "").replace("this.", "");
 
                     const handler = handlers[elType] || handlers.default;
                     handler(instance, varName, e);
 
                     // If this element is @bind.render this call render()
-                    if (modifier.includes('.render')) instance.render();
+                    if (modifier.includes(".render")) instance.render();
                 });
             };
 
-            const modifiers = [ "", ...permutations([ ".render" ], true) ];
+            const modifiers = ["", ...permutations([".render"], true)];
             modifiers.forEach(modifier => {
                 // Handle any binds on the root node
                 if (this.hasAttribute(`@bind${modifier}`)) {
@@ -458,9 +453,9 @@ const makeController = (base=HTMLElement, extendTag=null) => {
                 }
 
                 // Handle any binds on the children
-                const escapedModifier = modifier.replace(/\./g, "\\.")
+                const escapedModifier = modifier.replace(/\./g, "\\.");
                 this.root.querySelectorAll(`[\\@bind${escapedModifier}]`).forEach(el => {
-                    if (!this.#belongsToController(el)) return;
+                    if (!this.belongsToController(el)) return;
                     bindData(el, modifier);
                 });
             });
@@ -476,8 +471,8 @@ const makeController = (base=HTMLElement, extendTag=null) => {
          * @returns {String} The element type, e.g. 'input|text'
          */
         #getElementType(el) {
-            if (el.tagName.toLowerCase() === 'input') {
-                return [el.tagName, el.type].map(item => item.toLowerCase()).join('|');
+            if (el.tagName.toLowerCase() === "input") {
+                return [el.tagName, el.type].map(item => item.toLowerCase()).join("|");
             }
             return el.tagName.toLowerCase();
         }
@@ -491,24 +486,20 @@ const makeController = (base=HTMLElement, extendTag=null) => {
          * @param {Element} el The controller root DOM element
          * @returns {Boolean} True if the element belongs to the controller
          */
-        #belongsToController(el) {
+        belongsToController(el) {
             // If we're using the shadow DOM then we only see this controllers children so it must belong to the controller
             if (this.hasShadow) return true;
 
             const closestController = el.closest(`[data-controller]`);
             if (closestController == null) return false;
-            if (closestController.getAttribute('data-controller') !== this.localName) return false;
+            if (closestController !== this) return false;
             return true;
-
         }
-    });
+    };
 
     return CoreController;
-}
+};
 
 const Controller = makeController();
 
-export {
-    makeController,
-    Controller,
-};
+export { makeController, Controller };

@@ -4,9 +4,9 @@ const kebabToCamel = str => str[0].toLowerCase() + str.slice(1, str.length).repl
 
 /**
  * Returns the permutations of an array for all combinations and lengths
- * @param {*} arr 
+ * @param {*} arr
  */
-const permutations = (arr, toString=false) => {
+const permutations = (arr, toString = false) => {
     // Group each chunk of permutations of each length
     // ie. group all the length-1 permutations, and the length-2 permutations, etc...
     let chunks = {};
@@ -25,7 +25,7 @@ const permutations = (arr, toString=false) => {
         for (let permutation of chunks[targetLen - 1]) {
             for (let item of arr) {
                 if (permutation.includes(item)) continue;
-                newChunk.push([ item, ...permutation ]);
+                newChunk.push([item, ...permutation]);
             }
         }
 
@@ -40,7 +40,7 @@ const permutations = (arr, toString=false) => {
         let formattedResults = [];
         for (let group of results) {
             for (let permutation of group) {
-                formattedResults.push(permutation.join(''));
+                formattedResults.push(permutation.join(""));
             }
         }
 
@@ -60,7 +60,7 @@ const permutations = (arr, toString=false) => {
  * 2h => 2 hours
  * @param {string} duration A string duration
  */
-const parseDuration = (duration) => {
+const parseDuration = duration => {
     const [_, interval, unit] = /(\d+)(\w+)/.exec(duration);
 
     // Calculate the duration in milliseconds
@@ -71,16 +71,16 @@ const parseDuration = (duration) => {
     // h: hours
     let timeout = 0;
     switch (unit) {
-        case 'ms':
+        case "ms":
             timeout = interval;
             break;
-        case 's':
+        case "s":
             timeout = interval * 1000;
             break;
-        case 'm':
+        case "m":
             timeout = interval * 1000 * 60;
             break;
-        case 'h':
+        case "h":
             timeout = interval * 1000 * 60 * 60;
             break;
     }
@@ -91,17 +91,16 @@ const parseDuration = (duration) => {
 // Allows defining template literals with syntax highlighting
 const template = (strings, ...values) => {
     return strings.reduce((acc, str, i) => {
-        return acc + str + (values[i] || '');
-    }, '');
+        return acc + str + (values[i] || "");
+    }, "");
 };
-
 
 // Parse a string as a boolean
 // Falsey values are
 // "" (empty string)
 // 0 or "0"
 // false or "false"
-const parseBoolean = (value) => {
+const parseBoolean = value => {
     if (!value || value == "" || value == "0" || value.toLowerCase() == "false") {
         return false;
     }
@@ -109,13 +108,4 @@ const parseBoolean = (value) => {
     return true;
 };
 
-
-export {
-    pascalToKebab,
-    kebabToCamel,
-    permutations,
-    parseDuration,
-    template as html,
-    template as css,
-    parseBoolean,
-};
+export { pascalToKebab, kebabToCamel, permutations, parseDuration, template as html, template as css, parseBoolean };
