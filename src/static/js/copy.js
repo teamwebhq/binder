@@ -1,3 +1,4 @@
+// This is the code for the copy button on the code blocks
 window.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".copy").forEach(btn => {
         btn.addEventListener("click", e => {

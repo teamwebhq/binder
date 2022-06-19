@@ -98,6 +98,14 @@ const makeController = (base = HTMLElement, extendTag = null) => {
         }
 
         /**
+         * Runs when the element in removed from the DOM
+         */
+        disconnectedCallback() {
+            this._events.forEach(e => e.el.removeEventListener(e.eventType, e.event));
+            this._events = [];
+        }
+
+        /**
          * @method
          * @name attributeChangedCallback
          * @memberof! Controller
