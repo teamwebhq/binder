@@ -363,7 +363,7 @@ const makeController = (base = HTMLElement, extendTag = null) => {
             // TODO: Not sure of the performance impact of this
             // Need to benchmark and compare to plain querySelector
             // Another option is to parse the DOM as a string ourselves
-            const nodesWithEvents = document.evaluate(`./*[starts-with(name(@*),"@")]`, this.root);
+            const nodesWithEvents = document.evaluate(`.//*[@*[starts-with(name(), "@")]]`, this.root);
 
             let eventNode = nodesWithEvents.iterateNext();
             while (eventNode) {

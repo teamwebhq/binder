@@ -11,5 +11,6 @@ if [[ $1 == "watch" ]]; then
 else
     npx swc \
       --quiet \
+      --source-maps true \
       ./src/static/js/binder/ --out-dir ./build/
 fi

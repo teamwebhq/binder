@@ -101,7 +101,11 @@ const template = (strings, ...values) => {
 // 0 or "0"
 // false or "false"
 const parseBoolean = value => {
-    if (!value || value == "" || value == "0" || value.toLowerCase() == "false") {
+    if (!value || value == "" || value == "0") {
+        return false;
+    }
+
+    if (value && value.toLowerCase && value.toLowerCase() == "false") {
         return false;
     }
 
