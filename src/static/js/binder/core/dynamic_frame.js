@@ -75,19 +75,24 @@ class DynamicFrame extends Controller {
     }
 
     /**
-     * Alias for `render()`
+     * Reload the frame content then call `render()`
      * @memberof! DynamicFrame
      */
     async refresh() {
+        await this.loadContent();
         await this.render();
     }
 
     /**
-     * Reload the frame content
+     * Render the frame content
+     * If `loadContent` has not been called at least once then call that too
      * @memberof! DynamicFrame
      */
     async render() {
-        await this.loadContent();
+        if (!this._internal.hasLoadedAtLeastOnce) {
+            await this.loadContent();
+        }
+
         await super.render();
         this.saveState();
     }
@@ -161,6 +166,7 @@ class DynamicFrame extends Controller {
 
         await Promise.allSettled([new Promise(resolve => setTimeout(resolve, this.args.delay)), sendReq()]);
 
+        this._internal.hasLoadedAtLeastOnce = true;
         return ok;
     }
 
