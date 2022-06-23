@@ -138,7 +138,7 @@ const makeController = (base = HTMLElement, extendTag = null) => {
          * @param {object} config Optional configuration object that can be passed to `new CustomEvent()`
          */
         emit(eventName, detail = {}, config = {}) {
-            window.dispatchEvent(
+            this.dispatchEvent(
                 new CustomEvent(eventName, {
                     bubbles: true,
                     cancelable: true,
@@ -154,12 +154,12 @@ const makeController = (base = HTMLElement, extendTag = null) => {
          * @name listenFor
          * @memberof! Controller
          * @description Listens for an event to be fired from a child element
-         * @param {string} elementName The child element tag name to listen for
+         * @param {Element} target The element to listen for events from, use `window` to listen for global events
          * @param {string} eventName The name of the event to listen for
          * @param {function} callback The callback to call when the event is fired
          */
-        listenFor(eventName, callback) {
-            window.addEventListener(eventName, e => callback(e));
+        listenFor(target, eventName, callback) {
+            target.addEventListener(eventName, e => callback(e));
         }
 
         /**
@@ -346,7 +346,11 @@ const makeController = (base = HTMLElement, extendTag = null) => {
                         const fn = new Function(`${value}`);
                         fn.call(this);
                     } else {
-                        this[action](event);
+                        try {
+                            this[action](event);
+                        } catch (e) {
+                            console.error(`Failed to call '${action}' to handle '${event.type}' event on tag '${this.localName}'`, e);
+                        }
                     }
                 };
 
@@ -367,6 +371,11 @@ const makeController = (base = HTMLElement, extendTag = null) => {
 
             let eventNode = nodesWithEvents.iterateNext();
             while (eventNode) {
+                if (!this.belongsToController(eventNode)) {
+                    eventNode = nodesWithEvents.iterateNext();
+                    continue;
+                }
+
                 for (let attr of eventNode.getAttributeNames()) {
                     if (!attr.startsWith("@")) continue;
 
