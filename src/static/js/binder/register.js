@@ -44,12 +44,8 @@ const registerControllers = (...controllers) => {
             console.error(`[${controllerName}] Controller tag name must contain a hyphen but got <${controllerTag}>`);
         }
 
-        // If our controller has a __tag__ property then it extends that tag
-        let opts = {};
-        if (controller._extendTag) opts.extends = controller._extendTag;
-
         // Create an anonymous class here to avoid name clashes when using the bare controller with a custom name
-        window.customElements.define(controllerTag, controller, opts);
+        window.customElements.define(controllerTag, controller, {});
     }
 };
 

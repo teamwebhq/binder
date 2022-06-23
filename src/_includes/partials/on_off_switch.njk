@@ -1,26 +1,29 @@
-<!--
-This is our DOM element
-In this case it's just a `button` that is bound to the `on-off-switch` component
-
-We bind the `click` event to the `toggle` method of the controller
--->
-<button is="on-off-switch" @click="this.toggle">LOADING...</button>
+<on-off-switch>LOADING...</on-off-switch>
 
 <script type="module">
-    import { registerControllers, makeController } from '/static/js/binder/binder.js';
+    import { registerControllers, Controller } from '/static/js/binder/binder.js';
 
-    class OnOffSwitch extends makeController(HTMLButtonElement, "button") {
+    class OnOffSwitch extends Controller {
         // The `init` method is called when the controller is first created
         // Use this to handle your setup logic
         init() {
             this.isOn = true;
-            this.root.innerText = "ON";
-        }
 
+            // Using the `@render` attribute here will re-render the this element
+            // Each time `render()` is called
+            // Using `@render.eval` allows us to use JavaScript expressions in the template
+            this.innerHTML = '<button @render.eval @click="toggle">${this.isOn ? "ON" : "OFF"}</button>';
+
+            // If we change the innerHTML, we need to bind again to setup any binder event listeners
+            // @click and @render in this case
+            this.bind();
+        }
+        
         // This is the click handler for the button
+        // We manually trigger a render here to update the button text
         toggle() {
             this.isOn = !this.isOn;
-            this.root.innerText = this.isOn ? "ON" : "OFF";
+            this.render();
         }
     }
 

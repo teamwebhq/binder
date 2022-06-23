@@ -2,10 +2,9 @@
 {% extends "surround/base.njk" %}
 {% from "macros/render_controller.njk" import render_controller %}
 
-
 {% block content %}
     {# Load Monaco editor #}
-    <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.32.1/min/vs/editor/editor.main.min.css">
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.32.1/min/vs/editor/editor.main.min.css" />
 
     <script>var require = { paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.32.1/min/vs' } };</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.32.1/min/vs/loader.min.js"></script>
@@ -48,10 +47,9 @@
         }
     </style>
 
-
     <script type="module">
         // We import everything here so it's available in the playground
-        import { registerControllers, Controller, makeController } from '/static/js/binder/binder.js';
+        import { registerControllers, Controller } from '/static/js/binder/binder.js';
         import { pascalToKebab, kebabToCamel, parseBoolean, html, css } from '/static/js/binder/util.js';
         import { DynamicFrame } from '/static/js/binder/core/dynamic_frame.js';
 
