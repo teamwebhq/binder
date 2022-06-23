@@ -360,7 +360,8 @@ class DynamicFrame extends Controller {
          * @param {*} url
          */
         const loadUrl = url => {
-            const [origin, query] = url.split("?");
+            let [origin, query] = url.split("?");
+            if (!query) query = "";
             const params = Object.fromEntries(query.split("&").map(part => part.split("=")));
 
             this.setParams(params);
@@ -372,10 +373,10 @@ class DynamicFrame extends Controller {
             let target = e.target || e.srcElement;
 
             if (target.tagName === "A" && this.belongsToController(target)) {
+                e.preventDefault();
                 const href = target.getAttribute("href");
                 loadUrl(href);
-                this.render();
-                e.preventDefault();
+                this.loadContent();
             }
         });
 
