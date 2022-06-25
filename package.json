@@ -1,8 +1,8 @@
 {
   "devDependencies": {
+    "@11ty/eleventy": "^1.0.0",
     "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.165",
-    "@11ty/eleventy": "^1.0.0"
+    "@swc/core": "^1.2.165"
   },
   "name": "binder",
   "description": "This repository contains the `binder.js` code and the [11ty](https://www.11ty.dev/) static site https://binderjs.com.   To learn more about binder.js see https://binderjs.com.",
@@ -23,5 +23,7 @@
   "bugs": {
     "url": "https://github.com/teamwebhq/binder/issues"
   },
-  "homepage": "https://github.com/teamwebhq/binder#readme"
+  "homepage": "https://github.com/teamwebhq/binder#readme",
+  "dependencies": {
+  }
 }

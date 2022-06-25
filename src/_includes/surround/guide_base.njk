@@ -5,18 +5,18 @@
     <div id="guide" class="row">
         <div id="guide-contents" class="col-2">
             <ul>
-                <li><a id="guide-c-introduction" href="/guide/introduction">Introduction</a></li>
-                <li><a id="guide-c-our-first-controller" href="/guide/our-first-controller">Our First Controller</a></li>
-                <li><a id="guide-c-arguments" href="/guide/arguments">Arguments</a></li>
-                <li><a href="#">Event Binding</a></li>
-                <li><a href="#">Data Binding</a></li>
-                <li><a href="#">Rendering</a></li>
-                <li><a href="#">Observed Attributes</a></li>
-                <li><a href="#">The Shadow DOM</a></li>
+                <li><a href="/guide/introduction/">Introduction</a></li>
+                <li><a href="/guide/our-first-controller/">Our First Controller</a></li>
+                <li><a href="/guide/arguments/">Arguments</a></li>
+                <li><a href="/guide/event-binding/">Event Binding</a></li>
+                <li><a href="/guide/data-binding/">Data Binding</a></li>
+                <li><a href="/guide/rendering/">Rendering</a></li>
+                <li><a href="/guide/observed-attributes/">Observed Attributes</a></li>
+                <li><a href="/guide/the-shadow-dom/">The Shadow DOM</a></li>
                 <li>
-                    <a href="#">Core Controllers</a>
+                    <a href="/guide/core-controllers/">Core Controllers</a>
                     <ul>
-                        <li><a href="#">Dynamic Frame</a></li>
+                        <li><a href="/guide/core-controllers/dynamic-frame/">Dynamic Frame</a></li>
                     </ul>
                 </li>
             </ul>
@@ -46,7 +46,7 @@
         }
 
         /* Dynamically style the active content entry */
-        #guide-c-{{ active }} {
+        a[href="/{{permalink}}"] {
             color: var(--color-active);
             font-weight: bold;
         }

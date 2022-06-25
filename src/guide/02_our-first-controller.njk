@@ -1,0 +1,19 @@
+---
+title: Our First Controller
+layout: "surround/guide_base.njk"
+permalink: "guide/our-first-controller/"
+---
+
+{% markdown %}
+
+# Our First Controller
+
+[Custom Elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) are a way to create custom HTML elements, binder helps simplify the process of creating new elements, managing their state and handling events.
+
+In binder we call our custom elements **Controllers**.  
+There are two parts to a controller, the HTML and the JavaScript class behind it.
+
+{% endmarkdown %}
+
+{% from "macros/render_controller.njk" import render_controller %}
+{{ render_controller("partials/our_first_controller.njk", open=true) }}

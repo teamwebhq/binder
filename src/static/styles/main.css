@@ -4,10 +4,15 @@
 body {
     font-weight: 300;
     border-top: 5px solid var(--color-primary);
+    margin-bottom: 60px;
 }
 
 strong {
     font-weight: 600;
+}
+
+fieldset {
+    padding: 15px;
 }
 
 code {

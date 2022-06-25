@@ -1,0 +1,18 @@
+<!-- This is our custom element -->
+<our-first-controller></our-first-controller>
+
+<script type="module">
+    import { Controller, registerControllers } from "/static/js/binder/binder.js";
+
+    // This class defines the logic behind our element
+    class OurFirstController extends Controller {
+        // The init method is called when a new element is added to the DOM
+        init() {
+            // Put your set up code here
+            this.innerHTML = "<p>Hello, World!</p>";
+        }
+    }
+
+    // We need to "register" all controllers, this is what connects up the HTML to the JavaScript
+    registerControllers(OurFirstController);
+</script>
