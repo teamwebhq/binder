@@ -1,4 +1,10 @@
-<on-off-switch>LOADING...</on-off-switch>
+<on-off-switch>
+    <!--
+    Using the `@render` attribute here will re-render this element each time `render()` is called 
+    Using `@render.eval` allows us to use JavaScript expressions in the template
+    -->
+    <button @render.eval @click="this.toggle">${this.isOn ? "ON" : "OFF"}</button>
+</on-off-switch>
 
 <script type="module">
     import { registerControllers, Controller } from '/static/js/binder/binder.js';
@@ -8,15 +14,6 @@
         // Use this to handle your setup logic
         init() {
             this.isOn = true;
-
-            // Using the `@render` attribute here will re-render the this element
-            // Each time `render()` is called
-            // Using `@render.eval` allows us to use JavaScript expressions in the template
-            this.innerHTML = '<button @render.eval @click="toggle">${this.isOn ? "ON" : "OFF"}</button>';
-
-            // If we change the innerHTML, we need to bind again to setup any binder event listeners
-            // @click and @render in this case
-            this.bind();
         }
         
         // This is the click handler for the button
