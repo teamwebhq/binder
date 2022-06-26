@@ -1,0 +1,48 @@
+<total-clicks>
+    <p @render>Total clicks: ${this.data.clicks}</p>
+    <p @render>Last click was from: ${this.data.lastClick}</p>
+</total-clicks>
+
+<clicker-item id="clicker-a">
+    <button @click="emitClick">A</button>
+</clicker-item>
+
+<clicker-item id="clicker-b">
+    <button @click="emitClick">B</button>
+</clicker-item>
+
+<clicker-item id="clicker-c">
+    <button @click="emitClick">C</button>
+</clicker-item>
+
+<script type="module">
+    import { registerControllers, Controller } from '/static/js/binder/binder.js';
+
+    class TotalClicks extends Controller {
+        init() {
+            this.data.clicks = 0;
+            this.data.lastClick = "none";
+
+            // We can either listen on the `window` for events which bubble up
+            // or listen on a specific element
+            this.listenFor(window, "clicker-clicked", e => {
+                this.data.clicks++;
+                this.data.lastClick = e.detail.from;
+                this.render();
+            });
+        }
+    }
+
+    class ClickerItem extends Controller {
+        emitClick() {
+            // We can emit regular events like `click` or `change` or any arbitrary custom event
+            // We can also pass data along with the event
+            this.emit("clicker-clicked", {
+                from: this.id
+            });
+        }
+    }
+
+    registerControllers(TotalClicks, ClickerItem);
+</script>
+

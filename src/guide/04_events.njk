@@ -1,0 +1,59 @@
+---
+title: Events
+layout: "surround/guide_base.njk"
+permalink: "guide/events/"
+---
+
+{% from "macros/render_controller.njk" import render_controller %}
+
+{% markdown %}
+
+# Event Listeners
+
+Binder makes it easy to attach event listeners to your elements using `@{eventType}={action}` syntax, eg. `@click="someMethod"` where `click` is the event to listen for and `someMethod` is a method on your controller class.  
+
+{% endmarkdown %}
+
+{{ render_controller("partials/click_counter.njk") }}
+
+{% markdown %}
+
+### Modifiers
+
+There are a couple of modifiers that can be used when setting up event listeners. Modifiers can be mixed and appear in any order.  
+
+#### `.prevent`
+The `.prevent` modifier will call `event.preventDefault()` and stop events from triggering their default actions.  
+
+#### `.stop`
+The `.stop` modifier will call `event.stopPropagation()` and stop events from bubbling up the DOM.
+
+#### `.eval`
+The `.eval` modifier will evaluate the action instead of calling a method on the controller, allowing you to use any arbitrary JavaScript expression as your action.  
+The controller instance will be bound to `this` allowing you to still access the controller instance.
+
+```html
+<some-controller>
+    <!-- When clicked will log "Clicked SOME-CONTROLLER" -->
+    <button @click.eval="alert(`Clicked ${this.tagName}!`)">Click me!</button>
+</some-controller>
+```
+
+<hr />
+
+# Emiting Events
+
+Controllers can also emit custom events by calling `this.emit(eventName, eventData)`, combined with the event listener syntax this allows seamless communication between controllers.
+
+{% endmarkdown %}
+
+{{ render_controller("partials/events_example.njk") }}
+
+{% markdown %}
+
+---
+
+Next: []()
+
+{% endmarkdown %}
+

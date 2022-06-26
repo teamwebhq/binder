@@ -318,6 +318,7 @@ class Controller extends HTMLElement {
      *
      * The attribute key can also end with a combination of modifiers:
      * - `.prevent`: Automatically calls `event.preventDefault()`
+     * - `.stop`: Automatically calls `event.stopPropagation()`
      * - `.eval`: Will evaluate the attribute value
      */
     #bindEvents() {
@@ -332,6 +333,7 @@ class Controller extends HTMLElement {
 
             const callable = event => {
                 if (modifier.includes(".prevent")) event.preventDefault();
+                if (modifier.includes(".stop")) event.stopPropagation();
 
                 if (modifier.includes(".eval")) {
                     const fn = new Function(`${value}`);

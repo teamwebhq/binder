@@ -1,10 +1,8 @@
-<!-- HTML -->
 <click-counter>
     <p @render>Clicks: ${this.data.clicks}</p>
-    <button @click.prevent="this.count()">Click me!</button>
+    <button @click="this.count()">Click me!</button>
 </click-counter>
 
-<!-- JavaScript -->
 <script type="module">
     import { registerControllers, Controller } from '/static/js/binder/binder.js';
 

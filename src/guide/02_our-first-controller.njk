@@ -4,6 +4,8 @@ layout: "surround/guide_base.njk"
 permalink: "guide/our-first-controller/"
 ---
 
+{% from "macros/render_controller.njk" import render_controller %}
+
 {% markdown %}
 
 # Our First Controller
@@ -15,5 +17,4 @@ There are two parts to a controller, the HTML and the JavaScript class behind it
 
 {% endmarkdown %}
 
-{% from "macros/render_controller.njk" import render_controller %}
 {{ render_controller("partials/our_first_controller.njk", open=true) }}
