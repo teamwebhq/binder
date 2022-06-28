@@ -72,6 +72,8 @@ class DynamicFrame extends Controller {
         if (parseBoolean(this.args.contained)) {
             this.containFrame();
         }
+
+        await this.loadContent();
     }
 
     /**
@@ -81,20 +83,6 @@ class DynamicFrame extends Controller {
     async refresh() {
         await this.loadContent();
         await this.render();
-    }
-
-    /**
-     * Render the frame content
-     * If `loadContent` has not been called at least once then call that too
-     * @memberof! DynamicFrame
-     */
-    async render() {
-        if (!this._internal.hasLoadedAtLeastOnce) {
-            await this.loadContent();
-        }
-
-        await super.render();
-        this.saveState();
     }
 
     /**
@@ -165,8 +153,8 @@ class DynamicFrame extends Controller {
         };
 
         await Promise.allSettled([new Promise(resolve => setTimeout(resolve, this.args.delay)), sendReq()]);
+        this.saveState();
 
-        this._internal.hasLoadedAtLeastOnce = true;
         return ok;
     }
 

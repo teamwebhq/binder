@@ -75,11 +75,18 @@ class Controller extends HTMLElement {
     async connectedCallback() {
         if (!this.isConnected) return;
 
-        this.renderOnInit = parseBoolean(this.renderOnInit || "true");
-
+        // Bind the element to this instance
         this.bind();
+
+        // Init the element
+        if (this.args.hasOwnProperty("renderOnInit")) {
+            this.renderOnInit = parseBoolean(this.args.renderOnInit);
+        } else {
+            this.renderOnInit = true;
+        }
         await this.init(this.args);
 
+        // Render
         if (this.autoRender) {
             const interval = parseDuration(this.autoRender);
             this.setAutoRender(interval);
@@ -214,13 +221,6 @@ class Controller extends HTMLElement {
      */
     async render() {
         // TODO: Might be handy to be able to render one element or element tree
-
-        // Render self
-        // TODO: Better way to do this?
-        if (this.renderSelf && typeof this.renderSelf === "function") {
-            this.renderSelf();
-        }
-
         this.#findRenderableElements().forEach(el => {
             // Store the original template as an attribute on the element on first render
             let template = el.getAttribute("_template");

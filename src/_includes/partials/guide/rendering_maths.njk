@@ -1,0 +1,14 @@
+<render-maths>
+    <p @render.eval>2 + 2 = ${2 + 2}</p>
+</render-maths>
+
+<script type="module">
+    import { Controller, registerControllers } from "/static/js/binder/binder.js";
+
+    class RenderMaths extends Controller {
+    }
+
+    // We need to "register" all controllers, this is what connects up the HTML to the JavaScript
+    registerControllers(RenderMaths);
+</script>
+

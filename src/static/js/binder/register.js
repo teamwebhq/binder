@@ -44,8 +44,6 @@ const registerControllers = (...controllers) => {
             console.error(`[${controllerName}] Controller tag name must contain a hyphen but got <${controllerTag}>`);
         }
 
-        console.log(`Registering ${controllerTag}`);
-
         // Create an anonymous class here to avoid name clashes when using the bare controller with a custom name
         window.customElements.define(controllerTag, controller, {});
     }

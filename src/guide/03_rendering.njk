@@ -1,0 +1,39 @@
+---
+title: Rendering
+layout: "surround/guide_base.njk"
+permalink: "guide/rendering/"
+---
+
+{% from "macros/render_controller.njk" import render_controller %}
+
+{% markdown %}
+
+# Rendering
+
+Binder allows you to use JavaScript template literals within your custom elements via the `@render` attribute.  
+
+{% endmarkdown %}
+
+{{ render_controller("partials/guide/rendering.njk", open=false) }}
+
+{% markdown %}
+
+<br />
+
+There are two render modes, the first, as shown above, is a basic replace of variables within the controller.  
+If you need more flexibility you can use `@render.eval` to use full JavaScript expressions in your template.
+{% endmarkdown %}
+
+{{ render_controller("partials/guide/rendering_maths.njk", open=false) }}
+
+{% markdown %}
+
+<br />
+
+In your controllers you can define your own `render()` method to handle rendering
+
+<hr />
+
+Next: []()
+
+{% endmarkdown %}

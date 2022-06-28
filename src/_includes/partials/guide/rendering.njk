@@ -1,0 +1,17 @@
+<render-example>
+    <p @render>Hello ${this.name}</p>
+</render-example>
+
+<script type="module">
+    import { Controller, registerControllers } from "/static/js/binder/binder.js";
+
+    class RenderExample extends Controller {
+        init() {
+            this.name = "World!";
+        }
+    }
+
+    // We need to "register" all controllers, this is what connects up the HTML to the JavaScript
+    registerControllers(RenderExample);
+</script>
+

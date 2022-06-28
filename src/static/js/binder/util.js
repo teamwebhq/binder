@@ -97,15 +97,24 @@ const template = (strings, ...values) => {
 
 // Parse a string as a boolean
 // Falsey values are
-// "" (empty string)
 // 0 or "0"
-// false or "false"
+// false or "false" (not case sensitive)
+// null
+// NOTE: An empty string or no value at all is **true**
 const parseBoolean = value => {
-    if (!value || value == "" || value == "0") {
+    if (value === null || value === undefined) {
         return false;
     }
 
-    if (value && value.toLowerCase && value.toLowerCase() == "false") {
+    if (value === false) {
+        return false;
+    }
+
+    if (value === 0 || value === "0") {
+        return false;
+    }
+
+    if (value && value.toLowerCase && value.toLowerCase() === "false") {
         return false;
     }
 
