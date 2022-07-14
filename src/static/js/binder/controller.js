@@ -28,7 +28,7 @@ class Controller extends HTMLElement {
         this._internal = {};
 
         this.root = this;
-        this.args = args;
+        this.args = args || {};
 
         // Keep track of all attached events
         this._events = [];
@@ -41,12 +41,18 @@ class Controller extends HTMLElement {
 
         // Add the data-controller attribute to the element
         this.setAttribute("data-controller", this.localName);
+    }
 
-        this.template = this.root.querySelector("template");
-
+    /**
+     * Work in progress
+     * If the element has a `<template>` with a `:use-shadow` attribute, it will be used to create a shadow root
+     * When using the shadow DOM the `bind()` call fails
+     */
+    handleShadow() {
         // If the component has a template then we will clone it and render that to the DOM
         // If the template has the :use-shadow attribute then we will clone it onto the shadow DOM
         // This allows isolating the component from the regular DOM (including styles)
+        this.template = this.querySelector("template");
 
         // The template is optional, if not specified then we will do everything directly on the DOM within the component
         if (this.template) {
@@ -75,8 +81,10 @@ class Controller extends HTMLElement {
     async connectedCallback() {
         if (!this.isConnected) return;
 
+        this.handleShadow();
+
         // Bind the element to this instance
-        this.bind();
+        if (!this.hasShadow) this.bind();
 
         // Init the element
         if (this.args.hasOwnProperty("renderOnInit")) {
