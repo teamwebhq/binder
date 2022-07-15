@@ -145,7 +145,6 @@ class DynamicFrame extends Controller {
                 let response = await fetch(url, { signal: abortController.signal });
                 let text = await response.text();
                 this.updateContent(text);
-                this.findAndExecuteScripts();
             } catch (err) {
                 console.error(err);
                 ok = false;
@@ -159,32 +158,6 @@ class DynamicFrame extends Controller {
     }
 
     /**
-     * Called during `loadContent()`
-     * Will find all script tags within the frame and execute them
-     * Only if the frame has the `execute-scripts` attribute set to true
-     * @memberof! DynamicFrame
-     */
-    findAndExecuteScripts() {
-        if (!this.args.executeScripts) return;
-
-        let scripts = this.querySelectorAll("script");
-        if (!scripts) return;
-
-        [...scripts].forEach(script => {
-            let newScript = document.createElement("script");
-            newScript.setAttribute("type", script.type || "text/javascript");
-
-            if (script.getAttribute("src")) {
-                newScript.setAttribute("src", script.getAttribute("src"));
-                this.appendChild(newScript);
-            } else {
-                newScript.appendChild(document.createTextNode(script.innerHTML));
-                this.appendChild(newScript);
-            }
-        });
-    }
-
-    /**
      * Actually updates the content
      * This is where the artificial delay is applied
      * @param content - The content to use
@@ -194,12 +167,41 @@ class DynamicFrame extends Controller {
     updateContent(content, mode = null) {
         if (!mode) mode = this.args.mode || "replace";
 
+        const template = document.createElement("template");
+        template.innerHTML = content;
+
+        // If we want to execute scripts then go through our template and turn script tags into real scripts
+        if (this.args.executeScripts) {
+            let scripts = template.content.querySelectorAll("script");
+
+            [...scripts].forEach(script => {
+                let newScript = document.createElement("script");
+                newScript.setAttribute("type", script.type || "text/javascript");
+
+                if (script.getAttribute("src")) {
+                    newScript.setAttribute("src", script.getAttribute("src"));
+                    script.replaceWith(newScript);
+                } else {
+                    newScript.appendChild(document.createTextNode(script.innerHTML));
+                    script.replaceWith(newScript);
+                }
+            });
+
+            let links = template.content.querySelectorAll("link");
+            [...links].forEach(link => {
+                let newLink = document.createElement("link");
+                newLink.setAttribute("rel", link.rel || "stylesheet");
+                newLink.setAttribute("href", link.getAttribute("href"));
+                link.replaceWith(newLink);
+            });
+        }
+
         if (mode === "replace") {
-            this.mountPoint.innerHTML = content;
+            this.mountPoint.replaceChildren(template.content);
         } else if (mode === "append") {
-            this.mountPoint.insertAdjacentHTML("beforeEnd", content);
+            this.mountPoint.appendChild(template.content);
         } else if (mode === "prepend") {
-            this.mountPoint.insertAdjacentHTML("afterBegin", content);
+            this.mountPoint.prepend(template.content);
         }
     }
 
