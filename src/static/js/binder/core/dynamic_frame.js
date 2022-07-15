@@ -176,23 +176,15 @@ class DynamicFrame extends Controller {
 
             [...scripts].forEach(script => {
                 let newScript = document.createElement("script");
-                newScript.setAttribute("type", script.type || "text/javascript");
 
-                if (script.getAttribute("src")) {
-                    newScript.setAttribute("src", script.getAttribute("src"));
-                    script.replaceWith(newScript);
-                } else {
-                    newScript.appendChild(document.createTextNode(script.innerHTML));
-                    script.replaceWith(newScript);
-                }
-            });
+                // Copy all attributes to the new script
+                [...script.attributes].forEach(attr => newScript.setAttribute(attr.name, attr.value));
 
-            let links = template.content.querySelectorAll("link");
-            [...links].forEach(link => {
-                let newLink = document.createElement("link");
-                newLink.setAttribute("rel", link.rel || "stylesheet");
-                newLink.setAttribute("href", link.getAttribute("href"));
-                link.replaceWith(newLink);
+                // Copy the content of the script tag
+                if (script.innerHTML) newScript.appendChild(document.createTextNode(script.innerHTML));
+
+                // Add the script tag back in
+                script.replaceWith(newScript);
             });
         }
 
