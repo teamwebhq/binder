@@ -3,7 +3,7 @@
     Using the `@render` attribute here will re-render this element each time `render()` is called 
     Using `@render.eval` allows us to use JavaScript expressions in the template
     -->
-    <button @render.eval @click="this.toggle">${this.isOn ? "ON" : "OFF"}</button>
+    <button @render.eval @click="this.toggle">{this.isOn ? "ON" : "OFF"}</button>
 </on-off-switch>
 
 <script type="module">

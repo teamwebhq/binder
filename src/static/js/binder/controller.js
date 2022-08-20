@@ -242,7 +242,8 @@ class Controller extends HTMLElement {
             // This should be used sparingly and only when the content is trusted
             const evalMode = el.hasAttribute(`@render.eval`);
 
-            let replacerRegex = /\$\{(.*?)\}/g; // Find template vars: ${var}
+            // TODO: Make the replacer syntax configurable
+            let replacerRegex = /\{(.*?)\}/g; // Find template vars, eg {var}
 
             template.replace(replacerRegex, (replacer, key) => {
                 if (evalMode) {
@@ -385,13 +386,17 @@ class Controller extends HTMLElement {
     }
 
     /**
-     * Generator returning nodes which have events on them
+     * @method
+     * @private
+     * @name findEventNodes
+     * @memberof! Controller
+     * @description Generator returning nodes which have events on them
      * We do things a little differently depending on whether we are using the shadow DOM or not
-     * If using the light DOM we use `document.evaluate` and xpath
+     * If using the light DOM we use `document.evaluate` with an xpath expression
      * If using the shadow DOM we need to manually iterate through all nodes, which is slower
-     * TODO: Actually benchmark this to confirm if it's slower
      */
     *#findEventNodes() {
+        // TODO: Actually benchmark this to confirm if it's slower
         if (this.hasShadow) {
             const allNodes = this.root.querySelectorAll("*");
             for (let node of allNodes) {

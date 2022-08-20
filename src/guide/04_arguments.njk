@@ -17,7 +17,7 @@ Binder controllers allow passing arguments through to the JavaScript, these are 
 ```js
 class OurFirstController extends Controller {
     init() {
-        this.innerHTML = `<p>${this.args.greeting}, World!</p>`;
+        this.innerHTML = `<p>{this.args.greeting}, World!</p>`;
     }
 }
 ```

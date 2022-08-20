@@ -154,7 +154,7 @@ registerControllers(GreeterComponent);`;
 
                 const defaultHtml = `<greeter-component :default-name="World">
     <input type="text" @bind.render="name" />
-    <p @render.eval>Hello, \${this.data.name || this.args.defaultName}</p>
+    <p @render.eval>Hello, {this.data.name || this.args.defaultName}</p>
     <button @click="this.randomize">Random Name</button>
 </greeter-component>`;
 
