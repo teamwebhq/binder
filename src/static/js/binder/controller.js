@@ -60,6 +60,7 @@ class Controller extends HTMLElement {
 
             // Only use the shadowDOM when specified
             if (this.template.hasAttribute(":use-shadow")) {
+                console.debug(`[${this.localName}] Initialising shadow DOM`);
                 this.attachShadow({ mode: "open" }).appendChild(this.content.cloneNode(true));
 
                 this.root = this.shadowRoot;
@@ -84,7 +85,7 @@ class Controller extends HTMLElement {
         this.handleShadow();
 
         // Bind the element to this instance
-        if (!this.hasShadow) this.bind();
+        this.bind();
 
         // Init the element
         if (this.args.hasOwnProperty("renderOnInit")) {
@@ -364,20 +365,12 @@ class Controller extends HTMLElement {
             });
         };
 
-        // Find all controller child nodes with attributes that start with `@`
-        // TODO: Not sure of the performance impact of this
-        // Need to benchmark and compare to plain querySelector
-        // Another option is to parse the DOM as a string ourselves
-        const nodesWithEvents = document.evaluate(`.//*[@*[starts-with(name(), "@")]]`, this.root);
+        // Go through all nodes which have events on them
+        // eg. nodes which have any attribute starting with `@`
+        for (let node of this.#findEventNodes()) {
+            if (!this.belongsToController(node)) continue;
 
-        let eventNode = nodesWithEvents.iterateNext();
-        while (eventNode) {
-            if (!this.belongsToController(eventNode)) {
-                eventNode = nodesWithEvents.iterateNext();
-                continue;
-            }
-
-            for (let attr of eventNode.getAttributeNames()) {
+            for (let attr of node.getAttributeNames()) {
                 if (!attr.startsWith("@")) continue;
 
                 let [event, modifiers] = attr.replace("@", "").split(".", 2);
@@ -386,10 +379,33 @@ class Controller extends HTMLElement {
                 // @render and @bind are handled separately
                 if (event === "render" || event === "bind") continue;
 
-                bindEvent(eventNode, event, modifiers);
+                bindEvent(node, event, modifiers);
             }
+        }
+    }
 
-            eventNode = nodesWithEvents.iterateNext();
+    /**
+     * Generator returning nodes which have events on them
+     * We do things a little differently depending on whether we are using the shadow DOM or not
+     * If using the light DOM we use `document.evaluate` and xpath
+     * If using the shadow DOM we need to manually iterate through all nodes, which is slower
+     * TODO: Actually benchmark this to confirm if it's slower
+     */
+    *#findEventNodes() {
+        if (this.hasShadow) {
+            const allNodes = this.root.querySelectorAll("*");
+            for (let node of allNodes) {
+                if (node.getAttributeNames().filter(attr => attr.startsWith("@")).length > 0) {
+                    yield node;
+                }
+            }
+        } else {
+            const nodesWithEvents = document.evaluate(`.//*[@*[starts-with(name(), "@")]]`, this.root);
+            let eventNode = nodesWithEvents.iterateNext();
+            while (eventNode) {
+                yield eventNode;
+                eventNode = nodesWithEvents.iterateNext();
+            }
         }
     }
 
