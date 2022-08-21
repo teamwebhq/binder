@@ -95,12 +95,16 @@ const template = (strings, ...values) => {
     }, "");
 };
 
-// Parse a string as a boolean
-// Falsey values are
-// 0 or "0"
-// false or "false" (not case sensitive)
-// null
-// NOTE: An empty string or no value at all is **true**
+/**
+ * Parse a string as a boolean
+ * Falsey values are
+ * - 0 or "0"
+ * - false or "false" (not case sensitive)
+ * - null or undefined
+ * NOTE: An empty string is **true**, this is so an empty HTML attribute is true, like normal HTML boolean attributes
+ * @param {*} value
+ * @returns {boolean}
+ */
 const parseBoolean = value => {
     if (value === null || value === undefined) {
         return false;
