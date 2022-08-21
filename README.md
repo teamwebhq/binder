@@ -18,13 +18,13 @@ npm install
 # Run 11ty website locally
 npm run serve
 
-# Build 11ty site to ./dist
+# Build 11ty site to ./build/site/
 npm run build:site
 
-# Build jsdoc site to ./docs
+# Build jsdoc site to ./build/docs/
 npm run build:docs
 
-# Build JS to ./build
+# Build JS to ./build/static/
 npm run build:js
 
 # Build everything
