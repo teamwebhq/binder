@@ -39,6 +39,18 @@ pre {
     margin-bottom: 15px;
 }
 
+.nav-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .nav-sep {
     margin-bottom: 25px;
+}
+
+a.icon {
+    height: 2.4rem;
+    width: 2.4rem;
+    padding: 0;
 }
