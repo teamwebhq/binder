@@ -3,6 +3,7 @@
 <span id="today"></span>
 
 <script>
+    // Functions designed to auto-run via a DynamicFrame must be an IIFE (Immediately Invoked Function Expression)
     (function() {
         const span = document.getElementById("today");
         today.innerText = (new Date()).toISOString()

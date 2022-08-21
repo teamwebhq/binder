@@ -44,8 +44,7 @@ class DynamicFrame extends Controller {
         this.args.executeScripts = parseBoolean(this.args.executeScripts);
 
         if (this.args.autoRefresh) {
-            const interval = parseDuration(this.args.autoRefresh);
-            this.setAutoRefresh(interval);
+            this.setAutoRefresh();
         }
 
         if (!this.args.delay) this.args.delay = 0;
@@ -105,10 +104,11 @@ class DynamicFrame extends Controller {
     /**
      * Sets an interval to auto call `this.refresh()`
      * Overwrites previously set refresh intervals
-     * @param {*} interval Duration in milliseconds
      * @memberof! DynamicFrame
      */
-    setAutoRefresh(interval) {
+    setAutoRefresh() {
+        const interval = parseDuration(this.args.autoRefresh);
+
         if (interval === undefined) {
             console.error(`[${this.tag}] Undefined interval passed to setAutoRefresh`);
             return;
