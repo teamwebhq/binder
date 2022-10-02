@@ -153,6 +153,7 @@ class DynamicFrame extends Controller {
 
         await Promise.allSettled([new Promise(resolve => setTimeout(resolve, this.args.delay)), sendReq()]);
         this.saveState();
+        this.bind();  // The new DOM content might need to be bound to the controller
 
         return ok;
     }
