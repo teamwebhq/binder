@@ -10,6 +10,24 @@ permalink: "guide/lifecycle/"
 
 // TODO: Explain the lifecycle of `init`, `render`, `connectedCallback`, `disconnectedCallback`, etc...
 
+<pre>
+ ┌─────────────────┐          ┌──────────────────────┐           ┌────────┐              ┌──────────┐
+ │                 │          │                      │           │        │              │          │
+ │  constructor()  ├──────────►  connectedCallback() ├───────────► bind() ├──────────────►  init()  │
+ │                 │          │                      │           │        │              │          │
+ └─────────────────┘          └──────────────────────┘           └────┬───┘              └──────────┘
+                                                                      │
+                                                                      │
+                                                                      │
+                                                                 ┌────▼──────────────┐
+                                                                 │ bindArgs()        │
+                                                                 │                   │
+                                                                 │ bindEvents()      │
+                                                                 │                   │
+                                                                 │ bindDataValues()  │
+                                                                 └───────────────────┘
+</pre>
+
 <hr />
 
 Next: []()
