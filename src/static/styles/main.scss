@@ -7,6 +7,19 @@ body {
     margin-bottom: 60px;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-bottom: 0px;
+
+    & > code {
+        margin-left: -5px;
+    }
+}
+
 strong {
     font-weight: 600;
 }

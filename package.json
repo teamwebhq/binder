@@ -12,7 +12,8 @@
     "build:site": "npx @11ty/eleventy",
     "build:js": "./tools/build-js.sh",
     "build:docs": "npx jsdoc --configure ./jsdoc.conf.json ./src/static/js/binder/*",
-    "build": "npm run build:site && npm run build:js && npm run build:docs"
+    "build:css": "npx sass src/static/styles/:build/site/static/styles/",
+    "build": "npm run build:css && npm run build:site && npm run build:js && npm run build:docs"
   },
   "repository": {
     "type": "git",
@@ -25,5 +26,6 @@
   },
   "homepage": "https://github.com/teamwebhq/binder#readme",
   "dependencies": {
+    "sass": "^1.55.0"
   }
 }
