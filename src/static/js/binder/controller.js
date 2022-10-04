@@ -178,8 +178,6 @@ class Controller extends HTMLElement {
      * eg. re-attach events etc...
      */
     bind() {
-        // TODO: Might be useful to bind a specific node/tree
-
         // We only want to configure the arguments on the first bind()
         if (!this._internal.bound) {
             this.#bindArgs();
@@ -226,11 +224,13 @@ class Controller extends HTMLElement {
      * @method
      * @name render
      * @memberof! Controller
+     * @param {Element} rootNode The root node to search from
      * @description Re-renders everything with the @render attribute
      */
-    async render() {
-        // TODO: Might be handy to be able to render one element or element tree
-        this.#findRenderableElements().forEach(el => {
+    async render(rootNode = null) {
+        if (!rootNode) rootNode = this;
+
+        this.#findRenderableElements(rootNode).forEach(el => {
             // Store the original template as an attribute on the element on first render
             let template = el.getAttribute("_template");
             if (!template) {
@@ -291,11 +291,13 @@ class Controller extends HTMLElement {
      * @private
      * @name findRenderableElements
      * @memberof! Controller
+     * @param {Element} rootNode The root node to search from
      * @description Find all elements on the controller which have @render attributes
      * @render is a special action that let's the controller know to render this elements content when the render() method is called
      */
-    #findRenderableElements() {
-        return [...this.root.querySelectorAll(`[\\@render]`), ...this.root.querySelectorAll(`[\\@render\\.eval]`)].filter(el => this.belongsToController(el));
+    #findRenderableElements(rootNode = null) {
+        if (!rootNode) rootNode = this;
+        return [...rootNode.querySelectorAll(`[\\@render]`), ...rootNode.querySelectorAll(`[\\@render\\.eval]`)].filter(el => this.belongsToController(el));
     }
 
     /**
