@@ -8,7 +8,7 @@ permalink: "guide/arguments/"
 
 # Arguments
 
-Binder controllers allow passing arguments through to the JavaScript, these are stored in your controller in the `this.args` object.
+Binder controllers allow passing arguments through to your JavaScript code, these are stored in your controller in the `this.args` object.
 
 ```html
 <our-first-controller :greeting="Hey"></our-first-controller>
@@ -21,6 +21,15 @@ class OurFirstController extends Controller {
     }
 }
 ```
+
+---
+
+### Built in arguments
+
+| Name | Description | Default |
+| ---- | ----------- | ------- |
+| `render-on-init` | Whether to call `render()` during `init()` | `true` |
+| `auto-render` | If set `render()` will be called at the specified interval (See `parseDuration` below for argument format) | none |
 
 ---
 
@@ -54,6 +63,6 @@ parseDuration("250ms"); // 250 (250 milliseconds)
 
 <hr />
 
-Next: [Event Binding](/guide/event-binding)
+Next: [Events](/guide/events/)
 
 {% endmarkdown %}

@@ -1,3 +1,4 @@
+<!-- 4 separate controllers -->
 <total-clicks>
     <p @render>Total clicks: {this.data.clicks}</p>
     <p @render>Last click was from: {this.data.lastClick}</p>
@@ -23,8 +24,9 @@
             this.data.clicks = 0;
             this.data.lastClick = "none";
 
-            // We can either listen on the `window` for events which bubble up
-            // or listen on a specific element
+            // We can either listen on the `window` for events which bubble up or listen on a specific element
+            // If we listen on `this` we would only get events emitted from child elements
+            // If we listen on `this.parentNode` we would get events from children and siblings
             this.listenFor(window, "clicker-clicked", e => {
                 this.data.clicks++;
                 this.data.lastClick = e.detail.from;

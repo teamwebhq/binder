@@ -34,7 +34,7 @@ The controller instance will be bound to `this` allowing you to still access the
 
 ```html
 <some-controller>
-    <!-- When clicked will log "Clicked SOME-CONTROLLER" -->
+    <!-- When clicked will pop up with "Clicked SOME-CONTROLLER" -->
     <button @click.eval="alert(`Clicked ${this.tagName}!`)">Click me!</button>
 </some-controller>
 ```
@@ -43,7 +43,7 @@ The controller instance will be bound to `this` allowing you to still access the
 
 # Emiting Events
 
-Controllers can also emit custom events by calling `this.emit(eventName, eventData)`, combined with the event listener syntax this allows seamless communication between controllers.
+Controllers can also emit custom events by calling `this.emit(eventName, eventData)`, and listen for events using `this.listenFor(target, "event-name", callback)` allowing seamless communication between controllers.
 
 {% endmarkdown %}
 
@@ -53,7 +53,7 @@ Controllers can also emit custom events by calling `this.emit(eventName, eventDa
 
 ---
 
-Next: []()
+Next: [Data Binding](/guide/data-binding/)
 
 {% endmarkdown %}
 

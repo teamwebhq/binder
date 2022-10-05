@@ -96,8 +96,8 @@ class Controller extends HTMLElement {
         await this.init(this.args);
 
         // Render
-        if (this.autoRender) {
-            const interval = parseDuration(this.autoRender);
+        if (this.args.autoRender) {
+            const interval = parseDuration(this.args.autoRender);
             this.setAutoRender(interval);
         }
 
