@@ -44,12 +44,18 @@ pre {
     border: 1px solid var(--color-lightGrey);
 }
 
+legend {
+    padding-inline: 5px;
+}
+
 .admonition {
     border: 1px solid #d2d6dd;
-    padding: 20px;
+    padding-top: 0px;
+    padding-bottom: 15px;
+    padding-inline: 20px;
 
-    &.warning {
-        border: 1px solid #ff5151;
+    &.danger {
+        border: 2px solid #ff5151;
 
         & > legend {
             font-size: 20px;
