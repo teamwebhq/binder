@@ -352,7 +352,12 @@ class Controller extends HTMLElement {
                     fn.call(this);
                 } else {
                     try {
-                        this[action](event);
+                        if (action === "render") {
+                            // Render doesn't take an event
+                            this[action].call(this);
+                        } else {
+                            this[action].call(this, event);
+                        }
                     } catch (e) {
                         console.error(`Failed to call '${action}' to handle '${event.type}' event on tag '${this.localName}'`, e);
                     }
