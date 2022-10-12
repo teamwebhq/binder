@@ -17,7 +17,7 @@ import { pascalToKebab } from "./util.js";
  * ```
  * @param  {...any} controllers
  */
-const registerControllers = (...controllers) => {
+const registerControllers = async (...controllers) => {
     // First find all undefined elements and assume they are custom elements
     // We can then add the `data-controller` attribute to them
     // This makes it easy for us to find which controller a given DOM element belongs to
@@ -25,7 +25,7 @@ const registerControllers = (...controllers) => {
     const allUndefinedElements = [...document.querySelectorAll(":not(:defined)")];
     allUndefinedElements.forEach(el => el.setAttribute("data-controller", el.localName));
 
-    for (let controller of controllers) {
+    const registerController = async (controller, options = {}) => {
         let config = {};
         if (Array.isArray(controller)) {
             [controller, config = {}] = controller;
@@ -46,7 +46,10 @@ const registerControllers = (...controllers) => {
 
         // Create an anonymous class here to avoid name clashes when using the bare controller with a custom name
         window.customElements.define(controllerTag, controller, {});
-    }
+    };
+
+    // Register our controllers in parallel
+    await Promise.allSettled(controllers.map(controller => registerController(controller)));
 };
 
 export { registerControllers };
