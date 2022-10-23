@@ -29,4 +29,8 @@ npm run build:js
 
 # Build everything
 npm run build
+
+# Copy files to appropriate location to serve
+cp -r build/site /data/www/binder.danstewart.dev
+cp -r build/docs /data/www/docs.binder.danstewart.dev
 ```
