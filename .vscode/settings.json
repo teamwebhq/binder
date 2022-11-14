@@ -5,6 +5,10 @@
         "files.trimTrailingWhitespace": false
     },
 
+    "[html][jinja2][nunjucks]": {
+        "editor.formatOnSave": false
+    },
+
     "[css][postcss][javascript]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode"

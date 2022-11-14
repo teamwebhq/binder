@@ -5,18 +5,20 @@ layout: "surround/md_base.njk"
 
 {% markdown %}
 
-### Getting Started
-
-The easiest way to get started with binder is to load it from a CDN:
+### Getting Started The easiest way to get started with binder is to load it from a CDN: 
 
 ```html
 <!-- index.html -->
 <script type="module">
-    import { registerControllers, Controller } from "https://cdn.jsdelivr.net/gh/teamwebhq/binder/build/static/js/binder/binder.js";
+    import { registerControllers, Controller } from "https://cdn.jsdelivr.net/gh/teamwebhq/binder@v0.0.1-alpha/build/static/js/binder/binder.js";
 
-    class MyController extends Controller {}
+    class MyController extends Controller {
+        init() {
+            this.innerHTML = "<p>Hello, World!</p>";
+        }
+    }
 
-    registerControllers(Controller);
+    registerControllers(MyController);
 </script>
 
 <my-controller></my-controller>
