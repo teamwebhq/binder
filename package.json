@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/teamwebhq/binder#readme",
   "dependencies": {
+    "markdown-it": "^13.0.1",
     "sass": "^1.55.0"
   }
 }
