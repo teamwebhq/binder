@@ -1,5 +1,5 @@
-build/
-dist/
+build/site/
+build/docs/
 node_modules/
 src/scratch.njk
 build/site/scratch/
