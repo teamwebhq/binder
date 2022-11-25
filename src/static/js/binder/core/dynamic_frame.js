@@ -171,6 +171,8 @@ class DynamicFrame extends Controller {
         const template = document.createElement("template");
         template.innerHTML = content;
 
+        let deferredScripts = [];
+
         // If we want to execute scripts then go through our template and turn script tags into real scripts
         if (this.args.executeScripts) {
             let scripts = template.content.querySelectorAll("script");
@@ -184,8 +186,14 @@ class DynamicFrame extends Controller {
                 // Copy the content of the script tag
                 if (script.innerHTML) newScript.appendChild(document.createTextNode(script.innerHTML));
 
-                // Add the script tag back in
-                script.replaceWith(newScript);
+                // Seems the `defer` attribute is not respected when we execute the JS like this
+                // So defer it ourselves manually
+                if (script.hasAttribute("defer")) {
+                    deferredScripts.push([script, newScript]);
+                } else {
+                    // Add the script tag back in
+                    script.replaceWith(newScript);
+                }
             });
         }
 
@@ -196,6 +204,12 @@ class DynamicFrame extends Controller {
         } else if (mode === "prepend") {
             this.mountPoint.prepend(template.content);
         }
+
+        // Run deferred JS
+        deferredScripts.forEach(scriptPair => {
+            let [originalScript, newScript] = scriptPair;
+            originalScript.replaceWith(newScript);
+        });
     }
 
     /**
