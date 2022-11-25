@@ -189,9 +189,13 @@ class DynamicFrame extends Controller {
                 // Seems the `defer` attribute is not respected when we execute the JS like this
                 // So defer it ourselves manually
                 if (script.hasAttribute("defer")) {
+                    console.debug("Deferring script");
+                    console.debug(newScript);
                     deferredScripts.push([script, newScript]);
                 } else {
                     // Add the script tag back in
+                    console.debug("Running script now");
+                    console.debug(newScript);
                     script.replaceWith(newScript);
                 }
             });
