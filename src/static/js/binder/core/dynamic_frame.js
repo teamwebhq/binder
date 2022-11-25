@@ -189,8 +189,6 @@ class DynamicFrame extends Controller {
                 // Seems the `defer` attribute is not respected when we execute the JS like this
                 // So defer it ourselves manually
                 if (script.hasAttribute("defer")) {
-                    console.debug("Deferring script");
-                    console.debug(newScript);
                     deferredScripts.push([script, newScript]);
                 } else {
                     // Add the script tag back in
@@ -212,8 +210,19 @@ class DynamicFrame extends Controller {
         // Run deferred JS
         deferredScripts.forEach(scriptPair => {
             let [originalScript, newScript] = scriptPair;
+            console.debug("Deferred script now running");
+            console.debug(newScript);
             originalScript.replaceWith(newScript);
         });
+
+        // TODO: Need to think more about this
+        // Also it won't work with shadow DOM if it's on the window
+        window.document.dispatchEvent(
+            new Event("DOMContentLoaded", {
+                bubbles: true,
+                cancelable: true,
+            })
+        );
     }
 
     /**
