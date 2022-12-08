@@ -23,6 +23,7 @@ class Controller extends HTMLElement {
      */
     constructor(args) {
         super();
+        this.debug({ msg: `Constructing binder element` });
 
         // Store for internal data
         this._internal = {};
@@ -60,7 +61,7 @@ class Controller extends HTMLElement {
 
             // Only use the shadowDOM when specified
             if (this.template.hasAttribute(":use-shadow")) {
-                console.debug(`[${this.localName}] Initialising shadow DOM`);
+                this.debug({ msg: `Initialising shadow DOM` });
                 this.attachShadow({ mode: "open" }).appendChild(this.content.cloneNode(true));
 
                 this.root = this.shadowRoot;
@@ -377,6 +378,7 @@ class Controller extends HTMLElement {
         // eg. nodes which have any attribute starting with `@`
         for (let node of this.#findEventNodes()) {
             if (!this.belongsToController(node)) continue;
+            this.debug({ msg: `Attaching event listeners`, source: node });
 
             for (let attr of node.getAttributeNames()) {
                 if (!attr.startsWith("@")) continue;
@@ -527,6 +529,25 @@ class Controller extends HTMLElement {
 
         const closestController = el.closest(`[data-controller]`);
         return closestController === this;
+    }
+
+    /**
+     * Helper debug function
+     * Only enabled when
+     *  - `window.__BINDER_DEBUG__` is set to `true`
+     *  - `window.__BINDER_DEBUG__` is an array on this controllers `localName` is present
+     * @param {Object} obj The data to log
+     */
+    debug(obj) {
+        let shouldLog = false;
+
+        if (window.__BINDER_DEBUG__ === true) shouldLog = true;
+        if (Array.isArray(window.__BINDER_DEBUG__) && window.__BINDER_DEBUG__.includes(this.localName)) shouldLog = true;
+
+        if (shouldLog) {
+            obj.controller = this;
+            console.debug(obj);
+        }
     }
 }
 
