@@ -196,6 +196,8 @@ class DynamicFrame extends Controller {
         } else if (mode === "prepend") {
             this.mountPoint.prepend(template.content);
         }
+
+        this.emit("frame-updated", { from: this, mode: mode });
     }
 
     /**

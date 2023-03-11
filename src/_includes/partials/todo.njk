@@ -1,0 +1,76 @@
+<todo-list></todo-list>
+
+<script type="module">
+    import {
+        registerControllers,
+        Controller,
+        html
+    } from '/static/js/binder/binder.js';
+
+    class TodoList extends Controller {
+        init() {
+            // Out default list state
+            this.items = [{
+                title: "First Item",
+                completed: false,
+            }, {
+                title: "Second Item",
+                completed: false,
+            }, {
+                title: "Third Item",
+                completed: true,
+            }];
+        }
+
+        // Add a new item to our todo list
+        addItem(e) {
+            if (e.type === "keydown" && e.key != "Enter") return;
+
+            const input = this.querySelector("input");
+            if (!input.value) return;
+
+            this.items.push({
+                title: input.value,
+                completed: false,
+            });
+
+            this.render();
+        }
+
+        // Toggles whether a todo item is completed or not
+        toggleState(e) {
+            const taskTitle = e.target.innerHTML;
+
+            this.items.forEach(item => {
+                if (item.title === taskTitle) {
+                    item.completed = !item.completed;
+                }
+            });
+            
+            this.render();
+        }
+
+        // Renders our todo list
+        render() {
+            this.innerHTML = html`
+                <ul>
+                    ${this.items.map(item => {
+                        if (item.completed) {
+                            return html`<li @click="toggleState"><s>${item.title}</s></li>`
+                        }
+                        return html`<li @click="toggleState">${item.title}</li>`
+                    }).join("")}
+                </ul>
+
+                <input placeholder="New task" style="margin-bottom: 5px" @keydown="addItem" />
+                <button @click="addItem">Add</button>
+            `;
+
+            // We need to call `bind` again to reprocess our event handlers
+            this.bind();
+        }
+
+    }
+
+    registerControllers(TodoList);
+</script>
