@@ -253,6 +253,10 @@ class DynamicFrame extends Controller {
     endpoint() {
         let url = this.args.url;
 
+        if (url === "noload") {
+            return;
+        }
+
         if (!this.args.url) {
             console.error(`${this.tag}: No :url attribute specified`);
             return;
