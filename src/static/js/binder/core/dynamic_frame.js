@@ -220,10 +220,9 @@ class DynamicFrame extends Controller {
 
         for (let attr of this.attributes) {
             if (attr.nodeName.startsWith(":param-")) {
-                params.append(attr.nodeName.substr(7), attr.nodeValue);
+                params.append(attr.nodeName.substring(7), attr.nodeValue);
             }
         }
-
         return params;
     }
 
@@ -264,6 +263,7 @@ class DynamicFrame extends Controller {
 
     /**
      * Load the frame state based on the URL query string
+     * @returns {string} The query string for this frame
      */
     loadState() {
         if (!this.args.stateKey) return;
@@ -280,7 +280,6 @@ class DynamicFrame extends Controller {
         }
 
         // TODO: Rewrite this to use `setParams`
-
         // Wipe out the default param attributes on this frame as we add the correct ones below
         for (let attr of this.attributes) {
             if (attr.nodeName.startsWith(":param-")) {
@@ -303,6 +302,23 @@ class DynamicFrame extends Controller {
     }
 
     /**
+     * Loads a URL into the frame by updating the url and param attributes and then reload
+     * @param {*} url
+     */
+    loadUrl = url => {
+        let [origin, query] = url.split("?");
+        if (!query) query = "";
+
+        if (query) {
+            const params = Object.fromEntries(query.split("&").map(part => part.split("=")));
+            this.setParams(params);
+        }
+
+        this.args.url = origin;
+        this.refresh();
+    };
+
+    /**
      * Save the frame state to the URL query string
      * Only saves if the state has changed
      */
@@ -310,7 +326,7 @@ class DynamicFrame extends Controller {
         if (!this.args.stateKey) return;
 
         let qsParts = Object.fromEntries(new URLSearchParams(window.location.search));
-        qsParts[`${this.args.stateKey}-url`] = this.args.url;
+        qsParts[`${this.args.stateKey}-url`] = this.args.url.replace(window.location.origin, "");
 
         // Strip out any params that belong to this frame
         // We re-add them below
@@ -320,7 +336,7 @@ class DynamicFrame extends Controller {
             }
         }
 
-        // Add the params for this fra,e
+        // Add the params for this frame
         for (const [key, value] of this.params()) {
             qsParts[`${this.args.stateKey}-param-${key}`] = value;
         }
@@ -340,19 +356,6 @@ class DynamicFrame extends Controller {
      * Clicking any links or submitting any forms will only impact the frame, not the surrounding page
      */
     containFrame() {
-        /**
-         * Loads a URL into the frame by updating the url and param attributes
-         * @param {*} url
-         */
-        const loadUrl = url => {
-            let [origin, query] = url.split("?");
-            if (!query) query = "";
-            const params = Object.fromEntries(query.split("&").map(part => part.split("=")));
-
-            this.setParams(params);
-            this.args.url = origin;
-        };
-
         // Capture all clicks and if it was on an <a> tag load the href within the frame
         this.addEventListener("click", e => {
             let target = e.target || e.srcElement;
@@ -360,8 +363,7 @@ class DynamicFrame extends Controller {
             if (target.tagName === "A" && this.belongsToController(target)) {
                 e.preventDefault();
                 const href = target.getAttribute("href");
-                loadUrl(href);
-                this.loadContent();
+                this.loadUrl(href);
             }
         });
 
@@ -384,12 +386,17 @@ class DynamicFrame extends Controller {
                 return;
             }
 
+            // Build the form data to send
             const formData = new FormData(e.target);
+            let params = new URLSearchParams();
+            for (const pair of formData) {
+                params.append(pair[0], pair[1]);
+            }
 
             if (method.toUpperCase() == "POST") {
                 let response = await fetch(action, {
                     method: "POST",
-                    body: formData,
+                    body: params,
                     headers: {
                         "Content-Type": encoding,
                     },
@@ -397,8 +404,7 @@ class DynamicFrame extends Controller {
 
                 if (response.redirected) {
                     // If we have a redirect then follow it
-                    loadUrl(response.url);
-                    this.render();
+                    this.loadUrl(response.url);
                 } else {
                     // Otherwise show the response body
                     this.innerHTML = await response.text();
@@ -407,7 +413,7 @@ class DynamicFrame extends Controller {
                 const query = Object.fromEntries(new URLSearchParams(formData));
                 this.setParams(query);
                 this.args.url = action;
-                this.render();
+                this.refresh();
             }
 
             return false;
