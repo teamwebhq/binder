@@ -361,6 +361,10 @@ class DynamicFrame extends Controller {
             let target = e.target || e.srcElement;
 
             if (target.tagName === "A" && this.belongsToController(target)) {
+                if (!target.hasAttribute(":contained")) {
+                    return;
+                }
+
                 e.preventDefault();
                 const href = target.getAttribute("href");
                 this.loadUrl(href);
@@ -373,7 +377,11 @@ class DynamicFrame extends Controller {
         // We do not support the `target` attribute or the `method="dialog"` value
         // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
         this.addEventListener("submit", async e => {
+            if (!e.target.hasAttribute(":contained")) {
+                return;
+            }
             e.preventDefault();
+            e.stopPropagation();
 
             const method = e.target.getAttribute("method") || "GET";
             const action = e.target.getAttribute("action") || "/";
@@ -382,7 +390,6 @@ class DynamicFrame extends Controller {
 
             // Base HTML5 validation
             if (!skipValidation && !e.target.checkValidity()) {
-                console.warn("Form is not valid");
                 return;
             }
 
