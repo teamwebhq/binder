@@ -402,20 +402,27 @@ class DynamicFrame extends Controller {
             }
 
             if (method.toUpperCase() == "POST") {
-                let response = await fetch(action, {
+                let request = {
                     method: "POST",
-                    body: params,
-                    headers: {
-                        "Content-Type": encoding,
-                    },
-                });
+                };
 
+                if (encoding === "application/x-www-form-urlencoded") {
+                    request.body = params;
+                    request.headers = {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    };
+                } else {
+                    // If sending as multipart then we omit the content-type
+                    request.body = formData;
+                }
+
+                let response = await fetch(action, request);
                 if (response.redirected) {
                     // If we have a redirect then follow it
                     this.loadUrl(response.url);
                 } else {
                     // Otherwise show the response body
-                    this.innerHTML = await response.text();
+                    this.updateContent(await response.text());
                 }
             } else if (method.toUpperCase() == "GET") {
                 const query = Object.fromEntries(new URLSearchParams(formData));

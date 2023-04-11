@@ -111,6 +111,8 @@ class Controller extends HTMLElement {
     disconnectedCallback() {
         this._events.forEach(e => e.el.removeEventListener(e.eventType, e.event));
         this._events = [];
+
+        this.emit("disconnected", { detail: { from: this } });
     }
 
     /**
