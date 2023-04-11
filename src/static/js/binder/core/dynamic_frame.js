@@ -68,9 +68,7 @@ class DynamicFrame extends Controller {
             window.addEventListener("pushstate", () => handleStateChange());
         }
 
-        if (parseBoolean(this.args.contained)) {
-            this.containFrame();
-        }
+        this.containFrame(parseBoolean(this.args.contained));
 
         if (this.renderOnInit) await this.loadContent();
     }
@@ -354,14 +352,16 @@ class DynamicFrame extends Controller {
     /**
      * Makes the frame self contained
      * Clicking any links or submitting any forms will only impact the frame, not the surrounding page
+     * @param {bool} containAll Whether to automatically contain all `a` and `form` elements
+     *                          If not set then it will be opt in per element.
      */
-    containFrame() {
+    containFrame(containAll = false) {
         // Capture all clicks and if it was on an <a> tag load the href within the frame
         this.addEventListener("click", e => {
             let target = e.target || e.srcElement;
 
             if (target.tagName === "A" && this.belongsToController(target)) {
-                if (!target.hasAttribute(":contained")) {
+                if (!containAll && !target.hasAttribute(":contained")) {
                     return;
                 }
 
@@ -377,9 +377,10 @@ class DynamicFrame extends Controller {
         // We do not support the `target` attribute or the `method="dialog"` value
         // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
         this.addEventListener("submit", async e => {
-            if (!e.target.hasAttribute(":contained")) {
+            if (!containAll && !e.target.hasAttribute(":contained")) {
                 return;
             }
+
             e.preventDefault();
             e.stopPropagation();
 
