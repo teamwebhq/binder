@@ -51,16 +51,19 @@ class DynamicFrame extends Controller {
 
         // If we have a stateKey then track and handle the state
         if (this.args.stateKey) {
-            this.loadState();
-
             const handleStateChange = () => {
-                let qs = this.loadState();
+                let frameState = this.loadState();
 
-                if (this._internal.currentQs !== qs) {
-                    this._internal.currentQs = qs;
+                // Update and refresh
+                if (frameState && Object.keys(frameState).length > 0 && this._internal.frameState !== frameState) {
+                    this.args.url = frameState[`${this.args.stateKey}-url`];
+                    this._internal.frameState = frameState;
                     this.refresh();
                 }
             };
+
+            // Initial state load
+            handleStateChange();
 
             // When the history state changes then reload our state
             // This is triggered when going back and forward in the browser
@@ -77,9 +80,9 @@ class DynamicFrame extends Controller {
      * Reload the frame content then call `render()`
      * @memberof! DynamicFrame
      */
-    async refresh() {
-        await this.loadContent();
-        await this.render();
+    async refresh(method="get") {
+        let ok = await this.loadContent(null, method);
+        if (ok) await this.render();
     }
 
     /**
@@ -126,7 +129,7 @@ class DynamicFrame extends Controller {
      * @returns boolean - true on success
      * @memberof! DynamicFrame
      */
-    async loadContent(e) {
+    async loadContent(e, method="get") {
         let url = this.endpoint();
         url.search = new URLSearchParams(this.params());
 
@@ -140,7 +143,18 @@ class DynamicFrame extends Controller {
         let ok = true;
         const sendReq = async () => {
             try {
-                let response = await fetch(url, { signal: abortController.signal });
+                let response = await fetch(url, {
+                    signal: abortController.signal,
+                    method: method,
+                });
+
+                // If no content then delete self
+                if (response.status === 204) {
+                    this.destroySelf();
+                    ok = false;
+                    return;
+                }
+
                 let text = await response.text();
                 this.updateContent(text);
             } catch (err) {
@@ -150,8 +164,11 @@ class DynamicFrame extends Controller {
         };
 
         await Promise.allSettled([new Promise(resolve => setTimeout(resolve, this.args.delay)), sendReq()]);
-        this.saveState();
-        this.bind(); // The new DOM content might need to be bound to the controller
+
+        if (ok) {
+            this.saveState();
+            this.bind(); // The new DOM content might need to be bound to the controller
+        }
 
         return ok;
     }
@@ -243,7 +260,7 @@ class DynamicFrame extends Controller {
     }
 
     /**
-     * Returns the endpoint to call - from the data-url attr on the root element
+     * Returns the endpoint to call - from the :url attr on the root element
      * @returns {string}
      * @memberof! DynamicFrame
      */
@@ -260,50 +277,41 @@ class DynamicFrame extends Controller {
     }
 
     /**
-     * Load the frame state based on the URL query string
-     * @returns {string} The query string for this frame
+     * Load the frame state based on the main page URL query string
+     * @returns {object} The frame state
      */
     loadState() {
         if (!this.args.stateKey) return;
 
         let qs = window.location.search;
-        if (!qs) return;
 
+        if (!qs) return;
         qs = qs.substring(1);
         let qsParts = Object.fromEntries(qs.split("&").map(part => part.split("=")));
 
-        if (qsParts[`${this.args.stateKey}-url`]) {
-            this.args.url = qsParts[`${this.args.stateKey}-url`];
-            delete qsParts[`${this.args.stateKey}-url`];
-        }
+        let frameState = {}
+        let params = {};
+        for (let [key, value] of Object.entries(qsParts)) {
+            if (key.startsWith(this.args.stateKey + "-")) {
+                if (key.startsWith(this.args.stateKey + "-param-")) {
+                    params[key.replace(this.stateKey + "-param-", "")] = value;
+                }
 
-        // TODO: Rewrite this to use `setParams`
-        // Wipe out the default param attributes on this frame as we add the correct ones below
-        for (let attr of this.attributes) {
-            if (attr.nodeName.startsWith(":param-")) {
-                this.removeAttribute(attr.nodeName);
+                frameState[key] = value;
             }
         }
 
-        for (let [key, value] of Object.entries(qsParts)) {
-            // Ignore other state keys
-            // TODO: It might be better to make the state keys easier to identify
-            // I can see these two cases being used for real parameters, in which case we drop them
-            if (key.endsWith("-url")) continue;
-            if (!key.startsWith(this.args.stateKey)) continue;
+        // Update our params
+        this.setParams(params);
 
-            key = key.replace(`${this.args.stateKey}-param-`, "");
-            this.setAttribute(`:param-${key}`, value);
-        }
-
-        return qs;
+        return frameState;
     }
 
     /**
      * Loads a URL into the frame by updating the url and param attributes and then reload
      * @param {*} url
      */
-    loadUrl = url => {
+    loadUrl(url, method="get") {
         let [origin, query] = url.split("?");
         if (!query) query = "";
 
@@ -313,39 +321,48 @@ class DynamicFrame extends Controller {
         }
 
         this.args.url = origin;
-        this.refresh();
+        this.refresh(method);
     };
 
     /**
-     * Save the frame state to the URL query string
+     * Save the frame state to the outer page URL query string and add to history
      * Only saves if the state has changed
      */
     saveState() {
+        // If no stateKey then we can't save the state
         if (!this.args.stateKey) return;
 
-        let qsParts = Object.fromEntries(new URLSearchParams(window.location.search));
-        qsParts[`${this.args.stateKey}-url`] = this.args.url.replace(window.location.origin, "");
+        // Get the main page query string
+        let mainPageQs = Object.fromEntries(new URLSearchParams(window.location.search));
 
         // Strip out any params that belong to this frame
-        // We re-add them below
-        for (const key of Object.keys(qsParts)) {
-            if (key.startsWith(`${this.args.stateKey}-param-`)) {
-                delete qsParts[key];
+        // We will re-add them below
+        for (const key of Object.keys(mainPageQs)) {
+            if (key.startsWith(`${this.args.stateKey}-`)) {
+                delete mainPageQs[key];
             }
         }
 
+        // Build our frame state object
+        let frameState = {}
+        frameState[`${this.args.stateKey}-url`] = this.args.url.replace(window.location.origin, "");
+
         // Add the params for this frame
         for (const [key, value] of this.params()) {
-            qsParts[`${this.args.stateKey}-param-${key}`] = value;
+            frameState[`${this.args.stateKey}-param-${key}`] = value;
         }
 
-        const qs = Object.entries(qsParts)
-            .map(part => `${part[0]}=${part[1]}`)
-            .join("&");
+        // Merge our frame state into the page params
+        mainPageQs = { ...mainPageQs, ...frameState };
 
-        if (this._internal.currentQs !== qs) {
+        // If our state changed then update the main page URL and add to history
+        if (this._internal.frameState !== frameState) {
+            const qs = Object.entries(mainPageQs)
+                .map(part => `${part[0]}=${part[1]}`)
+                .join("&");
+
             window.history.pushState(qs, "", `?${qs}`);
-            this._internal.currentQs = qs;
+            this._internal.frameState = frameState;
         }
     }
 
@@ -433,6 +450,35 @@ class DynamicFrame extends Controller {
 
             return false;
         });
+    }
+
+    /**
+     * Remove self from DOM and remove state from query string
+     */
+    destroySelf() {
+        this.parentElement.removeChild(this);
+
+        if (this.args.stateKey) {
+            // Get main page query string
+            let qs = window.location.search;
+            qs = qs.substring(1);
+            if (!qs) return;
+
+            // Remove any parts that belong to this frame
+            let qsParts = Object.fromEntries(qs.split("&").map(part => part.split("=")));
+            for (const [key, value] of Object.entries(qsParts)) {
+                if (key.startsWith(this.args.stateKey + "-")) {
+                    delete qsParts[key];
+                }
+            }
+
+            // Back to string and save
+            qs = Object.entries(qsParts)
+                .map(part => `${part[0]}=${part[1]}`)
+                .join("&");
+
+            window.history.pushState(qs, "", `?${qs}`);
+        }
     }
 }
 
