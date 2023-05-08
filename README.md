@@ -1,12 +1,11 @@
 # binder.js
 
 This repository contains the `binder.js` code and the [11ty](https://www.11ty.dev/) static site https://binderjs.com.  
-To learn more about binder.js see https://binderjs.com.  
-
+To learn more about binder.js see https://binderjs.com.
 
 ## Getting Started
 
-This project uses [hermit](https://cashapp.github.io/hermit/usage/get-started/) to manage the node/npm/npx install.  
+This project uses [hermit](https://cashapp.github.io/hermit/usage/get-started/) to manage the node/npm/npx install.
 
 ```
 # Activate hermit
@@ -30,7 +29,7 @@ npm run build:js
 # Build everything
 npm run build
 
-# Copy files to appropriate location to serve
-cp -r build/site/* /data/www/binder.danstewart.dev
-cp -r build/docs/* /data/www/docs.binder.danstewart.dev
+# Copy files to server
+scp -r build/site/* nginx:/data/www/binder.danstewart.dev
+scp -r build/docs/* nginx:/data/www/docs.binder.danstewart.dev
 ```
