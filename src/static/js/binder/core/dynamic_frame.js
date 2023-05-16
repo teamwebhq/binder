@@ -423,6 +423,8 @@ class DynamicFrame extends Controller {
                     method: "POST",
                 };
 
+                // TODO: These defaults are backwards
+                // We should default to urlencoded
                 if (encoding === "application/x-www-form-urlencoded") {
                     request.body = params;
                     request.headers = {
