@@ -80,7 +80,7 @@ class DynamicFrame extends Controller {
      * Reload the frame content then call `render()`
      * @memberof! DynamicFrame
      */
-    async refresh(method="get") {
+    async refresh(method = "get") {
         let ok = await this.loadContent(null, method);
         if (ok) await this.render();
     }
@@ -129,7 +129,7 @@ class DynamicFrame extends Controller {
      * @returns boolean - true on success
      * @memberof! DynamicFrame
      */
-    async loadContent(e, method="get") {
+    async loadContent(e, method = "get") {
         let url = this.endpoint();
         url.search = new URLSearchParams(this.params());
 
@@ -289,7 +289,7 @@ class DynamicFrame extends Controller {
         qs = qs.substring(1);
         let qsParts = Object.fromEntries(qs.split("&").map(part => part.split("=")));
 
-        let frameState = {}
+        let frameState = {};
         let params = {};
         for (let [key, value] of Object.entries(qsParts)) {
             if (key.startsWith(this.args.stateKey + "-")) {
@@ -311,7 +311,7 @@ class DynamicFrame extends Controller {
      * Loads a URL into the frame by updating the url and param attributes and then reload
      * @param {*} url
      */
-    loadUrl(url, method="get") {
+    loadUrl(url, method = "get") {
         let [origin, query] = url.split("?");
         if (!query) query = "";
 
@@ -322,7 +322,7 @@ class DynamicFrame extends Controller {
 
         this.args.url = origin;
         this.refresh(method);
-    };
+    }
 
     /**
      * Save the frame state to the outer page URL query string and add to history
@@ -344,7 +344,7 @@ class DynamicFrame extends Controller {
         }
 
         // Build our frame state object
-        let frameState = {}
+        let frameState = {};
         frameState[`${this.args.stateKey}-url`] = this.args.url.replace(window.location.origin, "");
 
         // Add the params for this frame
@@ -430,7 +430,12 @@ class DynamicFrame extends Controller {
                     };
                 } else {
                     // If sending as multipart then we omit the content-type
-                    request.body = formData;
+                    let multipartData = new FormData();
+                    for (const pair of formData) {
+                        multipartData.append(pair[0], pair[1]);
+                    }
+
+                    request.body = multipartData;
                 }
 
                 let response = await fetch(action, request);
