@@ -23,7 +23,7 @@ class Controller extends HTMLElement {
      */
     constructor(args) {
         super();
-        this.debug({ msg: `Constructing binder element` });
+        this.debug({ msg: "Constructing binder element" });
 
         // Store for internal data
         this._internal = {};
@@ -61,7 +61,7 @@ class Controller extends HTMLElement {
 
             // Only use the shadowDOM when specified
             if (this.template.hasAttribute(":use-shadow")) {
-                this.debug({ msg: `Initialising shadow DOM` });
+                this.debug({ msg: "Initialising shadow DOM" });
                 this.attachShadow({ mode: "open" }).appendChild(this.content.cloneNode(true));
 
                 this.root = this.shadowRoot;
@@ -89,7 +89,7 @@ class Controller extends HTMLElement {
         this.bind();
 
         // Init the element
-        if (this.args.hasOwnProperty("renderOnInit")) {
+        if ("renderOnInit" in this.args) {
             this.renderOnInit = parseBoolean(this.args.renderOnInit);
         } else {
             this.renderOnInit = true;
@@ -221,7 +221,7 @@ class Controller extends HTMLElement {
      * Expected to be overridden
      * @param {*} args
      */
-    async init(args) {}
+    async init(_args) {}
 
     /**
      * @method
@@ -243,7 +243,7 @@ class Controller extends HTMLElement {
 
             // If the element has the attribute with .eval then eval the template
             // This should be used sparingly and only when the content is trusted
-            const evalMode = el.hasAttribute(`@render.eval`);
+            const evalMode = el.hasAttribute("@render.eval");
 
             // TODO: Make the replacer syntax configurable
             let replacerRegex = /\{(.*?)\}/g; // Find template vars, eg {var}
@@ -259,7 +259,7 @@ class Controller extends HTMLElement {
                     let pos = null;
 
                     // Split on dots and brackets and strip out any quotes
-                    key.split(/[\.\[\]]/)
+                    key.split(/[.[\]]/)
                         .filter(item => !!item)
                         .forEach(part => {
                             part = part.replace(/["']/g, ""); // Strip out square brackets
@@ -300,7 +300,7 @@ class Controller extends HTMLElement {
      */
     #findRenderableElements(rootNode = null) {
         if (!rootNode) rootNode = this;
-        return [...rootNode.querySelectorAll(`[\\@render]`), ...rootNode.querySelectorAll(`[\\@render\\.eval]`)].filter(el => this.belongsToController(el));
+        return [...rootNode.querySelectorAll("[\\@render]"), ...rootNode.querySelectorAll("[\\@render\\.eval]")].filter(el => this.belongsToController(el));
     }
 
     /**
@@ -380,7 +380,7 @@ class Controller extends HTMLElement {
         // eg. nodes which have any attribute starting with `@`
         for (let node of this.#findEventNodes()) {
             if (!this.belongsToController(node)) continue;
-            this.debug({ msg: `Attaching event listeners`, source: node });
+            this.debug({ msg: "Attaching event listeners", source: node });
 
             for (let attr of node.getAttributeNames()) {
                 if (!attr.startsWith("@")) continue;
@@ -416,7 +416,7 @@ class Controller extends HTMLElement {
                 }
             }
         } else {
-            const nodesWithEvents = document.evaluate(`.//*[@*[starts-with(name(), "@")]]`, this.root);
+            const nodesWithEvents = document.evaluate('.//*[@*[starts-with(name(), "@")]]', this.root);
             let eventNode = nodesWithEvents.iterateNext();
             while (eventNode) {
                 yield eventNode;
@@ -529,7 +529,7 @@ class Controller extends HTMLElement {
         // Controllers don't belong to themselves, go up a level to find their parent
         if (el.hasAttribute("data-controller")) el = el.parentElement;
 
-        const closestController = el.closest(`[data-controller]`);
+        const closestController = el.closest("[data-controller]");
         return closestController === this;
     }
 

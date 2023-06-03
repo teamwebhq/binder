@@ -471,7 +471,7 @@ class DynamicFrame extends Controller {
 
             // Remove any parts that belong to this frame
             let qsParts = Object.fromEntries(qs.split("&").map(part => part.split("=")));
-            for (const [key, value] of Object.entries(qsParts)) {
+            for (const [key, _value] of Object.entries(qsParts)) {
                 if (key.startsWith(this.args.stateKey + "-")) {
                     delete qsParts[key];
                 }

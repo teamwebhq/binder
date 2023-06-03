@@ -25,7 +25,7 @@ const registerControllers = async (...controllers) => {
     const allUndefinedElements = [...document.querySelectorAll(":not(:defined)")];
     allUndefinedElements.forEach(el => el.setAttribute("data-controller", el.localName));
 
-    const registerController = async (controller, options = {}) => {
+    const registerController = async (controller, _options = {}) => {
         let config = {};
         if (Array.isArray(controller)) {
             [controller, config = {}] = controller;
