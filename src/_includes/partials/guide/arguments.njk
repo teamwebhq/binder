@@ -1,0 +1,19 @@
+<controller-with-args>
+    <p @render>Value={this.data.value}</p>
+</controller-with-args>
+
+<controller-with-args :start="5">
+    <p @render>Value={this.data.value}</p>
+</controller-with-args>
+
+<script type="module">
+    import { Controller, registerControllers } from "/static/js/binder/binder.js";
+
+    class ControllerWithArgs extends Controller {
+        init() {
+            this.data.value = this.args.start || 0;
+        }
+    }
+
+    registerControllers(ControllerWithArgs);
+</script>

@@ -2,7 +2,7 @@
     {# Get the nice name for the controller #}
     {% set controller_name = template_path.replaceAll(".njk", "").replaceAll("_", " ").split("/").slice(-1) %}
 
-    <fieldset>
+    <fieldset style="margin-bottom: 15px">
         <legend>{{ controller_name }}</legend>
         {% include template_path %}
 

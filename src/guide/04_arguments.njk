@@ -4,23 +4,20 @@ layout: "surround/guide_base.njk"
 permalink: "guide/arguments/"
 ---
 
+{% from "macros/render_controller.njk" import render_controller %}
+
 {% markdown %}
 
 # Arguments
 
 Binder controllers allow passing arguments through to your JavaScript code, these are stored in your controller in the `this.args` object.
 
-```html
-<our-first-controller :greeting="Hey"></our-first-controller>
-```
+{% endmarkdown %}
 
-```js
-class OurFirstController extends Controller {
-    init() {
-        this.innerHTML = `<p>{this.args.greeting}, World!</p>`;
-    }
-}
-```
+{{ render_controller("partials/guide/arguments.njk", open=true) }}
+
+{% markdown %}
+
 
 ---
 
