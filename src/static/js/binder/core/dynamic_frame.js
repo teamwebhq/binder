@@ -421,6 +421,7 @@ class DynamicFrame extends Controller {
             if (method.toUpperCase() == "POST") {
                 let request = {
                     method: "POST",
+                    redirect: "manual",
                 };
 
                 if (encoding === "application/x-www-form-urlencoded") {
@@ -439,7 +440,7 @@ class DynamicFrame extends Controller {
                 }
 
                 let response = await fetch(action, request);
-                if (response.redirected) {
+                if (response.type == "opaqueredirect") {
                     // If we have a redirect then follow it
                     this.loadUrl(response.url);
                 } else {
