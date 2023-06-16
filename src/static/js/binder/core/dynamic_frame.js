@@ -421,7 +421,6 @@ class DynamicFrame extends Controller {
             if (method.toUpperCase() == "POST") {
                 let request = {
                     method: "POST",
-                    redirect: "manual",
                 };
 
                 if (encoding === "application/x-www-form-urlencoded") {
@@ -438,15 +437,9 @@ class DynamicFrame extends Controller {
 
                     request.body = multipartData;
                 }
-
                 let response = await fetch(action, request);
-                if (response.type == "opaqueredirect") {
-                    // If we have a redirect then follow it
-                    this.loadUrl(response.url);
-                } else {
-                    // Otherwise show the response body
-                    this.updateContent(await response.text());
-                }
+                // Show the response body
+                this.updateContent(await response.text());
             } else if (method.toUpperCase() == "GET") {
                 const query = Object.fromEntries(new URLSearchParams(formData));
                 this.setParams(query);
