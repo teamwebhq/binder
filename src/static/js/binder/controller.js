@@ -370,7 +370,7 @@ class Controller extends HTMLElement {
 
                 if (modifier.includes(".eval")) {
                     const fn = new Function("e", `${value}`);
-                    fn.call(this.event);
+                    fn.call(this, event);
                 } else {
                     try {
                         if (action === "render") {
