@@ -145,7 +145,7 @@
 class GreeterComponent extends Controller {
     randomize() {
         const names = [ "Tom", "Dick", "Harry" ];
-        this.data.name = names[Math.floor(Math.random() * names.length)];
+        this.binds.name.value = names[Math.floor(Math.random() * names.length)];
         this.render();
     }
 }
@@ -153,7 +153,7 @@ class GreeterComponent extends Controller {
 registerControllers(GreeterComponent);`;
 
                 const defaultHtml = `<greeter-component :default-name="World">
-    <input type="text" @bind="name" />
+    <input type="text" @bind="name" @input="render" />
     <p @render.eval>Hello, {this.binds.name.value || this.args.defaultName}</p>
     <button @click="this.randomize">Random Name</button>
 </greeter-component>`;
