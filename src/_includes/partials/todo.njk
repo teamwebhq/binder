@@ -26,7 +26,7 @@
         addItem(e) {
             if (e.type === "keydown" && e.key != "Enter") return;
 
-            const input = this.querySelector("input");
+            const input = this.binds.input;
             if (!input.value) return;
 
             this.items.push({
@@ -62,7 +62,7 @@
                     }).join("")}
                 </ul>
 
-                <input placeholder="New task" style="margin-bottom: 5px" @keydown="addItem" />
+                <input @bind="input" placeholder="New task" style="margin-bottom: 5px" @keydown="addItem" />
                 <button @click="addItem">Add</button>
             `;
 

@@ -1,5 +1,5 @@
 import { Controller } from "../controller.js";
-import { parseDuration, parseBoolean } from "../util.js";
+import { parseBoolean, parseDuration } from "../util.js";
 
 /*
 This is the base controller for DynamicFrames
@@ -146,6 +146,9 @@ class DynamicFrame extends Controller {
                 let response = await fetch(url, {
                     signal: abortController.signal,
                     method: method,
+                    headers: {
+                        "X-Dynamic-Frame": 1,
+                    },
                 });
 
                 // If no content then delete self
@@ -421,13 +424,14 @@ class DynamicFrame extends Controller {
             if (method.toUpperCase() == "POST") {
                 let request = {
                     method: "POST",
+                    headers: {
+                        "X-Dynamic-Frame": 1,
+                    },
                 };
 
                 if (encoding === "application/x-www-form-urlencoded") {
                     request.body = params;
-                    request.headers = {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    };
+                    request.headers["Content-Type"] = "application/x-www-form-urlencoded";
                 } else {
                     // If sending as multipart then we omit the content-type
                     let multipartData = new FormData();
