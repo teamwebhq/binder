@@ -29,19 +29,19 @@ The `.prevent` modifier will call `event.preventDefault()` and stop events from 
 The `.stop` modifier will call `event.stopPropagation()` and stop events from bubbling up the DOM.
 
 #### `.eval`
-The `.eval` modifier will evaluate the action instead of calling a method on the controller, allowing you to use any arbitrary JavaScript expression as your action.  
-The controller instance will be bound to `this` allowing you to still access the controller instance.
+The `.eval` modifier will evaluate the action instead of treating it as a method on the controller, allowing you to use any arbitrary JavaScript expression as your action.  
+The controller instance will be bound to `this` allowing you to still access the controller instance and the event object will be available as `e`.
+
+```html
+<some-controller>
+    <button @click.eval="alert(`Clicked ${e.target}!`)">Click me!</button>
+</some-controller>
+```
 
 #### `.render`
 The `.render` modifier will call `this.render()` on the controller after your event code is executed.  
 If your event handler is `async` then the render will happen after the promise resolves.  
 
-```html
-<some-controller>
-    <!-- When clicked will pop up with "Clicked SOME-CONTROLLER" -->
-    <button @click.eval="alert(`Clicked ${this.tagName}!`)">Click me!</button>
-</some-controller>
-```
 
 <hr />
 
