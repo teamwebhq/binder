@@ -360,29 +360,34 @@ class Controller extends HTMLElement {
         this._events.forEach(e => e.el.removeEventListener(e.eventType, e.event));
         this._events = [];
 
-        const bindEvent = (el, eventType, modifier) => {
-            const value = el.getAttribute(`@${eventType}${modifier}`);
+        const bindEvent = async (el, eventType, modifiers) => {
+            let attributeName = `@${eventType}`;
+            if (modifiers.length) attributeName += `.${modifiers.join(".")}`;
+
+            const value = el.getAttribute(attributeName);
             const action = value.replace("this.", "").replace("()", "");
 
-            const callable = event => {
-                if (modifier.includes(".prevent")) event.preventDefault();
-                if (modifier.includes(".stop")) event.stopPropagation();
+            const callable = async event => {
+                if (modifiers.includes("prevent")) event.preventDefault();
+                if (modifiers.includes("stop")) event.stopPropagation();
 
-                if (modifier.includes(".eval")) {
+                if (modifiers.includes("eval")) {
                     const fn = new Function("e", `${value}`);
                     fn.call(this, event);
                 } else {
                     try {
                         if (action === "render") {
                             // Render doesn't take an event
-                            this[action].call(this);
+                            await this[action].call(this);
                         } else {
-                            this[action].call(this, event);
+                            await this[action].call(this, event);
                         }
                     } catch (e) {
                         console.error(`Failed to call '${action}' to handle '${event.type}' event on tag '${this.localName}'`, e);
                     }
                 }
+
+                if (modifiers.includes("render")) this.render();
             };
 
             el.addEventListener(eventType, callable);
@@ -403,8 +408,7 @@ class Controller extends HTMLElement {
             for (let attr of node.getAttributeNames()) {
                 if (!attr.startsWith("@")) continue;
 
-                let [event, modifiers] = attr.replace("@", "").split(".", 2);
-                modifiers = modifiers ? `.${modifiers}` : "";
+                let [event, ...modifiers] = attr.replace("@", "").split(".");
 
                 // @render and @bind are handled separately
                 if (event == "render" || event == "bind") continue;

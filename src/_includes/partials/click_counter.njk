@@ -1,22 +1,10 @@
-<click-counter>
-    <p @render>Clicks: {this.data.clicks}</p>
-    <button @click="this.count()">Click me!</button>
+<click-counter :clicks=0>
+    <p @render>Clicks: {this.args.clicks}</p>
+    <button @click.eval.render="this.args.clicks++">Click me!</button>
 </click-counter>
 
 <script type="module">
     import { registerControllers, Controller } from '/static/js/binder/binder.js';
-
-    class ClickCounter extends Controller {
-        init() {
-            this.data.clicks = 0;
-        }
-
-        count() {
-            this.data.clicks++;
-            this.render();
-        }
-    }
-
-    registerControllers(ClickCounter);
+    registerControllers([ Controller, { name: "click-counter" }]);
 </script>
 

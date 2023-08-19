@@ -32,6 +32,10 @@ The `.stop` modifier will call `event.stopPropagation()` and stop events from bu
 The `.eval` modifier will evaluate the action instead of calling a method on the controller, allowing you to use any arbitrary JavaScript expression as your action.  
 The controller instance will be bound to `this` allowing you to still access the controller instance.
 
+#### `.render`
+The `.render` modifier will call `this.render()` on the controller after your event code is executed.  
+If your event handler is `async` then the render will happen after the promise resolves.  
+
 ```html
 <some-controller>
     <!-- When clicked will pop up with "Clicked SOME-CONTROLLER" -->

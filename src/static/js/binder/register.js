@@ -8,6 +8,7 @@ import { pascalToKebab } from "./util.js";
  * registerControllers(MyController, MyOtherController);
  * ```
  *
+ * With custom configuration:
  * ```js
  * registerControllers(
  *  MyController,
@@ -45,7 +46,7 @@ const registerControllers = async (...controllers) => {
         }
 
         // Create an anonymous class here to avoid name clashes when using the bare controller with a custom name
-        window.customElements.define(controllerTag, controller, {});
+        window.customElements.define(controllerTag, class extends controller {}, {});
     };
 
     // Register our controllers in parallel

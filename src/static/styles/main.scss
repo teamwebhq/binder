@@ -59,9 +59,17 @@ legend {
 
         & > legend {
             font-size: 20px;
-            color: #ff5151;;
+            color: #ff5151;
         }
+    }
 
+    &.information {
+        border: 2px solid #36C2F0;
+
+        & > legend {
+            font-size: 20px;
+            color: #36C2F0;
+        }
     }
 }
 
