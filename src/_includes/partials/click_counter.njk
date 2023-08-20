@@ -5,6 +5,6 @@
 
 <script type="module">
     import { registerControllers, Controller } from '/static/js/binder/binder.js';
-    registerControllers([ Controller, { name: "click-counter" }]);
+    registerControllers(Controller.withTag("click-counter"));
 </script>
 

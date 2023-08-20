@@ -16,5 +16,5 @@
 <!-- JavaScript -->
 <script type="module">
     import { registerControllers, Controller } from '/static/js/binder/binder.js';
-    registerControllers([ Controller, { name: "currency-picker" }]);
+    registerControllers(Controller.withTag("currency-picker"));
 </script>

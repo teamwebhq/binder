@@ -8,7 +8,55 @@ permalink: "guide/registering/"
 
 # Registering
 
-// TODO: Explain the process of registering a controller and optional overrides.
+In order for a controller to be available in your HTML you first need to _register_ it.  
+
+Binder provides a `registerControllers` function which is a thin wrapper around `window.customElements.define` (the built in way to register custom elements).  
+
+```js
+import { registerControllers, Controller } from '/static/js/binder/binder.js';
+class MyController extends Controller {};
+registerControllers(MyController);
+```
+
+### How is the tag name set?
+
+The HTML tag name can be set in a few ways.  
+
+1. Declaring a `static tag` on your controller
+```js
+import { registerControllers, Controller } from '/static/js/binder/binder.js';
+
+class MyController extends Controller {
+    static tag = "my-tag";
+};
+
+registerControllers(MyController);
+```
+
+2. Use the wrapper `Controller.withTag` static method
+```js
+import { registerControllers, Controller } from '/static/js/binder/binder.js';
+
+class MyController extends Controller {};
+
+registerControllers(MyController.withTag("my-tag"));
+```
+
+3. Letting binder automatically set it from the controller name
+```js
+import { registerControllers, Controller } from '/static/js/binder/binder.js';
+
+class MyController extends Controller {};
+
+// Controller name is converted to lower kebab case (eg. my-controller)
+registerControllers(MyController);
+```
+
+<fieldset class="admonition information mt-15 mb-15">
+    <legend>INFO</legend>
+    Custom element names must contain at least two words separated by a hyphen.<br />
+    <code>my-tag</code> is ok but <code>mytag</code> is not.
+</fieldset>
 
 <hr />
 

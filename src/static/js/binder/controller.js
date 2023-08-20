@@ -16,6 +16,13 @@ class Controller extends HTMLElement {
      * The default implementation will call `set{AttributeName}(oldValue, newValue)`
      */
     static observedAttributes = [];
+    static tag = undefined;
+
+    static withTag(tag) {
+        return class extends this {
+            static tag = tag;
+        };
+    }
 
     /**
      * Create a new custom controller element
