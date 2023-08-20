@@ -335,7 +335,16 @@ class Controller extends HTMLElement {
         boundElements.forEach(el => {
             if (this.belongsToController(el)) {
                 const key = el.getAttribute("@bind");
-                this.binds[key] = el;
+
+                if (Object.hasOwn(this.binds, key)) {
+                    if (Array.isArray(this.binds[key])) {
+                        this.binds[key].push(el);
+                    } else {
+                        this.binds[key] = [this.binds[key], el];
+                    }
+                } else {
+                    this.binds[key] = el;
+                }
             }
         });
     }

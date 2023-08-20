@@ -1,0 +1,36 @@
+---
+title: Data Binding
+layout: "surround/guide_base.njk"
+permalink: "guide/binding/"
+---
+
+{% markdown %}
+
+# Binding 
+
+You can "bind" elements inside of a controller for easier access in your controller code.  
+
+This will bind the `p` element to your controller under `this.binds.paragraph`:
+```
+<some-controller>
+    <p :bind="paragraph">Hello, World</p>
+</some-controller>
+```
+
+This is effectively just a shorthand for `this.binds.paragraph = this.querySelector("p");`
+
+If you store multiple elements under the same key then they will be stored in a list:
+```
+<some-controller>
+    <p :bind="paragraph">Hello, One</p>  <!-- this.binds.paragraph[0] -->
+    <p :bind="paragraph">Hello, Two</p>  <!-- this.binds.paragraph[1] -->
+    <p :bind="paragraph">Hello, Three</p>  <!-- this.binds.paragraph[2] -->
+</some-controller>
+```
+
+
+<hr />
+
+Next: [Observed Attributes](/guide/observed-attributes/)
+
+{% endmarkdown %}
