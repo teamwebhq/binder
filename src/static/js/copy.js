@@ -9,10 +9,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
             navigator.clipboard.writeText(text);
 
-            e.target.textContent = "Copied!";
+            e.target.classList.add("copied");
             setTimeout(() => {
-                e.target.textContent = "Copy";
+                e.target.classList.remove("copied");
             }, 3000);
+
+            // e.target.textContent = "Copied";
+            // setTimeout(() => {
+            //     e.target.textContent = "Copy";
+            // }, 3000);
         });
     });
 });

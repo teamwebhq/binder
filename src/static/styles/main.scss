@@ -49,27 +49,51 @@ legend {
 }
 
 .admonition {
-    border: 1px solid #d2d6dd;
+    border: 2px solid #d2d6dd;
+    border-radius: 5px;
     padding-top: 0px;
     padding-bottom: 15px;
     padding-inline: 20px;
 
+    & > legend {
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 15px;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-bottom: 10px;
+    }
+
     &.danger {
-        border: 2px solid #ff5151;
+        border-color: #ff5151;
+        background-color: #ffd1d1;
 
         & > legend {
-            font-size: 20px;
-            color: #ff5151;
+            background-color: #ff5151;
+            color: white;
         }
     }
 
     &.information {
-        border: 2px solid #36C2F0;
+        border-color: #36C2F0;
+        background-color: #c4edfa;
 
         & > legend {
-            font-size: 20px;
-            color: #36C2F0;
+            color: white;
+            background-color: #36C2F0;
         }
+    }
+}
+
+.controller-preview {
+    border-radius: 5px;
+
+    & > legend {
+        font-size: 16px;
+    }
+
+    & > details > pre {
+        border-radius: 10px;
     }
 }
 
@@ -78,7 +102,21 @@ legend {
     top: 30px;
     right: 12px;
     z-index: 999;
+
+    &::after {
+        content: "Copy";
+    }
+
+    &.copied {
+        background-color: forestgreen;
+        color: white;
+    }
+
+    &.copied::after {
+        content: "Copied!";
+    }
 }
+
 
 .nav {
     margin-top: 15px;

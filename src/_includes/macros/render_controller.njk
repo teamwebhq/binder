@@ -2,14 +2,14 @@
     {# Get the nice name for the controller #}
     {% set controller_name = template_path.replaceAll(".njk", "").replaceAll("_", " ").split("/").slice(-1) %}
 
-    <fieldset style="margin-bottom: 15px">
+    <fieldset class="controller-preview mb-15">
         <legend>{{ controller_name }}</legend>
         {% include template_path %}
 
-        <details style="margin-top: 15px; margin-bottom: 15px;" {% if open %}open{% endif %}>
+        <details class="mb-15 mt-15" {% if open %}open{% endif %}>
             <summary>View Source</summary>
             {# NOTE: This horrid formatting is necessary, any whitespace will be rendered #}
-            <div class="relative"><button class="copy button outline">Copy</button></div>
+            <div class="relative"><button class="copy button outline"></button></div>
             <pre><code class="html">{% filter escape %}{% include(template_path) %}{% endfilter %}</code></pre>
         </details>
     </fieldset>
