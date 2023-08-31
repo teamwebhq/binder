@@ -11,7 +11,7 @@ permalink: "guide/rendering/"
 # Rendering
 
 Binder allows you to use JavaScript template literals wrapped in `{` and `}` within your custom elements.  
-Anything with the `@render` attribute will be rendered as a template when `this.render()` is called.  
+Anything with the `:render` attribute will be rendered as a template when `this.render()` is called.  
 
 {% endmarkdown %}
 
@@ -22,14 +22,14 @@ Anything with the `@render` attribute will be rendered as a template when `this.
 <br />
 
 There are two render modes, the first (shown above) is a basic replacement of variables within the controller.  
-If you need more flexibility you can use `@render.eval` to use full JavaScript expressions in your template.
+If you need more flexibility you can use `:render.eval` to use full JavaScript expressions in your template.
 {% endmarkdown %}
 
 {{ render_controller("partials/guide/rendering_maths.njk", open=false) }}
 
 <fieldset class="admonition danger mt-15">
     <legend>BE CAREFUL</legend>
-    When using <code>@render.eval</code> the JavaScript is actually executed, do not do this on untrusted input.
+    When using <code>:render.eval</code> the JavaScript is actually executed, do not do this on untrusted input.
 </fieldset>
 
 {% markdown %}

@@ -1,8 +1,8 @@
 <!-- HTML -->
 <currency-picker :currency="GBP">
-    <!-- @bind is a special argument stores this element in the controller under `this.binds.currency` -->
-    <!-- @change="render" triggers a render when the select changes -->
-    <select @bind="currency" @change="render">
+    <!-- :bind is a special argument stores this element in the controller under `this.binds.currency` -->
+    <!-- @change.render triggers a render when the select changes -->
+    <select :bind="currency" @change.render>
         <option disabled selected>Please select a currency</option>
         <option value="AUD">Australian Dollars</option>
         <option selected value="GBP">British Pounds</option>
@@ -10,7 +10,7 @@
         <option value="USD">US Dollars</option>
     </select>
 
-    <h4 @render>Chosen currency: {this.binds.currency.value}</h4>
+    <h4 :render>Chosen currency: {this.binds.currency.value}</h4>
 </currency-picker>
 
 <!-- JavaScript -->

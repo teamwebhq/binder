@@ -62,7 +62,7 @@
                     }).join("")}
                 </ul>
 
-                <input @bind="input" placeholder="New task" style="margin-bottom: 5px" @keydown="addItem" />
+                <input :bind="input" placeholder="New task" style="margin-bottom: 5px" @keydown="addItem" />
                 <button @click="addItem">Add</button>
             `;
 

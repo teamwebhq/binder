@@ -1,5 +1,5 @@
 <click-counter :clicks=0>
-    <p @render>Clicks: {this.args.clicks}</p>
+    <p :render>Clicks: {this.args.clicks}</p>
     <button @click.eval.render="this.args.clicks++">Click me!</button>
 </click-counter>
 

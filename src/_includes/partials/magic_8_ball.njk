@@ -1,6 +1,6 @@
 <magic-8-ball>
-    <button @render @click="this.render">{this.prompt}</button>
-    <p @render.eval>{this.randomAnswer()}</p>
+    <button @click.render>Ask the magic 8 ball</button>
+    <p :render.eval>{this.randomAnswer()}</p>
 </magic-8-ball>
 
 <script type="module">
@@ -8,8 +8,6 @@
 
     class Magic8Ball extends Controller {
         init() {
-            this.prompt = 'Ask the magic 8 ball';
-
             this.answers = [
                 "It is certain.",
                 "It is decidedly so.",

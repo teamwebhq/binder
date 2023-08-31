@@ -153,8 +153,8 @@ class GreeterComponent extends Controller {
 registerControllers(GreeterComponent);`;
 
                 const defaultHtml = `<greeter-component :default-name="World">
-    <input type="text" @bind="name" @input="render" />
-    <p @render.eval>Hello, {this.binds.name.value || this.args.defaultName}</p>
+    <input type="text" :bind="name" @input.render />
+    <p :render.eval>Hello, {this.binds.name.value || this.args.defaultName}</p>
     <button @click="this.randomize">Random Name</button>
 </greeter-component>`;
 

@@ -2,18 +2,20 @@
 {% from "macros/render_controller.njk" import render_controller %}
 
 {% block content %}
+    <img id="guide-contents-toggle" src="/static/icons/menu.svg" alt="Guide Menu" />
+
     <div id="guide" class="row">
         <div id="guide-contents" class="col-2">
             <ul>
                 <li><a href="/guide/introduction/">Introduction</a></li>
                 <li><a href="/guide/our-first-controller/">Our First Controller</a></li>
+                <li><a href="/guide/registering/">Registering</a></li>
                 <li><a href="/guide/rendering/">Rendering</a></li>
                 <li><a href="/guide/arguments/">Arguments</a></li>
                 <li><a href="/guide/events/">Events</a></li>
-                <li><a href="/guide/binding/">Binding</a></li>
+                <li><a href="/guide/binding/">Binding Elements</a></li>
                 <li><a href="/guide/observed-attributes/">Observed Attributes</a></li>
                 <li><a href="/guide/lifecycle/">Lifecycle</a></li>
-                <li><a href="/guide/registering/">Registering</a></li>
                 <li><a href="/guide/the-shadow-dom/">The Shadow DOM</a></li>
 
                 <hr style="width: 90%"/>
@@ -44,6 +46,7 @@
         }
 
         #guide-contents {
+            display: block;
             border-right: 1px solid #ccc;
         }
 
@@ -61,6 +64,38 @@
             color: var(--color-active);
             font-weight: bold;
         }
+
+        #guide-contents-toggle {
+            display: none;
+            margin-left: 25px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        @media only screen and (max-width: 1200px) {
+            #guide-contents {
+                display: none;
+                border-right: none;
+            }
+
+            #guide-contents-toggle {
+                display: block;
+            }
+        }
     </style>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            const contents = document.querySelector("#guide-contents");
+            const toggle = document.querySelector("#guide-contents-toggle");
+            toggle.addEventListener("click", e => {
+                if (contents.offsetParent === null) {
+                    contents.style.display = "block";
+                } else {
+                    contents.style.display = "none";
+                }
+            });
+        });
+    </script>
 {% endblock %}
 

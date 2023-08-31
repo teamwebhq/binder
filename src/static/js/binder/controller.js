@@ -234,7 +234,7 @@ class Controller extends HTMLElement {
      * @name render
      * @memberof! Controller
      * @param {Element} rootNode The root node to search from
-     * @description Re-renders everything with the @render attribute
+     * @description Re-renders everything with the :render attribute
      */
     async render(rootNode = null) {
         if (!rootNode) rootNode = this;
@@ -249,7 +249,7 @@ class Controller extends HTMLElement {
 
             // If the element has the attribute with .eval then eval the template
             // This should be used sparingly and only when the content is trusted
-            const evalMode = el.hasAttribute("@render.eval");
+            const evalMode = el.hasAttribute(":render.eval");
 
             // TODO: Make the replacer syntax configurable
             let replacerRegex = /\{(.*?)\}/g; // Find template vars, eg {var}
@@ -301,12 +301,12 @@ class Controller extends HTMLElement {
      * @name findRenderableElements
      * @memberof! Controller
      * @param {Element} rootNode The root node to search from
-     * @description Find all elements on the controller which have @render attributes
-     * @render is a special action that let's the controller know to render this elements content when the render() method is called
+     * @description Find all elements on the controller which have :render attributes
+     * :render is a special action that let's the controller know to render this elements content when the render() method is called
      */
     #findRenderableElements(rootNode = null) {
         if (!rootNode) rootNode = this;
-        return [...rootNode.querySelectorAll("[\\@render]"), ...rootNode.querySelectorAll("[\\@render\\.eval]")].filter(el => this.belongsToController(el));
+        return [...rootNode.querySelectorAll("[\\:render]"), ...rootNode.querySelectorAll("[\\:render\\.eval]")].filter(el => this.belongsToController(el));
     }
 
     /**
@@ -333,15 +333,15 @@ class Controller extends HTMLElement {
      * @private
      * @name bindElements
      * @memberof! Controller
-     * @description Bind any elements with a `@bind` attribute to the controller under `this.binds`
+     * @description Bind any elements with a `:bind` attribute to the controller under `this.binds`
      */
     #bindElements() {
         this.binds = {};
 
-        const boundElements = this.querySelectorAll("[\\@bind]");
+        const boundElements = this.querySelectorAll("[\\:bind]");
         boundElements.forEach(el => {
             if (this.belongsToController(el)) {
-                const key = el.getAttribute("@bind");
+                const key = el.getAttribute(":bind");
 
                 if (Object.hasOwn(this.binds, key)) {
                     if (Array.isArray(this.binds[key])) {
@@ -425,9 +425,6 @@ class Controller extends HTMLElement {
                 if (!attr.startsWith("@")) continue;
 
                 let [event, ...modifiers] = attr.replace("@", "").split(".");
-
-                // @render and @bind are handled separately
-                if (event == "render" || event == "bind") continue;
 
                 bindEvent(node, event, modifiers);
             }
