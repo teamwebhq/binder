@@ -485,4 +485,55 @@ class DynamicFrame extends Controller {
     }
 }
 
-export { DynamicFrame };
+/**
+ * Container for route anchor elements
+ * Any `<a>` elements within the `<dynamic-frame-router>` will be intercepted and only update the specified dynamic frame
+ * Specifies the target `DynamicFrame` to handle routing for
+ */
+class DynamicFrameRouter extends Controller {
+    async init() {
+        this.target = document.querySelector(this.args.target);
+        this.anchors = this.querySelectorAll("a");
+
+        if (!this.target) {
+            console.error(`Could not find target dynamic frame element: ${this.args.target}`);
+            return;
+        }
+
+        // Handle clicks
+        this.addEventListener("click", e => {
+            let target = e.target || e.srcElement;
+
+            if (target.tagName === "A" && this.belongsToController(target)) {
+                e.preventDefault();
+                this.navigate(target.getAttribute("href"), true);
+            }
+        });
+
+        // Handle history change
+        window.onpopstate = history.onpushstate = () => {
+            this.navigate(document.location.pathname);
+        };
+    }
+
+    async navigate(href, recordInHistory = false) {
+        const targetUrl = new URL(href, window.location.origin);
+
+        await this.target.loadUrl(href);
+
+        // Update the active anchor
+        this.anchors.forEach(a => {
+            const anchorHref = new URL(a.href);
+
+            if (anchorHref.pathname === targetUrl.pathname) {
+                a.classList.add("active");
+            } else {
+                a.classList.remove("active");
+            }
+        });
+
+        if (recordInHistory) window.history.pushState({}, "", href);
+    }
+}
+
+export { DynamicFrame, DynamicFrameRouter };
