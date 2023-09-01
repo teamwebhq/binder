@@ -50,6 +50,7 @@ class Controller extends HTMLElement {
 
         // Add the data-controller attribute to the element
         this.setAttribute("data-controller", this.localName);
+        this.emit("binder:created", {});
     }
 
     /**
@@ -111,6 +112,8 @@ class Controller extends HTMLElement {
         }
 
         if (this.renderOnInit) this.render();
+
+        this.emit("binder:connected", {});
     }
 
     /**
@@ -120,7 +123,7 @@ class Controller extends HTMLElement {
         this._events.forEach(e => e.el.removeEventListener(e.eventType, e.event));
         this._events = [];
 
-        this.emit("disconnected", { detail: { from: this } });
+        this.emit("binder:disconnected", { detail: { from: this } });
     }
 
     /**
@@ -293,6 +296,8 @@ class Controller extends HTMLElement {
             // TODO: This may be innefecient
             el.innerHTML = template;
         });
+
+        this.emit("binder:render", {});
     }
 
     /**
