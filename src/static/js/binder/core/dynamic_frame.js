@@ -497,6 +497,7 @@ class DynamicFrameRouter extends Controller {
         this.target = document.querySelector(this.args.target);
         this.anchors = this.querySelectorAll("a");
         this.cache = {};
+        this.args.caching = parseBoolean(this.args.caching);
 
         if (!this.target) {
             console.error(`Could not find target dynamic frame element: ${this.args.target}`);
@@ -524,7 +525,9 @@ class DynamicFrameRouter extends Controller {
         const oldHref = this.target.args.url;
 
         // Cache the contents of the frame
-        this.cache[oldHref] = [...this.target.children].map(child => child.cloneNode(true));
+        if (this.args.caching) {
+            this.cache[oldHref] = [...this.target.children].map(child => child.cloneNode(true));
+        }
 
         // Update the targeted frame
         if (href in this.cache) {
