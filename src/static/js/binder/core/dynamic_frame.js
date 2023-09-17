@@ -389,6 +389,7 @@ class DynamicFrame extends Controller {
 
                 e.preventDefault();
                 const href = target.getAttribute("href");
+                window.history.pushState({}, "", href);
                 this.loadUrl(href);
             }
         });
@@ -450,6 +451,7 @@ class DynamicFrame extends Controller {
                 const query = Object.fromEntries(new URLSearchParams(formData));
                 this.setParams(query);
                 this.args.url = action;
+                window.history.pushState({}, "", action);
                 this.refresh();
             }
 
