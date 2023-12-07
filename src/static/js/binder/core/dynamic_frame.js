@@ -221,26 +221,39 @@ class DynamicFrame extends Controller {
     }
 
     /**
-     * Returns the query string params for the request - expected to be overridden
+     * Returns the URLSearchParams for the frame
+     *
+     * All attributes starting with `:param-` will be included
+     * eg. `<dynamic-frame :param-name="Dan">` will add `?name=Dan`
+     *
      * Handles arrays as duplicated params (ie. a: [1,2] => ?a=1&a=2)
+     * Wraps values in `encodeURIComponent` if not already encoded
+     *
+     * @param {object} values Key/value pairs to add to the query string
      * @returns {URLSearchParams}
      * @memberof! DynamicFrame
      */
     params(values = {}) {
         let params = new URLSearchParams(values);
 
+        // URL encode any values that aren't already encoded
+        const encode = val => {
+            if (decodeURIComponent(val) === val) return val;
+            return encodeURIComponent(val);
+        };
+
         // Annoyingly URLSearchParams can't handle array params unless you call .append each time
         // So find any array params and re-add them manually
         Object.entries(values).forEach(([key, val]) => {
             if (Array.isArray(val)) {
                 params.delete(key);
-                val.forEach(item => params.append(key, item));
+                val.forEach(item => params.append(key, encode(item)));
             }
         });
 
         for (let attr of this.attributes) {
             if (attr.nodeName.startsWith(":param-")) {
-                params.append(attr.nodeName.substring(7), attr.nodeValue);
+                params.append(attr.nodeName.substring(7), encode(attr.nodeValue));
             }
         }
         return params;
