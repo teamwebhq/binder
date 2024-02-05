@@ -1,0 +1,8 @@
+<script type="module">
+    import { registerControllers } from '/static/js/binder/binder.js';
+    import { DynamicFrame } from '/static/js/binder/core/dynamic_frame.js';
+
+    registerControllers(DynamicFrame);
+</script>
+
+<dynamic-frame :url="/ex2" :execute-scripts></dynamic-frame>

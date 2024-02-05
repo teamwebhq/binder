@@ -196,6 +196,7 @@ class DynamicFrame extends Controller {
             let scripts = template.content.querySelectorAll("script");
 
             for (let script of scripts) {
+                console.log(`Loading ${script.src}`);
                 const addScript = script =>
                     new Promise(resolve => {
                         let newScript = document.createElement("script");
@@ -203,17 +204,18 @@ class DynamicFrame extends Controller {
 
                         // Copy all attributes to the new script
                         [...script.attributes].forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                        if (!newScript.hasAttribute("defer")) newScript.setAttribute("defer", "false");
-                        if (!newScript.hasAttribute("async")) newScript.setAttribute("async", "false");
 
                         // Copy the content of the script tag
                         if (script.innerHTML) newScript.appendChild(document.createTextNode(script.innerHTML));
 
                         // Add the script tag back in
-                        script.replaceWith(newScript);
+                        this.appendChild(newScript);
                     });
 
+                // TODO: Don't need to await here if newScript.async
+                console.log("Waiting...");
                 await addScript(script);
+                console.log("NEXT!");
             }
         }
 
