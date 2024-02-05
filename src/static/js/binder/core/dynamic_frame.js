@@ -190,9 +190,11 @@ class DynamicFrame extends Controller {
 
         const template = document.createElement("template");
         template.innerHTML = content;
+        console.log("Updating content");
 
         // If we want to execute scripts then go through our template and turn script tags into real scripts
         if (this.args.executeScripts) {
+            console.log("Executing scripts");
             let scripts = template.content.querySelectorAll("script");
 
             for (let script of scripts) {
@@ -226,6 +228,7 @@ class DynamicFrame extends Controller {
         }
 
         this.emit("frame-updated", { from: this, mode: mode });
+        console.log("Updated");
     }
 
     /**
