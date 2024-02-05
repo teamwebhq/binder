@@ -196,18 +196,24 @@ class DynamicFrame extends Controller {
             let scripts = template.content.querySelectorAll("script");
 
             for (let script of scripts) {
-                let newScript = document.createElement("script");
+                const addScript = script =>
+                    new Promise(resolve => {
+                        let newScript = document.createElement("script");
+                        newScript.onload = resolve;
 
-                // Copy all attributes to the new script
-                [...script.attributes].forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                if (!newScript.hasAttribute("defer")) newScript.setAttribute("defer", "false");
-                if (!newScript.hasAttribute("async")) newScript.setAttribute("async", "false");
+                        // Copy all attributes to the new script
+                        [...script.attributes].forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                        if (!newScript.hasAttribute("defer")) newScript.setAttribute("defer", "false");
+                        if (!newScript.hasAttribute("async")) newScript.setAttribute("async", "false");
 
-                // Copy the content of the script tag
-                if (script.innerHTML) newScript.appendChild(document.createTextNode(script.innerHTML));
+                        // Copy the content of the script tag
+                        if (script.innerHTML) newScript.appendChild(document.createTextNode(script.innerHTML));
 
-                // Add the script tag back in
-                script.replaceWith(newScript);
+                        // Add the script tag back in
+                        script.replaceWith(newScript);
+                    });
+
+                await addScript(script);
             }
         }
 
