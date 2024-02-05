@@ -211,7 +211,9 @@ class DynamicFrame extends Controller {
                 // Add the script tag back in
                 script.replaceWith(newScript);
 
+                console.log("Waiting...");
                 await Promise.resolve(waitForLoad);
+                console.log("Done!");
             }
         }
 
