@@ -36,6 +36,7 @@ class DynamicFrame extends Controller {
      *
      */
     async init() {
+        console.log("INITIALISING BINDER FRAME");
         this.contents = "";
 
         // Keep track of pending requests so we can cancel when updating multiple things
