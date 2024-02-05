@@ -36,7 +36,6 @@ class DynamicFrame extends Controller {
      *
      */
     async init() {
-        console.log("INITIALISING BINDER FRAME");
         this.contents = "";
 
         // Keep track of pending requests so we can cancel when updating multiple things
@@ -191,11 +190,9 @@ class DynamicFrame extends Controller {
 
         const template = document.createElement("template");
         template.innerHTML = content;
-        console.log("Updating content");
 
         // If we want to execute scripts then go through our template and turn script tags into real scripts
         if (this.args.executeScripts) {
-            console.log("Executing scripts");
             let scripts = template.content.querySelectorAll("script");
 
             for (let script of scripts) {
@@ -206,17 +203,11 @@ class DynamicFrame extends Controller {
                 if (!newScript.hasAttribute("defer")) newScript.setAttribute("defer", "false");
                 if (!newScript.hasAttribute("async")) newScript.setAttribute("async", "false");
 
-                const waitForLoad = new Promise(resolve => newScript.once("load", resolve));
-
                 // Copy the content of the script tag
                 if (script.innerHTML) newScript.appendChild(document.createTextNode(script.innerHTML));
 
                 // Add the script tag back in
                 script.replaceWith(newScript);
-
-                console.log("Waiting...");
-                await Promise.resolve(waitForLoad);
-                console.log("Done!");
             }
         }
 
@@ -229,7 +220,6 @@ class DynamicFrame extends Controller {
         }
 
         this.emit("frame-updated", { from: this, mode: mode });
-        console.log("Updated");
     }
 
     /**
