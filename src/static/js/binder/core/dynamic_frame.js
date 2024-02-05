@@ -200,6 +200,8 @@ class DynamicFrame extends Controller {
 
                 // Copy all attributes to the new script
                 [...script.attributes].forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                if (!newScript.hasAttribute("defer")) newScript.setAttribute("defer", "false");
+                if (!newScript.hasAttribute("async")) newScript.setAttribute("async", "false");
 
                 // Copy the content of the script tag
                 if (script.innerHTML) newScript.appendChild(document.createTextNode(script.innerHTML));
