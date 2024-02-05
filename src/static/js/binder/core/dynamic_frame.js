@@ -185,7 +185,7 @@ class DynamicFrame extends Controller {
      * @param mode - replace or append, defaults to `this.args.mode`
      * @memberof! DynamicFrame
      */
-    updateContent(content, mode = null) {
+    async updateContent(content, mode = null) {
         if (!mode) mode = this.args.mode || "replace";
 
         const template = document.createElement("template");
@@ -195,7 +195,7 @@ class DynamicFrame extends Controller {
         if (this.args.executeScripts) {
             let scripts = template.content.querySelectorAll("script");
 
-            [...scripts].forEach(script => {
+            for (let script of scripts) {
                 let newScript = document.createElement("script");
 
                 // Copy all attributes to the new script
@@ -203,12 +203,16 @@ class DynamicFrame extends Controller {
                 if (!newScript.hasAttribute("defer")) newScript.setAttribute("defer", "false");
                 if (!newScript.hasAttribute("async")) newScript.setAttribute("async", "false");
 
+                const waitForLoad = new Promise(resolve => newScript.once("load", resolve));
+
                 // Copy the content of the script tag
                 if (script.innerHTML) newScript.appendChild(document.createTextNode(script.innerHTML));
 
                 // Add the script tag back in
                 script.replaceWith(newScript);
-            });
+
+                await Promise.resolve(waitForLoad);
+            }
         }
 
         if (mode === "replace") {
@@ -253,13 +257,6 @@ class DynamicFrame extends Controller {
      * @param {object} values
      */
     setParams(values = {}) {
-        // Wipe out all current attributes
-        for (let attr of this.attributes) {
-            if (attr.nodeName.startsWith(":param-")) {
-                this.removeAttribute(attr.nodeName);
-            }
-        }
-
         // Set the new params
         Object.entries(values).forEach(([key, val]) => {
             this.setAttribute(`:param-${key}`, val);
