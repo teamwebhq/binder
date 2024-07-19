@@ -155,13 +155,17 @@ class DynamicFrame extends Controller {
                 // If no content then delete self
                 if (response.status === 204) {
                     this.destroySelf();
-                    ok = false;
+                    ok = true;
                     return;
                 }
 
                 let text = await response.text();
                 this.updateContent(text);
             } catch (err) {
+                if (err.name !== "AbortError") {
+                    throw err;
+                }
+
                 console.error(err);
                 ok = false;
             }
