@@ -42,12 +42,6 @@ class Controller extends HTMLElement {
         // Keep track of all attached events
         this._events = [];
 
-        // Handle <self> node
-        // By default an empty element will only contain it's `self` content
-        // Can also be added manually using <self></self>
-        if (this.innerHTML.trim() === "") this.innerHTML = "<self></self>";
-        this.self = this.querySelector("self");
-
         // Add the data-controller attribute to the element
         this.setAttribute("data-controller", this.localName);
         this.emit("binder:created", {});
