@@ -1,6 +1,7 @@
 # binder.js
 
 This repository contains the `binder.js` code and the [11ty](https://www.11ty.dev/) static site https://binderjs.com.  
+
 To learn more about binder.js see https://binderjs.com.
 
 ## Getting Started
@@ -28,8 +29,13 @@ npm run build:js
 
 # Build everything
 npm run build
-
-# Copy files to server
-scp -r build/site/* nginx:/data/www/binder.danstewart.dev
-scp -r build/docs/* nginx:/data/www/docs.binder.danstewart.dev
 ```
+
+## License
+
+Licensed under MIT. (https://github.com/teamwebhq/binder/blob/main/LICENSE)
+
+
+## Creator
+
+Learn more about TeamWeb at https://teamwebhq.com/.
