@@ -159,6 +159,13 @@ class DynamicFrame extends Controller {
                     return;
                 }
 
+                // Special header for redirecting the outer page
+                // Useful for errors or session timeouts
+                if (response.headers.get("X-Dynamic-Frame-Page-Redirect")) {
+                    window.location.href = response.headers.get("X-Dynamic-Frame-Page-Redirect");
+                    return;
+                }
+
                 let text = await response.text();
                 this.updateContent(text);
             } catch (err) {
