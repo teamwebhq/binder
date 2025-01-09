@@ -1,8 +1,8 @@
 {
   "devDependencies": {
-    "@11ty/eleventy": "^1.0.0",
-    "@swc/cli": "^0.1.57",
-    "@swc/core": "^1.2.165"
+    "@11ty/eleventy": "^3.0.0",
+    "@swc/cli": "^0.5.2",
+    "@swc/core": "^1.10.1"
   },
   "name": "binder",
   "description": "This repository contains the `binder.js` code and the [11ty](https://www.11ty.dev/) static site https://binderjs.com.   To learn more about binder.js see https://binderjs.com.",

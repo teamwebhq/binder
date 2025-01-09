@@ -7,10 +7,12 @@ if [[ $1 == "watch" ]]; then
         --source-maps true \
         --quiet \
         --watch \
+        --strip-leading-paths \
         ./src/static/js/binder/ --out-dir ./build/ &
 else
     npx swc \
-      --quiet \
-      --source-maps true \
-      ./src/static/js/binder/ --out-dir ./build/
+        --quiet \
+        --source-maps true \
+        --strip-leading-paths \
+        ./src/static/js/binder/ --out-dir ./build/
 fi
