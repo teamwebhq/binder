@@ -546,6 +546,9 @@ class DynamicFrameRouter extends Controller {
         if (href in this.cache) {
             this.target.replaceChildren(...this.cache[href]);
             this.target.args.url = href;
+            this.target.emit("dynamic-frame:updated", {
+                fromCache: true,
+            });
         } else {
             await this.target.loadUrl(href);
         }
